@@ -14,15 +14,21 @@
 package org.asosat.domain.repository;
 
 import static org.asosat.kernel.util.MyBagUtils.asSet;
+import static org.asosat.kernel.util.MyClsUtils.getClassPathPackageClassNames;
 import static org.asosat.kernel.util.MyClsUtils.hierarchyList;
 import static org.asosat.kernel.util.MyClsUtils.tryToLoadClassForName;
+import static org.asosat.kernel.util.Preconditions.requireNotBlank;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Set;
 import javax.persistence.Converter;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.MappedSuperclass;
+import org.apache.commons.vfs2.FileExtensionSelector;
+import org.asosat.kernel.resource.GlobalMessageCodes;
+import org.asosat.kernel.resource.MultiClassPathFiles;
 
 /**
  * @author bingo 下午10:13:49
@@ -44,6 +50,32 @@ public class JpaUtils {
 
   public static boolean isPersistenceClass(String clsName) {
     return isPersistenceClass(tryToLoadClassForName(clsName));
+  }
+
+  public static void stdoutPersistClasses(String pkg) {
+    new ArrayList<>(getClassPathPackageClassNames(pkg)).stream()
+        .filter(c -> JpaUtils.isPersistenceClass(c)).sorted(String::compareTo)
+        .map(x -> new StringBuilder("<class>").append(x).append("</class>").toString())
+        .forEach(x -> System.out.println(x));
+  }
+
+  public static void stdoutPersistes(String pkg) {
+    System.out.println("<!-- mapping files -->");
+    stdoutPersistJpaOrmXml(pkg);
+    System.out.println("<!-- mapping classes -->");
+    stdoutPersistClasses(pkg);
+  }
+
+  public static void stdoutPersistJpaOrmXml(String pkg) {
+    String packageNameToUse =
+        requireNotBlank(pkg, GlobalMessageCodes.ERR_PARAM).replaceAll("\\.", "/");
+    MultiClassPathFiles.select(new FileExtensionSelector("xml")).keySet().stream()
+        .sorted(String::compareTo).forEach(s -> {
+          if (s.contains(packageNameToUse) && s.endsWith("JpaOrm.xml")) {
+            System.out.println(new StringBuilder().append("<mapping-file>")
+                .append(s.substring(s.indexOf(packageNameToUse))).append("</mapping-file>"));
+          }
+        });
   }
 
 }

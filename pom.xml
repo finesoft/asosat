@@ -105,7 +105,7 @@
 		</dependency>
 	</dependencies>
 	<description>A series of skills and technology (asosat) for enterprise system development.</description>
-	<modules>
-    <module>asosat-domain</module>
+  <modules>
+    <module>asosat-kernel</module>
   </modules>
 </project>

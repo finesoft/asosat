@@ -42,7 +42,7 @@ public interface Aggregate extends Entity, Being, Readable<Aggregate> {
    * In this case, it means whether it is persisted or not
    */
   default boolean isEnabled() {
-    return getLifecycle() == Lifecycle.ENABED;
+    return getLifecycle() == Lifecycle.ENABLED;
   }
 
   /**

@@ -42,18 +42,18 @@ public class DefaultAggregateListener {
   public DefaultAggregateListener() {}
 
   void handlePostLoad(AbstractAggregate o) {
-    o.initLifecycle(Lifecycle.ENABED);
+    o.initLifecycle(Lifecycle.ENABLED);
     o.assistant().clearMessages();
   }
 
   void handlePostPersist(AbstractAggregate o) {
-    o.initLifecycle(Lifecycle.ENABED);
+    o.initLifecycle(Lifecycle.ENABLED);
     this.registerToUnitOfWork(o);
     o.assistant().clearMessages();
   }
 
   void handlePostRemove(AbstractAggregate o) {
-    o.initLifecycle(Lifecycle.DESTED);
+    o.initLifecycle(Lifecycle.DESTROYED);
     this.registerToUnitOfWork(o);
     o.assistant().clearMessages();
   }
@@ -67,7 +67,7 @@ public class DefaultAggregateListener {
   void handlePreRemove(AbstractAggregate o) {}
 
   void handlePreUpdate(AbstractAggregate o) {
-    o.initLifecycle(Lifecycle.ENABED);
+    o.initLifecycle(Lifecycle.ENABLED);
     this.registerToUnitOfWork(o);
   }
 

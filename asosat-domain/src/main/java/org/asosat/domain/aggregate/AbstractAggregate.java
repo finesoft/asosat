@@ -13,8 +13,8 @@
  */
 package org.asosat.domain.aggregate;
 
-import static org.asosat.kernel.util.Preconditions.requireFalse;
 import static org.asosat.domain.aggregate.PkgMsgCds.ERR_AGG_LC;
+import static org.asosat.kernel.util.Preconditions.requireFalse;
 import java.beans.Transient;
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -24,11 +24,11 @@ import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
+import org.asosat.domain.aggregate.DefaultAggregateListener.LifcyclePhase;
+import org.asosat.domain.event.LifecycleEvent;
 import org.asosat.kernel.supertype.Event;
 import org.asosat.kernel.supertype.Lifecycle;
 import org.asosat.kernel.supertype.Message;
-import org.asosat.domain.aggregate.DefaultAggregateListener.LifcyclePhase;
-import org.asosat.domain.event.LifecycleEvent;
 
 /**
  * @author bingo 下午3:25:51
@@ -40,7 +40,7 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
 
   private static final long serialVersionUID = -9184534676784775644L;
 
-  protected transient volatile Lifecycle lifecycle = Lifecycle.INITED;
+  protected transient volatile Lifecycle lifecycle = Lifecycle.INITIAL;
   protected transient volatile AggregateAssistant assistant;
 
   @Version
@@ -73,10 +73,10 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
 
   /**
    * Identifies whether the aggregate has been persisted or deleted.
-   * <li>INITED: Just created</li>
-   * <li>ENABED: Has been persisted</li>
-   * <li>DESTED: If already persisted, the representation is removed from the persistence facility;
-   * otherwise it is just a token</li>
+   * <li>INITIAL: Just created</li>
+   * <li>ENABLED: Has been persisted</li>
+   * <li>DESTROYED: If already persisted, the representation is removed from the persistence
+   * facility; otherwise it is just a token</li>
    */
   @Override
   @Transient
@@ -92,7 +92,7 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
   @Transient
   @javax.persistence.Transient
   public synchronized Boolean isPhantom() {
-    return this.getId() == null || this.lifecycle != Lifecycle.ENABED;
+    return this.getId() == null || this.lifecycle != Lifecycle.ENABLED;
   }
 
   @Override
@@ -142,7 +142,7 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
    * Enable the aggregate if is not persisted then persist it else merge it.
    */
   protected synchronized AbstractAggregate enable(boolean immediately) {
-    requireFalse(this.getLifecycle() == Lifecycle.DESTED, ERR_AGG_LC,
+    requireFalse(this.getLifecycle() == Lifecycle.DESTROYED, ERR_AGG_LC,
         this.toHumanReader(Locale.getDefault()));
     this.fire(new LifecycleEvent(this, LifcyclePhase.ENABLE, immediately));
     this.fire(new LifecycleEvent(this, LifcyclePhase.ENABLED));
@@ -150,7 +150,7 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
   }
 
   protected synchronized AbstractAggregate initLifecycle(Lifecycle lifecycle) {
-    requireFalse(this.getLifecycle() == Lifecycle.DESTED, ERR_AGG_LC,
+    requireFalse(this.getLifecycle() == Lifecycle.DESTROYED, ERR_AGG_LC,
         this.toHumanReader(Locale.getDefault()));
     this.lifecycle = lifecycle;
     return this;

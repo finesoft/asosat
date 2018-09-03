@@ -2,8 +2,8 @@
 http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/beans_1_0.xsd">
 	<interceptors>
-		<class>org.asosat.core.csks.pattern.interceptor.AsynchronousInterceptor</class>
-		<class>org.asosat.core.csks.pattern.interceptor.RetryInterceptor</class>
-		<class>org.asosat.core.csks.pattern.interceptor.ConcurrencyThrottleInterceptor</class>
+		<class>org.asosat.kernel.pattern.interceptor.AsynchronousInterceptor</class>
+		<class>org.asosat.kernel.pattern.interceptor.RetryInterceptor</class>
+		<class>org.asosat.kernel.pattern.interceptor.ConcurrencyThrottleInterceptor</class>
 	</interceptors>
 </beans>

@@ -101,6 +101,7 @@ public class Order extends AbstractDefaultGenericAggregate<Map<String, Object>, 
     } else {
       this.items.add(new OrderItem(product, qty, unitPrice));
     }
+    this.reCalTotalAmount();
   }
 
   public void confirm(Map<String, Object> param, Consumer<Order> preConfirmHandler) {
@@ -162,7 +163,16 @@ public class Order extends AbstractDefaultGenericAggregate<Map<String, Object>, 
   }
 
   public boolean removeItemIf(Predicate<OrderItem> filter) {
-    return this.items.removeIf(filter);
+    boolean removed = this.items.removeIf(filter);
+    if (removed) {
+      this.reCalTotalAmount();
+    }
+    return removed;
+  }
+
+  void reCalTotalAmount() {
+    this.totalAmount = this.items.stream().map(i -> i.getQty().multiply(i.getUnitPrice()))
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
   }
 
 }

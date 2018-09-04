@@ -19,7 +19,7 @@ import org.asosat.domain.annotation.stereotype.InfrastructureServices;
 import org.asosat.domain.service.MessageService;
 
 /**
- * asosat-core-ddds <br/>
+ * asosat-domain <br/>
  *
  * @author bingo 上午11:51:01
  */

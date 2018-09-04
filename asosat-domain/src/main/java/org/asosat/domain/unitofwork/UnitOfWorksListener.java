@@ -17,7 +17,7 @@ import javax.enterprise.context.ApplicationScoped;
 import org.asosat.domain.annotation.stereotype.InfrastructureServices;
 
 /**
- * asosat-core-ddds <br/>
+ * asosat-domain <br/>
  *
  * @author bingo 2017年9月25日
  * @since

@@ -12,7 +12,7 @@
  * the License.
  */
 /**
- * asosat-core-ddds <br/>
+ * asosat-domain <br/>
  *
  * @author bingo 2018年3月28日
  * @since

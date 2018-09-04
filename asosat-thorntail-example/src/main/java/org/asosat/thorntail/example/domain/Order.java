@@ -106,6 +106,7 @@ public class Order extends AbstractDefaultGenericAggregate<Map<String, Object>, 
 
   public void confirm(Map<String, Object> param, Consumer<Order> preConfirmHandler) {
     preConfirmHandler.accept(this);
+    this.confirmed = true;
     this.fire(new OrderConfirmdEvent(this));
   }
 

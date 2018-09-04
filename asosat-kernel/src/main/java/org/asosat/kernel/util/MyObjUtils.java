@@ -68,8 +68,13 @@ public class MyObjUtils {
     return a.compareTo(b) < 0 ? a : b;
   }
 
+
   public static boolean nonNull(Object obj) {
     return Objects.nonNull(obj);
+  }
+
+  public static <T extends Comparable<T>> boolean same(T a, T b) {
+    return (a == b) || (a != null && a.compareTo(b) == 0);
   }
 
   public static String toString(Object o) {

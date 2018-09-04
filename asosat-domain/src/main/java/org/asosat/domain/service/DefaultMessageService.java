@@ -21,14 +21,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import org.asosat.kernel.exception.GeneralRuntimeException;
-import org.asosat.kernel.pattern.interceptor.Asynchronous;
 import org.asosat.domain.annotation.stereotype.InfrastructureServices;
 import org.asosat.domain.message.ExchangedMessage;
 import org.asosat.domain.message.ExchangedMessageHandler;
-import org.asosat.domain.message.MessageSender;
 import org.asosat.domain.message.MessageConvertor;
+import org.asosat.domain.message.MessageSender;
 import org.asosat.domain.saga.SagaManager;
+import org.asosat.kernel.exception.GeneralRuntimeException;
+import org.asosat.kernel.pattern.interceptor.Asynchronous;
 
 /**
  * @author bingo 上午10:51:18
@@ -81,7 +81,7 @@ public class DefaultMessageService implements MessageService {
     }
   }
 
-  @Asynchronous(fair = true) // FIXME ordered
+  @Asynchronous(fair = false) // FIXME ordered
   @Override
   public void send(ExchangedMessage msg) {
     if (msg != null) {

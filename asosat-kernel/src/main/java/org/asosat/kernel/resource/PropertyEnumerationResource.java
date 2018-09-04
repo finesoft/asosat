@@ -96,7 +96,7 @@ public class PropertyEnumerationResource implements EnumerationResource {
         if (!this.init) {
           try {
             this.destroy();
-            MyPropertyResourceBundle.getBundles(new PatternFileSelector(this.pathRegex))
+            PropertyResourceBundle.getBundles(new PatternFileSelector(this.pathRegex))
                 .forEach((s, res) -> {
                   Locale locale = res.getLocale();
                   EnumLiteralsObject obj =

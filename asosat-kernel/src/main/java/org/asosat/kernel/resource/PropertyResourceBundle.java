@@ -35,7 +35,7 @@ import org.asosat.kernel.context.DefaultSetting;
  * @author bingo 上午12:25:48
  *
  */
-public class MyPropertyResourceBundle extends ResourceBundle {
+public class PropertyResourceBundle extends ResourceBundle {
 
   public static final String LOCALE_SPT = "_";
   private Map<String, Object> lookup;
@@ -44,9 +44,9 @@ public class MyPropertyResourceBundle extends ResourceBundle {
   private String baseBundleName;
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  public MyPropertyResourceBundle(FileObject fo) throws IOException {
+  public PropertyResourceBundle(FileObject fo) throws IOException {
     this.baseBundleName = fo.getName().getBaseName();
-    this.locale = MyPropertyResourceBundle.detectLocaleByName(this.baseBundleName);
+    this.locale = PropertyResourceBundle.detectLocaleByName(this.baseBundleName);
     this.lastModifiedTime = fo.getContent().getLastModifiedTime();
     Properties properties = new Properties();
     properties
@@ -54,11 +54,11 @@ public class MyPropertyResourceBundle extends ResourceBundle {
     this.lookup = new HashMap(properties);
   }
 
-  public static Map<String, MyPropertyResourceBundle> getBundles(FileSelector fs) {
-    Map<String, MyPropertyResourceBundle> map = new ConcurrentHashMap<>();
+  public static Map<String, PropertyResourceBundle> getBundles(FileSelector fs) {
+    Map<String, PropertyResourceBundle> map = new ConcurrentHashMap<>();
     MultiClassPathFiles.select(fs).forEach((s, fo) -> {
       try {
-        map.putIfAbsent(s, new MyPropertyResourceBundle(fo));
+        map.putIfAbsent(s, new PropertyResourceBundle(fo));
       } catch (IOException e) {
       }
     });
@@ -95,7 +95,7 @@ public class MyPropertyResourceBundle extends ResourceBundle {
   @Override
   public Enumeration<String> getKeys() {
     ResourceBundle parent = this.parent;
-    return new MyResourceBundleEnumeration(this.lookup.keySet(),
+    return new ResourceBundleEnumeration(this.lookup.keySet(),
         (parent != null) ? parent.getKeys() : null);
   }
 
@@ -116,7 +116,7 @@ public class MyPropertyResourceBundle extends ResourceBundle {
     return this.lookup.get(key);
   }
 
-  public static class MyResourceBundleEnumeration implements Enumeration<String> {
+  public static class ResourceBundleEnumeration implements Enumeration<String> {
 
     Set<String> set;
     Iterator<String> iterator;
@@ -132,7 +132,7 @@ public class MyPropertyResourceBundle extends ResourceBundle {
      *        be null.
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public MyResourceBundleEnumeration(Set<String> set, Enumeration enumeration) {
+    public ResourceBundleEnumeration(Set<String> set, Enumeration enumeration) {
       this.set = set;
       this.iterator = set.iterator();
       this.enumeration = enumeration;

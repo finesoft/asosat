@@ -26,10 +26,10 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
-import org.asosat.kernel.exception.GeneralRuntimeException;
-import org.asosat.kernel.resource.ConfigResource;
 import org.asosat.domain.annotation.stereotype.InfrastructureServices;
 import org.asosat.domain.repository.JpaUtils;
+import org.asosat.kernel.exception.GeneralRuntimeException;
+import org.asosat.kernel.resource.ConfigResource;
 
 /**
  * @author bingo 下午3:28:14
@@ -39,9 +39,9 @@ import org.asosat.domain.repository.JpaUtils;
 @InfrastructureServices
 public abstract class AbstractGenericMessageConvertor<P, A> implements MessageConvertor {
 
-  public static final String MSG_PKG = "";
+  public static final String MSG_PKG = "localmessage.class.package.path";
   public static final String MSG_QUE_SPT = ";";
-  public static final String DFLT_MSG_PKG = "net.asosat;org.asosat";
+  public static final String DFLT_MSG_PKG = "com;cn";
 
   @Inject
   protected ConfigResource configResource;
@@ -79,8 +79,8 @@ public abstract class AbstractGenericMessageConvertor<P, A> implements MessageCo
     for (String path : paths.split(MSG_QUE_SPT)) {
       getClassPathPackageClassNames(path).forEach(clz -> {
         Class<?> cls = tryToLoadClassForName(clz);
-        if (JpaUtils.isPersistenceClass(cls)
-            && AbstractGenericMessage.class.isAssignableFrom(cls)) {// only support JPA
+        if (cls != null && AbstractGenericMessage.class.isAssignableFrom(cls)
+            && JpaUtils.isPersistenceClass(cls)) {// only support JPA
           Class<AbstractGenericMessage<P, A>> msgCls = (Class<AbstractGenericMessage<P, A>>) cls;
           Constructor<AbstractGenericMessage<P, A>> match = this.findConstructor(msgCls);
           if (match != null) {
@@ -98,10 +98,6 @@ public abstract class AbstractGenericMessageConvertor<P, A> implements MessageCo
   protected Constructor<AbstractGenericMessage<P, A>> findConstructor(
       Class<AbstractGenericMessage<P, A>> cls) {
     return ConstructorUtils.getMatchingAccessibleConstructor(cls, ExchangedMessage.class);
-  }
-
-  protected void uniquenessQueue() {
-    // TODO FIXME
   }
 
 }

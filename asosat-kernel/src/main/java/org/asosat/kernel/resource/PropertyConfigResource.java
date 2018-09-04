@@ -65,7 +65,7 @@ public class PropertyConfigResource implements ConfigResource {
         if (!this.init) {
           try {
             this.destroy();
-            MyPropertyResourceBundle.getBundles(new PatternFileSelector(DFLT_MSG_REF_PATH_REG))
+            PropertyResourceBundle.getBundles(new PatternFileSelector(DFLT_MSG_REF_PATH_REG))
                 .forEach((s, res) -> {
                   this.holder
                       .computeIfAbsent(res.getBaseBundleName(), (k) -> new ConcurrentHashMap<>())

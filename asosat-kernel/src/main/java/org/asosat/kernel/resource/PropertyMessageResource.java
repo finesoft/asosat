@@ -103,7 +103,7 @@ public class PropertyMessageResource implements MessageResource {
         if (!this.init) {
           try {
             this.destroy();
-            MyPropertyResourceBundle.getBundles(new PatternFileSelector(this.pathRegex))
+            PropertyResourceBundle.getBundles(new PatternFileSelector(this.pathRegex))
                 .forEach((s, res) -> {
                   Map<String, MessageFormat> localeMap = res.dump().entrySet().stream().collect(
                       Collectors.toMap(k -> k.getKey(), v -> new MessageFormat(v.getValue())));

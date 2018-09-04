@@ -39,7 +39,6 @@ public abstract class AbstractJmsMessageSender implements MessageSender {
 
   public AbstractJmsMessageSender() {}
 
-
   @Override
   public boolean send(ExchangedMessage message) throws Exception {
     return this.convertAndSend(this.queues.get(message.queueName()), message);

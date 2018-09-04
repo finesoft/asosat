@@ -13,9 +13,9 @@
  */
 package org.asosat.domain.repository;
 
+import static org.asosat.domain.repository.JpaQueryBuilder.namedQuery;
 import static org.asosat.kernel.util.MyBagUtils.isEmpty;
 import static org.asosat.kernel.util.MyClsUtils.tryToLoadClassForName;
-import static org.asosat.domain.repository.JpaQueryBuilder.namedQuery;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +29,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
 import javax.persistence.Query;
-import org.asosat.kernel.supertype.Being;
-import org.asosat.kernel.supertype.Entity;
 import org.asosat.domain.aggregate.AggregateIdentifier;
 import org.asosat.domain.annotation.stereotype.Repositories;
 import org.asosat.domain.unitofwork.TransactionUnitOfWorksManager;
+import org.asosat.kernel.supertype.Being;
+import org.asosat.kernel.supertype.Entity;
 
 /**
  * A simple encapsulation of JPA entity manager

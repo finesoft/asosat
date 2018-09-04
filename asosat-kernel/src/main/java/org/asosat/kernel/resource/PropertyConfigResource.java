@@ -13,8 +13,12 @@
  */
 package org.asosat.kernel.resource;
 
+import static org.asosat.kernel.util.MyMapUtils.getMapValue;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
@@ -28,9 +32,10 @@ import org.asosat.kernel.context.DefaultContext;
 @ApplicationScoped
 public class PropertyConfigResource implements ConfigResource {
 
-  public static final String DFLT_MSG_REF_PATH_REG = ".*config.*\\.properties";
+  public static final String DFLT_CFG_REF_PATH_REG =
+      ".*config.*\\.properties;.*application.*\\.properties";
 
-  final Map<String, Map<String, Object>> holder = new ConcurrentHashMap<>();
+  final Map<String, String> holder = new ConcurrentHashMap<>();
   private volatile boolean init = false;
 
   public PropertyConfigResource() {}
@@ -39,19 +44,15 @@ public class PropertyConfigResource implements ConfigResource {
     return DefaultContext.bean(PropertyConfigResource.class);
   }
 
-  @Override
-  public String getName() {
-    return null;
-  }
 
   @Override
   public Map<String, String> getProperties() {
-    return null;
+    return Collections.unmodifiableMap(this.holder);
   }
 
   @Override
-  public <T> T getValue(String propertyName, Class<T> cls) {
-    return null;
+  public <T> T getValue(String propertyName, final Function<Object, T> extractor) {
+    return getMapValue(this.holder, propertyName, extractor);
   }
 
   public synchronized void reload() {
@@ -65,12 +66,10 @@ public class PropertyConfigResource implements ConfigResource {
         if (!this.init) {
           try {
             this.destroy();
-            PropertyResourceBundle.getBundles(new PatternFileSelector(DFLT_MSG_REF_PATH_REG))
-                .forEach((s, res) -> {
-                  this.holder
-                      .computeIfAbsent(res.getBaseBundleName(), (k) -> new ConcurrentHashMap<>())
-                      .putAll(res.dump());
-                });
+            Arrays.stream(DFLT_CFG_REF_PATH_REG.split(";")).forEach(fn -> PropertyResourceBundle
+                .getBundles(new PatternFileSelector(fn)).forEach((s, res) -> {
+                  this.holder.putAll(res.dump());
+                }));
           } finally {
             this.init = true;
           }
@@ -81,7 +80,6 @@ public class PropertyConfigResource implements ConfigResource {
 
   @PreDestroy
   synchronized void destroy() {
-    this.holder.forEach((k, v) -> v.clear());
     this.holder.clear();
   }
 

@@ -30,6 +30,7 @@ import org.asosat.domain.annotation.stereotype.InfrastructureServices;
 import org.asosat.domain.repository.JpaUtils;
 import org.asosat.kernel.exception.GeneralRuntimeException;
 import org.asosat.kernel.resource.ConfigResource;
+import org.asosat.kernel.util.ConvertUtils;
 
 /**
  * @author bingo 下午3:28:14
@@ -75,7 +76,7 @@ public abstract class AbstractGenericMessageConvertor<P, A> implements MessageCo
   @PostConstruct
   @SuppressWarnings("unchecked")
   protected synchronized void enable() {
-    String paths = this.configResource.getValue(MSG_PKG, String.class, DFLT_MSG_PKG);
+    String paths = this.configResource.getValue(MSG_PKG, ConvertUtils::toString, DFLT_MSG_PKG);
     for (String path : paths.split(MSG_QUE_SPT)) {
       getClassPathPackageClassNames(path).forEach(clz -> {
         Class<?> cls = tryToLoadClassForName(clz);

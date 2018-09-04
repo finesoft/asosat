@@ -37,9 +37,7 @@ public class ConcurrencyThrottleInterceptor {
 
   static Map<MethodSignature, Semaphore> THROTTLES = new ConcurrentHashMap<>();
 
-  public ConcurrencyThrottleInterceptor() {
-
-  }
+  public ConcurrencyThrottleInterceptor() {}
 
   @AroundInvoke
   public Object concurrencyThrottleInvocation(final InvocationContext ctx) throws Exception {

@@ -15,6 +15,7 @@ package org.asosat.kernel.resource;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import javax.enterprise.context.ApplicationScoped;
 
 /**
@@ -23,11 +24,6 @@ import javax.enterprise.context.ApplicationScoped;
  */
 @ApplicationScoped
 public interface ConfigResource {
-
-  /**
-   * Config file name
-   */
-  String getName();
 
   /**
    * All config properties
@@ -39,10 +35,10 @@ public interface ConfigResource {
     return getProperties().keySet();
   }
 
-  <T> T getValue(String propertyName, Class<T> cls);
+  <T> T getValue(String propertyName, final Function<Object, T> extractor);
 
-  default <T> T getValue(String propertyName, Class<T> cls, T dflt) {
-    T value = getValue(propertyName, cls);
+  default <T> T getValue(String propertyName, final Function<Object, T> extractor, T dflt) {
+    T value = getValue(propertyName, extractor);
     return value == null ? dflt : value;
   }
 

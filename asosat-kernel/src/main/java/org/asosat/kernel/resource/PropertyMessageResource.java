@@ -25,6 +25,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.apache.commons.vfs2.PatternFileSelector;
 import org.asosat.kernel.context.DefaultContext;
+import org.asosat.kernel.util.ConvertUtils;
 
 /**
  *
@@ -128,8 +129,8 @@ public class PropertyMessageResource implements MessageResource {
   synchronized void init() {
     if (this.config != null) {
       this.pathRegex =
-          this.config.getValue(MSG_REC_PATH_REG_KEY, String.class, DFLT_MSG_REF_PATH_REG);
-      this.lazyLoad = this.config.getValue(MSG_REC_LOAD_WAY, Boolean.class, false);
+          this.config.getValue(MSG_REC_PATH_REG_KEY, ConvertUtils::toString, DFLT_MSG_REF_PATH_REG);
+      this.lazyLoad = this.config.getValue(MSG_REC_LOAD_WAY, ConvertUtils::toBoolean, false);
     }
     if (!this.lazyLoad) {
       this.load();

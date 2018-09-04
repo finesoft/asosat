@@ -47,6 +47,7 @@ import javax.inject.Inject;
 import org.asosat.kernel.context.DefaultContext;
 import org.asosat.kernel.exception.NotSupportedException;
 import org.asosat.kernel.resource.ConfigResource;
+import org.asosat.kernel.util.ConvertUtils;
 
 /**
  * @author bingo 下午6:07:59
@@ -233,25 +234,27 @@ public class AsynchronousExecutor {
 
   private void initExecutorManual() {
     final int coreSize =
-        this.config.getValue(AE_CORE_SIZE, Integer.class,
+        this.config.getValue(AE_CORE_SIZE, ConvertUtils::toInteger,
             Math.max(2, Runtime.getRuntime().availableProcessors())),
-        maxSize = this.config.getValue(AE_MAX_SIZE, Integer.class, coreSize);
-    final long keepAlive = this.config.getValue(AE_KEEP_ALIVE_VALUE, Long.class, 0L);
+        maxSize = this.config.getValue(AE_MAX_SIZE, ConvertUtils::toInteger, coreSize);
+    final long keepAlive = this.config.getValue(AE_KEEP_ALIVE_VALUE, ConvertUtils::toLong, 0L);
     final String keepAliveUnit =
-        this.config.getValue(AE_KEEP_ALIVE_UNIT, String.class, "MILLISECONDS");
+        this.config.getValue(AE_KEEP_ALIVE_UNIT, ConvertUtils::toString, "MILLISECONDS");
     final TimeUnit timeUnit = TimeUnit.valueOf(keepAliveUnit);
-    final String rejectedHandlerName = this.config.getValue(AE_REJEXE_HANDLER_NAME, String.class);
+    final String rejectedHandlerName =
+        this.config.getValue(AE_REJEXE_HANDLER_NAME, ConvertUtils::toString);
     final RejectedExecutionHandler rejectedHandler;
     if (rejectedHandlerName != null) {
       rejectedHandler = this.lookupByName(rejectedHandlerName, RejectedExecutionHandler.class);
     } else {
       rejectedHandler = new ThreadPoolExecutor.AbortPolicy();
     }
-    final String threadFactoryName = this.config.getValue(AE_NAME, String.class, AE_NAME_DFLT);
+    final String threadFactoryName =
+        this.config.getValue(AE_NAME, ConvertUtils::toString, AE_NAME_DFLT);
 
     if (this.linkedExecutorService == null) {
       final int capacity =
-          this.config.getValue(AE_QUEUE_CAPACITY, Integer.class, Integer.MAX_VALUE);
+          this.config.getValue(AE_QUEUE_CAPACITY, ConvertUtils::toInteger, Integer.MAX_VALUE);
       final BlockingQueue<Runnable> linked = new LinkedBlockingQueue<Runnable>(capacity);
       final ThreadFactory threadFactory = new DefaultThreadFactory(threadFactoryName + "-linked");
       this.linkedExecutorService = new ThreadPoolExecutor(coreSize, maxSize, keepAlive, timeUnit,
@@ -259,7 +262,7 @@ public class AsynchronousExecutor {
     }
 
     if (this.arrayExecutorService == null) {
-      final int size = this.config.getValue(AE_QUEUE_FAIR, Integer.class, 1024);
+      final int size = this.config.getValue(AE_QUEUE_FAIR, ConvertUtils::toInteger, 1024);
       final BlockingQueue<Runnable> array = new ArrayBlockingQueue<Runnable>(size, false);
       final ThreadFactory threadFactory = new DefaultThreadFactory(threadFactoryName + "-array");
       this.arrayExecutorService = new ThreadPoolExecutor(coreSize, maxSize, keepAlive, timeUnit,
@@ -267,7 +270,8 @@ public class AsynchronousExecutor {
     }
 
     if (this.shceduledExecutorService == null) {
-      final String sthreadFactoryName = this.config.getValue(SE_NAME, String.class, SE_NAME_DFLT);
+      final String sthreadFactoryName =
+          this.config.getValue(SE_NAME, ConvertUtils::toString, SE_NAME_DFLT);
       final ThreadFactory threadFactory = new DefaultThreadFactory(sthreadFactoryName);
       this.shceduledExecutorService =
           new ScheduledThreadPoolExecutor(coreSize, threadFactory, rejectedHandler);

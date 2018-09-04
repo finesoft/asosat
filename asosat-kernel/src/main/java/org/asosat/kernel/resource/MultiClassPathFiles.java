@@ -48,9 +48,7 @@ public class MultiClassPathFiles {
   }
 
 
-  private MultiClassPathFiles() {
-
-  }
+  private MultiClassPathFiles() {}
 
   public static Map<String, FileObject> select(FileSelector fs) {
     // FIXME the name is uniqueness??

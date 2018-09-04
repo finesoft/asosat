@@ -22,4 +22,5 @@ import org.asosat.kernel.supertype.Message;
 public interface ExchangedMessage extends Message {
 
   MessageIdentifier getOriginalMessage();
+
 }

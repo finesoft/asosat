@@ -20,11 +20,11 @@ import java.util.Arrays;
 import java.util.Locale;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import org.asosat.kernel.abstraction.Readable;
 import org.asosat.kernel.resource.EnumerationResource;
 import org.asosat.kernel.resource.GlobalMessageCodes;
 import org.asosat.kernel.resource.MessageSeverity;
 import org.asosat.kernel.resource.PropertyMessageResource;
-import org.asosat.kernel.supertype.Readable;
 
 /**
  * @author bingo 上午10:31:53

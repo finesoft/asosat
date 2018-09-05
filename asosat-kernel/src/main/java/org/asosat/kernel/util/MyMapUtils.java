@@ -23,7 +23,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.apache.commons.collections4.MapUtils;
-import org.asosat.kernel.supertype.DynamicAttributes.DynamicAttributeMap;
+import org.asosat.kernel.abstraction.DynamicAttributes.DynamicAttributeMap;
 
 public abstract class MyMapUtils {
 

@@ -59,7 +59,7 @@ public class DefaultContext {
     return CTX.getBeanManager().getEvent();
   }
 
-  public static void fireEvent(org.asosat.kernel.supertype.Event event, Annotation... qualifiers) {
+  public static void fireEvent(org.asosat.kernel.abstraction.Event event, Annotation... qualifiers) {
     if (event != null) {
       if (event.getClass().isAnnotationPresent(AsynchronousEvent.class)) {
         if (qualifiers.length > 0) {

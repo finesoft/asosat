@@ -21,7 +21,7 @@ import org.asosat.kernel.domain.annotation.stereotype.Events;
  * @author bingo 上午10:09:59
  */
 @Events
-public abstract class PropertyChangedEvent<T extends Aggregate, PT> extends AbstractEvent {
+public abstract class AbstractPropertyChangedEvent<T extends Aggregate, PT> extends AbstractEvent {
 
   private static final long serialVersionUID = 6311499831097921960L;
 
@@ -29,7 +29,7 @@ public abstract class PropertyChangedEvent<T extends Aggregate, PT> extends Abst
 
   private final PT newValue;
 
-  public PropertyChangedEvent(T source, PT oldValue, PT newValue) {
+  public AbstractPropertyChangedEvent(T source, PT oldValue, PT newValue) {
     super(source);
     this.oldValue = oldValue;
     this.newValue = newValue;

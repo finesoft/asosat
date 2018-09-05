@@ -38,7 +38,7 @@ public class DefaultPersistenceService implements PersistenceService {
     }
   }
 
-  public void onAggregateLifecycle(
+  public void onLifecycle(
       @Observes(during = TransactionPhase.IN_PROGRESS) LifecycleEvent event) {
     if (event != null && event.getSource() != null) {
       if (event.getLifcyclehase() == LifcyclePhase.ENABLE) {

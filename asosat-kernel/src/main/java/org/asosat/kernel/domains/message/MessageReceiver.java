@@ -11,31 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.thorntail.example.domain;
-
-import org.asosat.kernel.domains.event.AbstractEvent;
+package org.asosat.kernel.domains.message;
 
 /**
- * asosat-thorntail-example
- *
- * @author bingo 下午7:59:44
+ * @author bingo 下午2:32:06
  *
  */
-public class OrderConfirmedEvent extends AbstractEvent {
+public interface MessageReceiver {
 
-  private static final long serialVersionUID = -5090978171054060890L;
-
-  /**
-   * @param source
-   */
-  public OrderConfirmedEvent(Order source) {
-    super(source);
-  }
-
-  @Override
-  public Order getSource() {
-    return (Order) super.getSource();
-  }
-
+  void receive(ExchangedMessage message);
 
 }

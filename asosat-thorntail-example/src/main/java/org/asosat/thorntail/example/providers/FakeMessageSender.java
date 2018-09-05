@@ -17,10 +17,10 @@ import java.io.IOException;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import org.asosat.kernel.domain.annotation.stereotype.InfrastructureServices;
-import org.asosat.kernel.domain.message.ExchangedMessage;
-import org.asosat.kernel.domain.message.MemonyMessageTesting;
-import org.asosat.kernel.domain.message.MessageSender;
+import org.asosat.kernel.domains.annotation.stereotype.InfrastructureServices;
+import org.asosat.kernel.domains.message.ExchangedMessage;
+import org.asosat.kernel.domains.message.MemonyMessageTesting;
+import org.asosat.kernel.domains.message.MessageSender;
 import org.asosat.kernel.pattern.interceptor.Retry;
 import org.asosat.thorntail.example.domain.Repository;
 

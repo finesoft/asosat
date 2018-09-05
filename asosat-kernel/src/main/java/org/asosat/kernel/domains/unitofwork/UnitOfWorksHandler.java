@@ -11,38 +11,20 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.thorntail.example.providers;
+package org.asosat.kernel.domains.unitofwork;
 
-import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
-import org.asosat.kernel.abstraction.Message;
 import org.asosat.kernel.domains.annotation.stereotype.InfrastructureServices;
-import org.asosat.kernel.domains.message.AbstractGenericMessage;
-import org.asosat.kernel.domains.message.AbstractGenericMessageConvertor;
-import org.asosat.kernel.domains.message.ExchangedMessage;
 
 /**
- * @author bingo 下午3:27:05
+ * @author bingo 下午8:11:33
  *
  */
+@FunctionalInterface
 @ApplicationScoped
 @InfrastructureServices
-public class FakeMessageConvertor
-    extends AbstractGenericMessageConvertor<Map<String, Object>, Map<String, Object>> {
+public interface UnitOfWorksHandler {
 
-  public FakeMessageConvertor() {}
-
-
-  @Override
-  public AbstractGenericMessage<Map<String, Object>, Map<String, Object>> from(
-      ExchangedMessage message) {
-    return super.from(message);
-  }
-
-
-  @Override
-  public ExchangedMessage to(Message message) {
-    return null;
-  }
+  void onPreComplete(UnitOfWorks uow);
 
 }

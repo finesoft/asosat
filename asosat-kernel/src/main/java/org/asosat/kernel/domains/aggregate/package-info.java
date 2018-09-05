@@ -11,31 +11,21 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.thorntail.example.domain;
-
-import org.asosat.kernel.domains.event.AbstractEvent;
-
 /**
- * asosat-thorntail-example
+ * asosat-domain <br/>
  *
- * @author bingo 下午7:59:44
- *
+ * @author bingo 2018年3月28日
+ * @since
  */
-public class OrderConfirmedEvent extends AbstractEvent {
+package org.asosat.kernel.domains.aggregate;
 
-  private static final long serialVersionUID = -5090978171054060890L;
+import org.asosat.kernel.resource.GlobalMessageCodes;
 
-  /**
-   * @param source
-   */
-  public OrderConfirmedEvent(Order source) {
-    super(source);
-  }
+class PkgMsgCds implements GlobalMessageCodes {
 
-  @Override
-  public Order getSource() {
-    return (Order) super.getSource();
-  }
-
+  static final String ERR_AGG_LC = "aggregate.lifecycle_state_error";
+  static final String ERR_AGG_AST_INSTAL = "aggregate.assistant_install_error";
+  static final String ERR_AGG_MSG_SEQ = "aggregate.msgSeqNum_error";
+  static final String ERR_AGG_ID = "aggregate.identifier_error";
 
 }

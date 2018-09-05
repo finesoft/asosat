@@ -11,38 +11,40 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.thorntail.example.providers;
+package org.asosat.kernel.domains.infrastructure;
 
-import java.util.Map;
+import java.lang.annotation.Annotation;
+import java.util.stream.Stream;
 import javax.enterprise.context.ApplicationScoped;
-import org.asosat.kernel.abstraction.Message;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import org.asosat.kernel.domains.annotation.stereotype.InfrastructureServices;
-import org.asosat.kernel.domains.message.AbstractGenericMessage;
-import org.asosat.kernel.domains.message.AbstractGenericMessageConvertor;
-import org.asosat.kernel.domains.message.ExchangedMessage;
+import org.asosat.kernel.domains.saga.SagaManager;
+import org.asosat.kernel.domains.saga.SagaService;
 
 /**
- * @author bingo 下午3:27:05
+ * asosat-kernel
+ *
+ * @author bingo 上午1:02:32
  *
  */
 @ApplicationScoped
 @InfrastructureServices
-public class FakeMessageConvertor
-    extends AbstractGenericMessageConvertor<Map<String, Object>, Map<String, Object>> {
+public class DefaultSagaService implements SagaService {
 
-  public FakeMessageConvertor() {}
-
-
-  @Override
-  public AbstractGenericMessage<Map<String, Object>, Map<String, Object>> from(
-      ExchangedMessage message) {
-    return super.from(message);
-  }
-
+  @Inject
+  @Any
+  protected Instance<SagaManager> sagaManagers;
 
   @Override
-  public ExchangedMessage to(Message message) {
-    return null;
+  public Stream<SagaManager> getSagaManagers(Annotation... annotations) {
+    Instance<SagaManager> inst = this.sagaManagers.select(annotations);
+    if (inst.isResolvable()) {
+      return inst.stream();
+    } else {
+      return Stream.empty();
+    }
   }
 
 }

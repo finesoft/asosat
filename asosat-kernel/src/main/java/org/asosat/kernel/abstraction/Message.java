@@ -21,6 +21,11 @@ import java.time.Instant;
  */
 public interface Message extends Serializable, Readable<Message> {
 
+  static int compare(Message m1, Message m2) {
+    int occuredTimeCmpr = compareOccurredTime(m1, m2);
+    return occuredTimeCmpr == 0 ? compareSequenceNumber(m1, m2) : occuredTimeCmpr;
+  }
+
   static int compareOccurredTime(Message m1, Message m2) {
     return m1.occurredTime().compareTo(m2.occurredTime());
   }

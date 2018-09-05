@@ -11,31 +11,19 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.thorntail.example.domain;
-
-import org.asosat.kernel.domains.event.AbstractEvent;
-
 /**
- * asosat-thorntail-example
- *
- * @author bingo 下午7:59:44
+ * @author bingo 下午2:15:13
  *
  */
-public class OrderConfirmedEvent extends AbstractEvent {
+package org.asosat.kernel.domains.message;
 
-  private static final long serialVersionUID = -5090978171054060890L;
+import org.asosat.kernel.resource.GlobalMessageCodes;
 
-  /**
-   * @param source
-   */
-  public OrderConfirmedEvent(Order source) {
-    super(source);
-  }
+class PkgMsgCds implements GlobalMessageCodes {
 
-  @Override
-  public Order getSource() {
-    return (Order) super.getSource();
-  }
-
+  static final String ERR_EXMSG_CVT = "exchangeMessage.convert_error";
+  static final String ERR_MSG_CFG_QUEUE_NULL = "message.annotation_error_queue_not_found";
+  static final String ERR_MSG_CFG_QUEUE_DUP = "message.annotation_error_queue_repeat";
+  static final String ERR_MSG_QUEUE_NULL = "message.queue_error_null";
 
 }

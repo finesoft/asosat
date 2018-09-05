@@ -11,31 +11,23 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.thorntail.example.domain;
+package org.asosat.kernel.domains.saga;
 
-import org.asosat.kernel.domains.event.AbstractEvent;
+import java.util.List;
+import org.asosat.kernel.abstraction.Message;
+import org.asosat.kernel.domains.aggregate.AggregateIdentifier;
+import org.asosat.kernel.domains.annotation.stereotype.DomainServices;
 
 /**
- * asosat-thorntail-example
- *
- * @author bingo 下午7:59:44
+ * @author bingo 下午7:19:48
  *
  */
-public class OrderConfirmedEvent extends AbstractEvent {
+@DomainServices
+public interface SagaManager {
 
-  private static final long serialVersionUID = -5090978171054060890L;
+  Saga begin(Message message);
 
-  /**
-   * @param source
-   */
-  public OrderConfirmedEvent(Order source) {
-    super(source);
-  }
+  Saga get(String queue, String trackingToken);
 
-  @Override
-  public Order getSource() {
-    return (Order) super.getSource();
-  }
-
-
+  List<Saga> select(AggregateIdentifier aggregateIdentifier);
 }

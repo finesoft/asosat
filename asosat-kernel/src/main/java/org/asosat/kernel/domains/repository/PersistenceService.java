@@ -11,31 +11,19 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.thorntail.example.domain;
-
-import org.asosat.kernel.domains.event.AbstractEvent;
+package org.asosat.kernel.domains.repository;
 
 /**
- * asosat-thorntail-example
+ * Global persistence service to listen the aggregate life cycle event.
+ * {@code AbstractDefaultAggregate.enable()} {@code AbstractDefaultAggregate.destory()}
  *
- * @author bingo 下午7:59:44
- *
+ * @author bingo 上午9:53:57
  */
-public class OrderConfirmedEvent extends AbstractEvent {
+public interface PersistenceService {
 
-  private static final long serialVersionUID = -5090978171054060890L;
+  public void merge(Object obj, boolean immediately);
 
-  /**
-   * @param source
-   */
-  public OrderConfirmedEvent(Order source) {
-    super(source);
-  }
+  public void persist(Object obj, boolean immediately);
 
-  @Override
-  public Order getSource() {
-    return (Order) super.getSource();
-  }
-
-
+  public void remove(Object obj, boolean immediately);
 }

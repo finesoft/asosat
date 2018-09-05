@@ -13,6 +13,7 @@
  */
 package org.asosat.thorntail.example.domain;
 
+import static org.asosat.kernel.resource.GlobalMessageCodes.ERR_PARAM;
 import static org.asosat.kernel.util.Preconditions.requireGt;
 import static org.asosat.kernel.util.Preconditions.requireNotBlank;
 import java.math.BigDecimal;
@@ -37,6 +38,9 @@ public class OrderItem {
   @Column
   private BigDecimal unitPrice;
 
+  @Column
+  private BigDecimal amount;
+
   /**
    * @param product
    * @param qty
@@ -45,13 +49,20 @@ public class OrderItem {
   public OrderItem(String product, BigDecimal qty, BigDecimal unitPrice) {
     super();
     this.product = requireNotBlank(product, "");
-    this.qty = requireGt(qty, BigDecimal.ZERO, "");
-    this.unitPrice = requireGt(unitPrice, BigDecimal.ZERO, "");
+    this.updateQty(qty);
+    this.updateUnitPrice(unitPrice);
   }
 
   protected OrderItem() {}
 
 
+
+  /**
+   * @return the amount
+   */
+  public BigDecimal getAmount() {
+    return this.amount;
+  }
 
   /**
    *
@@ -77,22 +88,23 @@ public class OrderItem {
     return this.unitPrice;
   }
 
-  /**
-   *
-   * @param qty the qty to set
-   */
   protected void updateQty(BigDecimal qty) {
-    this.qty = requireGt(qty, BigDecimal.ZERO, "");
+    this.qty = requireGt(qty, BigDecimal.ZERO, ERR_PARAM);
+    this.calAmount();
   }
 
-  /**
-   *
-   * @param unitPrice the unitPrice to set
-   */
   protected void updateUnitPrice(BigDecimal unitPrice) {
-    this.unitPrice = requireGt(unitPrice, BigDecimal.ZERO, "");
+    this.unitPrice = requireGt(unitPrice, BigDecimal.ZERO, ERR_PARAM);
+    this.calAmount();
   }
 
+  void calAmount() {
+    if (this.qty != null && this.unitPrice != null) {
+      this.amount = this.qty.multiply(this.unitPrice);
+    } else {
+      this.amount = null;
+    }
+  }
 
 
 }

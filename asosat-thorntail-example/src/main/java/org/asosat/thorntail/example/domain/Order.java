@@ -13,12 +13,16 @@
  */
 package org.asosat.thorntail.example.domain;
 
-import static org.asosat.kernel.util.MyObjUtils.same;
+import static org.asosat.kernel.resource.GlobalMessageCodes.ERR_PARAM;
+import static org.asosat.kernel.resource.GlobalMessageCodes.ERR_SYS;
+import static org.asosat.kernel.util.MyObjUtils.isEquals;
+import static org.asosat.kernel.util.Preconditions.requireFalse;
 import static org.asosat.kernel.util.Preconditions.requireNotBlank;
 import static org.asosat.kernel.util.Preconditions.requireTrue;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,7 +40,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import org.asosat.domain.aggregate.AbstractDefaultGenericAggregate;
-import org.asosat.kernel.util.MyObjUtils;
 
 
 /**
@@ -71,43 +74,52 @@ public class Order extends AbstractDefaultGenericAggregate<Map<String, Object>, 
   private BigDecimal totalAmount;
 
   @ElementCollection(fetch = FetchType.LAZY)
-  @CollectionTable(name = "AT_ORD_ITEM", joinColumns = {@JoinColumn(name = "orderId")})
+  @CollectionTable(name = "AT_ORD_ITM", joinColumns = {@JoinColumn(name = "orderId")})
   @OrderColumn(name = "seq")
   private List<OrderItem> items = new ArrayList<>();
 
   @Column
   private boolean confirmed;
 
+  @Column
+  private Instant confirmedTime;
+
   /**
+   *
    * @param number
-   * @param items
    * @param seller
    * @param buyer
    */
   public Order(String number, String seller, String buyer) {
     super();
     this.number = number;
-    this.seller = requireNotBlank(seller, "");
-    this.buyer = requireNotBlank(buyer, "");
+    this.seller = requireNotBlank(seller, ERR_PARAM);
+    this.buyer = requireNotBlank(buyer, ERR_PARAM);
   }
 
   protected Order() {}
 
   public void addItem(String product, BigDecimal qty, BigDecimal unitPrice) {
     Optional<OrderItem> itemExistOp =
-        this.items.stream().filter(i -> MyObjUtils.equals(i.getProduct(), product)).findFirst();
+        this.items.stream().filter(i -> isEquals(i.getProduct(), product)).findFirst();
     if (itemExistOp.isPresent()) {
-      requireTrue(itemExistOp.get(), (i) -> same(i.getUnitPrice(), unitPrice), "").updateQty(qty);
+      requireTrue(itemExistOp.get(), (i) -> isEquals(i.getUnitPrice(), unitPrice), ERR_PARAM)
+          .updateQty(qty);
     } else {
       this.items.add(new OrderItem(product, qty, unitPrice));
     }
-    this.reCalTotalAmount();
+    this.calTotalAmount();
   }
 
   public void confirm(Map<String, Object> param, Consumer<Order> preConfirmHandler) {
+    requireFalse(this.isConfirmed(), ERR_SYS);
     preConfirmHandler.accept(this);
     this.confirmed = true;
-    this.fire(new OrderConfirmdEvent(this));
+    this.confirmedTime = Instant.now();
+    if (!this.isEnabled()) {
+      this.enable(true);
+    }
+    this.fire(new OrderConfirmedEvent(this));
   }
 
   /**
@@ -116,6 +128,13 @@ public class Order extends AbstractDefaultGenericAggregate<Map<String, Object>, 
    */
   public String getBuyer() {
     return this.buyer;
+  }
+
+  /**
+   * @return the confirmedTime
+   */
+  public Instant getConfirmedTime() {
+    return this.confirmedTime;
   }
 
   @Override
@@ -128,7 +147,7 @@ public class Order extends AbstractDefaultGenericAggregate<Map<String, Object>, 
    * @return the items
    */
   public List<OrderItem> getItems() {
-    return this.items;
+    return Collections.unmodifiableList(this.items);
   }
 
   /**
@@ -166,14 +185,14 @@ public class Order extends AbstractDefaultGenericAggregate<Map<String, Object>, 
   public boolean removeItemIf(Predicate<OrderItem> filter) {
     boolean removed = this.items.removeIf(filter);
     if (removed) {
-      this.reCalTotalAmount();
+      this.calTotalAmount();
     }
     return removed;
   }
 
-  void reCalTotalAmount() {
-    this.totalAmount = this.items.stream().map(i -> i.getQty().multiply(i.getUnitPrice()))
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
+  void calTotalAmount() {
+    this.totalAmount =
+        this.items.stream().map(OrderItem::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
   }
 
 }

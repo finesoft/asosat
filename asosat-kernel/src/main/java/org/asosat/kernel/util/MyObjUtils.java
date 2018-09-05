@@ -40,17 +40,23 @@ public class MyObjUtils {
     return sup == null || sup.get() == null ? nulSup.get() : sup.get();
   }
 
-  public static boolean deepEquals(Object a, Object b) {
+  public static boolean isDeepEquals(Object a, Object b) {
     return Objects.deepEquals(a, b);
   }
 
-  public static boolean equals(Object a, Object b) {
+  public static boolean isEquals(Object a, Object b) {
     return Objects.equals(a, b);
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Number & Comparable> boolean isEquals(T a, T b) {
+    return (a == b) || (a != null && b != null && a.compareTo(b) == 0);
   }
 
   public static int hash(Object... values) {
     return Objects.hash(values);
   }
+
 
   public static int hashCode(Object o) {
     return Objects.hashCode(o);
@@ -69,12 +75,8 @@ public class MyObjUtils {
   }
 
 
-  public static boolean nonNull(Object obj) {
+  public static boolean isNonNull(Object obj) {
     return Objects.nonNull(obj);
-  }
-
-  public static <T extends Comparable<T>> boolean same(T a, T b) {
-    return (a == b) || (a != null && a.compareTo(b) == 0);
   }
 
   public static String toString(Object o) {

@@ -13,23 +13,21 @@
  */
 package org.asosat.thorntail.example.domain;
 
-import org.asosat.domain.event.AbstractEvent;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
+import org.asosat.domain.annotation.stereotype.DomainServices;
 
 /**
  * asosat-thorntail-example
  *
- * @author bingo 下午7:59:44
+ * @author bingo 下午2:26:05
  *
  */
-public class OrderConfirmdEvent extends AbstractEvent {
+@ApplicationScoped
+@DomainServices
+public class OrderListener {
 
-  private static final long serialVersionUID = -5090978171054060890L;
-
-  /**
-   * @param source
-   */
-  public OrderConfirmdEvent(Order source) {
-    super(source);
+  public void onConfirmed(@Observes OrderConfirmedEvent e) {
+    System.out.println(e.getSource().getNumber() + " was confirmed!");
   }
-
 }

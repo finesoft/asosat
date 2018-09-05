@@ -15,7 +15,7 @@ package org.asosat.thorntail.example.domain;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
-import org.asosat.domain.annotation.stereotype.DomainServices;
+import org.asosat.kernel.domain.annotation.stereotype.DomainServices;
 
 /**
  * asosat-thorntail-example

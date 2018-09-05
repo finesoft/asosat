@@ -40,7 +40,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.asosat</groupId>
-				<artifactId>asosat-domain</artifactId>
+				<artifactId>asosat-kernel</artifactId>
 				<version>${xversion.asosat}</version>
 			</dependency>
 		</dependencies>
@@ -65,10 +65,6 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
 			<version>4.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.asosat</groupId>
-			<artifactId>asosat-domain</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.thorntail</groupId>
@@ -106,7 +102,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.asosat</groupId>
-			<artifactId>asosat-domain</artifactId>
+			<artifactId>asosat-kernel</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.jms</groupId>

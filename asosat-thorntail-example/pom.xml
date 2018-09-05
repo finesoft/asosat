@@ -19,7 +19,6 @@
 		<xversion.arquillian-bom>1.1.12.Final</xversion.arquillian-bom>
 		<xversion.arquillian-drone-bom>2.0.1.Final</xversion.arquillian-drone-bom>
 		<xversion.asosat>0.0.1-SNAPSHOT</xversion.asosat>
-		<xversion.cps>0.0.1-SNAPSHOT</xversion.cps>
 		<xversion.com.microsoft.sqlserver>6.4.0.jre8</xversion.com.microsoft.sqlserver>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
 		<xversion.jms>2.0.1</xversion.jms>
@@ -46,6 +45,77 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<version>${xversion.com.microsoft.sqlserver}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>4.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.asosat</groupId>
+			<artifactId>asosat-domain</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.thorntail</groupId>
+			<artifactId>thorntail-jaxrs</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.thorntail</groupId>
+			<artifactId>thorntail-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.thorntail</groupId>
+			<artifactId>thorntail-jta</artifactId>
+		</dependency>
+		<!-- <dependency> <groupId>io.thorntail</groupId> <artifactId>thorntail-jms</artifactId> 
+			</dependency> -->
+		<dependency>
+			<groupId>io.thorntail</groupId>
+			<artifactId>thorntail-testing</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.thorntail</groupId>
+			<artifactId>thorntail-devtools</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.thorntail</groupId>
+			<artifactId>thorntail-jndi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.asosat</groupId>
+			<artifactId>asosat-domain</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>javax.jms-api</artifactId>
+			<version>${xversion.jms}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -61,14 +131,12 @@
 						<configuration>
 							<mode>thin</mode>
 							<format>jar</format>
-							<!-- <mainClass>com.mycorp.myapp.Main</mainClass> -->
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
 	</build>
-	<!-- 当有新的依赖时开启 -->
 	<repositories>
 		<repository>
 			<id>oss.sonatype.org-snapshot</id>
@@ -93,11 +161,5 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-	<dependencies>
-		<dependency>
-			<groupId>org.asosat</groupId>
-			<artifactId>asosat-domain</artifactId>
-		</dependency>
-	</dependencies>
 	<description>Examples with thorntailv4.</description>
 </project>

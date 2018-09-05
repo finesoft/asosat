@@ -33,16 +33,16 @@ import org.asosat.thorntail.example.command.SaveOrder.SaveOrderCmd;
 @Path("/order")
 public class OrderCtrl {
 
-  @Path("/confirm/")
   @POST
+  @Path("/confirm/")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response confirm(ConfirmOrderCmd cmd) {
     DefaultContext.commander().issue(cmd);
     return Response.ok(asMap("success", true)).type(MediaType.APPLICATION_JSON).build();
   }
 
-  @Path("/remove/")
   @POST
+  @Path("/remove/")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response remove(RemoveOrderCmd cmd) {
     DefaultContext.commander().issue(cmd);

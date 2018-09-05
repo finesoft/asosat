@@ -46,7 +46,7 @@ public class CommandExtension implements Extension {
     for (Type type : target.getAnnotatedType().getTypeClosure()) {
       if (type instanceof ParameterizedType) {
         ParameterizedType parameterizedType = (ParameterizedType) type;
-        Type genericParameterType = parameterizedType.getActualTypeArguments()[1];
+        Type genericParameterType = parameterizedType.getActualTypeArguments()[0];
         if (genericParameterType instanceof Class
             && Command.class.isAssignableFrom((Class<?>) genericParameterType)) {
           requireNull(

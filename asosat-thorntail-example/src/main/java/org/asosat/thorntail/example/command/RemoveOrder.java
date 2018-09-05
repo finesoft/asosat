@@ -13,6 +13,7 @@
  */
 package org.asosat.thorntail.example.command;
 
+import static org.asosat.kernel.resource.GlobalMessageCodes.ERR_PARAM;
 import static org.asosat.kernel.util.Preconditions.requireNotNull;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -44,14 +45,15 @@ public class RemoveOrder {
   }
 
   @Transactional
-  public static class RemoveOrderHandler implements CommandHandler<Void, RemoveOrderCmd> {
+  public static class RemoveOrderHandler implements CommandHandler<RemoveOrderCmd, Void> {
 
     @Inject
     Repository repo;
 
     @Override
     public Void handle(RemoveOrderCmd command) {
-      requireNotNull(this.repo.get(Order.class, command.getId()), "").destroy(null, null);
+      requireNotNull(this.repo.get(Order.class, command.getId()), ERR_PARAM).destroy(null,
+          (p, o) -> System.out.println("We will remove the order!"));
       return null;
     }
   }

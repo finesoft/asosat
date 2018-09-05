@@ -11,15 +11,10 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.pattern.command;
-
 /**
- * @author bingo 下午2:44:45
+ * asosat-thorntail-example
+ * 
+ * @author bingo 下午3:22:54
  *
  */
-@FunctionalInterface
-public interface CommandHandler<C extends Command, R> {
-
-  R handle(C command);
-
-}
+package org.asosat.thorntail.example.providers;

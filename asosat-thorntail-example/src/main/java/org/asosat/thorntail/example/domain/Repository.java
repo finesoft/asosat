@@ -13,14 +13,16 @@
  */
 package org.asosat.thorntail.example.domain;
 
+import org.asosat.domain.annotation.stereotype.InfrastructureServices;
 import org.asosat.domain.repository.AbstractJpaRepository;
 
 /**
  * asosat-thorntail-example
- * 
+ *
  * @author bingo 下午7:29:07
  *
  */
+@InfrastructureServices
 public class Repository extends AbstractJpaRepository {
 
 }

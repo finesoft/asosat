@@ -11,31 +11,27 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.pattern.command;
+package org.asosat.thorntail.example.providers;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import javax.enterprise.inject.Produces;
+import io.thorntail.condition.annotation.RequiredClassPresent;
+import io.thorntail.jdbc.DriverMetaData;
 
 /**
- * @author bingo 下午2:07:00
+ * @author bingo 上午11:04:52
  *
  */
 @ApplicationScoped
-public class DefaultCommander implements Commander {
+@RequiredClassPresent("com.microsoft.sqlserver.jdbc.SQLServerDriver")
+public class SQLServerDriverProducer {
 
-  final CommandRegistry registry;
-
-  @Inject
-  public DefaultCommander(CommandRegistry registry) {
-    this.registry = registry;
-  }
-
-  @SuppressWarnings("unchecked")
-  @Override
-  public <R, C extends Command> R issue(C command) {
-    CommandHandler<C, R> commandHandler =
-        (CommandHandler<C, R>) this.registry.get(command.getClass());
-    return commandHandler.handle(command);
+  @Produces
+  @ApplicationScoped
+  DriverMetaData driverInfo() {
+    return new DriverMetaData("com.microsoft.sqlserver.jdbc.SQLServerDriver")
+        .setDriverClassName(com.microsoft.sqlserver.jdbc.SQLServerDriver.class.getName())
+        .setDataSourceClassName(com.microsoft.sqlserver.jdbc.SQLServerDataSource.class.getName());
   }
 
 }

@@ -79,7 +79,7 @@ public class SaveOrder {
   }
 
   @Transactional
-  public static class SaveOrderCmdHandler implements CommandHandler<Long, SaveOrderCmd> {
+  public static class SaveOrderCmdHandler implements CommandHandler<SaveOrderCmd, Long> {
 
     @Override
     public Long handle(SaveOrderCmd command) {
@@ -89,7 +89,7 @@ public class SaveOrder {
             getMapValue(i, "qty", ConvertUtils::toBigDecimal),
             getMapValue(i, "unitPrice", ConvertUtils::toBigDecimal));
       });
-      return order.enable(null, null).getId();
+      return order.enable(null, (p, o) -> System.out.println("We will save the order!")).getId();
     }
 
   }

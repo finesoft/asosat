@@ -30,7 +30,7 @@ public class CommandRegistry {
   public CommandRegistry() {}
 
   @SuppressWarnings("unchecked")
-  <R, C extends Command> CommandHandler<R, C> get(Class<C> commandClass) {
+  <R, C extends Command> CommandHandler<C, R> get(Class<C> commandClass) {
     return this.providerMap.get(commandClass).get();
   }
 

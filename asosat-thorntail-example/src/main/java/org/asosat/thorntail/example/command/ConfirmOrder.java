@@ -13,8 +13,10 @@
  */
 package org.asosat.thorntail.example.command;
 
+import static org.asosat.kernel.resource.GlobalMessageCodes.ERR_PARAM;
 import static org.asosat.kernel.util.Preconditions.requireNotNull;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import org.asosat.kernel.pattern.command.Command;
 import org.asosat.kernel.pattern.command.CommandHandler;
 import org.asosat.thorntail.example.domain.Order;
@@ -42,15 +44,16 @@ public class ConfirmOrder {
     }
   }
 
-  public static class ConfirmOrderCmdHandler implements CommandHandler<Long, ConfirmOrderCmd> {
+  @Transactional
+  public static class ConfirmOrderCmdHandler implements CommandHandler<ConfirmOrderCmd, Long> {
 
     @Inject
     Repository repo;
 
     @Override
     public Long handle(ConfirmOrderCmd command) {
-      requireNotNull(this.repo.get(Order.class, command.getId()), "").confirm(null, (o) -> {
-        System.out.println("We will confirm order");
+      requireNotNull(this.repo.get(Order.class, command.getId()), ERR_PARAM).confirm(null, (o) -> {
+        System.out.println("We will confirm the order");
       });
       return null;
     }

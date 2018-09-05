@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.thorntail.example.controller;
+package org.asosat.thorntail.example.providers;
 
 import static org.asosat.kernel.util.MyMapUtils.asMap;
 import java.util.Locale;
@@ -28,12 +28,13 @@ import org.asosat.kernel.exception.GeneralRuntimeExceptionMessager;
  *
  */
 @Provider
-public class HttpCtrlExceptionMapper implements ExceptionMapper<Exception> {
+public class CtrlExceptionMapper implements ExceptionMapper<Exception> {
 
-  public HttpCtrlExceptionMapper() {}
+  public CtrlExceptionMapper() {}
 
   @Override
   public Response toResponse(Exception exception) {
+    exception.printStackTrace();
     if (exception instanceof GeneralRuntimeException) {
       GeneralRuntimeException ex = (GeneralRuntimeException) exception;
       return Response.ok(asMap("success", false, "message", ex.getLocalizedMessage(), "attributes",

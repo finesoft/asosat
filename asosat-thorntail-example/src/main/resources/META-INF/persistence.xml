@@ -21,7 +21,7 @@
 			<property name="hibernate.connection.autocommit"
 				value="false" />
 			<property name="hibernate.dialect"
-				value="org.asosat.thorntail.example.support.HibernateSQLServer2012Dialect" />
+				value="org.asosat.thorntail.example.providers.HibernateSQLServer2012Dialect" />
 			<property name="hibernate.archive.autodetection"
 				value="class, hbm" />
 

@@ -87,14 +87,14 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
   @Override
   public List<Message> extractMessages(boolean flush) {
     final AtomicLong counter = new AtomicLong(this.lastMessageSequenceNumber);
-    List<Message> messages = this.messages.stream()
+    List<Message> exMsgs = this.messages.stream()
         .map(e -> ((AbstractMessage) e).resetSequenceNumber(counter.incrementAndGet()))
         .collect(Collectors.toList());
     if (flush) {
-      this.lastMessageSequenceNumber += messages.size();
+      this.lastMessageSequenceNumber += exMsgs.size();
       this.clearMessages();
     }
-    return messages;
+    return exMsgs;
   }
 
   @Override

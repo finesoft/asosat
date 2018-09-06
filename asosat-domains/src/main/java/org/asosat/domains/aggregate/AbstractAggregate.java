@@ -50,7 +50,7 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
 
   @Override
   public synchronized List<Message> extractMessages(boolean flush) {
-    return this.assistant().extractMessages(flush);
+    return this.callAssistant().extractMessages(flush);
   }
 
   /**
@@ -58,7 +58,7 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
    */
   @Override
   public void fire(Event event, Annotation... qualifiers) {
-    this.assistant().fire(event, qualifiers);
+    this.callAssistant().fire(event, qualifiers);
   }
 
   /**
@@ -96,7 +96,7 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
 
   @Override
   public void raise(Message... messages) {
-    this.assistant().raise(messages);
+    this.callAssistant().raise(messages);
   }
 
   @Override
@@ -121,7 +121,7 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
   /**
    * Obtain an assistant for the aggregate, subclass can rewrite this method for supply an assistant
    */
-  protected synchronized AggregateAssistant assistant() {
+  protected synchronized AggregateAssistant callAssistant() {
     if (this.assistant == null) {
       this.assistant = new DefaultAggregateAssistant(this);
     }

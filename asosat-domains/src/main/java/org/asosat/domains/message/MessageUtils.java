@@ -23,9 +23,7 @@ import org.asosat.domains.annotation.stereotype.Messages;
  * @author bingo 下午1:50:27
  *
  */
-public class MessageUtils {
-
-  public MessageUtils() {}
+public abstract class MessageUtils {
 
   public static String extractMessageQueue(Class<?> cls) {
     MessageQueue mt = cls.getAnnotation(MessageQueue.class);

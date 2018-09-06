@@ -43,23 +43,23 @@ public class DefaultAggregateListener {
 
   void handlePostLoad(AbstractAggregate o) {
     o.initLifecycle(Lifecycle.ENABLED);
-    o.assistant().clearMessages();
+    o.callAssistant().clearMessages();
   }
 
   void handlePostPersist(AbstractAggregate o) {
     o.initLifecycle(Lifecycle.ENABLED);
     this.registerToUnitOfWork(o);
-    o.assistant().clearMessages();
+    o.callAssistant().clearMessages();
   }
 
   void handlePostRemove(AbstractAggregate o) {
     o.initLifecycle(Lifecycle.DESTROYED);
     this.registerToUnitOfWork(o);
-    o.assistant().clearMessages();
+    o.callAssistant().clearMessages();
   }
 
   void handlePostUpdate(AbstractAggregate o) {
-    o.assistant().clearMessages();
+    o.callAssistant().clearMessages();
   }
 
   void handlePrePersist(AbstractAggregate o) {}

@@ -24,7 +24,7 @@ import org.asosat.kernel.resource.GlobalMessageCodes;
  * @author bingo 下午6:10:11
  *
  */
-public class MemonyMessageTesting {
+public abstract class MemonyMessageTesting {
 
   private static Logger logger = Logger.getLogger(MemonyMessageTesting.class.getName());
 

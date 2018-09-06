@@ -61,12 +61,12 @@ public class TransactionUnitOfWorks extends AbstractUnitOfWorks implements Synch
     try {
       this.complete(success);
     } finally {
-      final Map<Lifecycle, Set<AggregateIdentifier>> registration = this.getRegistration();
+      final Map<Lifecycle, Set<AggregateIdentifier>> cloneRegistration = this.getRegistration();
       this.clear();
       this.getManager().unregister(this.transaction);
       this.logger.log(Level.FINE,
           String.format(END_LOG, this.transaction.toString(), this.getManager().UOWS.size()));
-      this.handlePostCompleted(registration, success);
+      this.handlePostCompleted(cloneRegistration, success);
     }
   }
 

@@ -26,4 +26,5 @@ class PkgMsgCds implements GlobalMessageCodes {
   static final String ERR_MSG_CFG_QUEUE_DUP = "message.annotation_error_queue_repeat";
   static final String ERR_MSG_QUEUE_NULL = "message.queue_error_null";
 
+  private PkgMsgCds() {}
 }

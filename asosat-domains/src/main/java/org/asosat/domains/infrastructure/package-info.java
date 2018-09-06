@@ -25,4 +25,5 @@ class PkgMsgCds implements GlobalMessageCodes {
 
   static final String ERR_MSG_SERV_SEND = "messageService.send_error";
 
+  private PkgMsgCds() {}
 }

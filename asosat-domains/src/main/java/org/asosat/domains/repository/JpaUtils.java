@@ -34,12 +34,10 @@ import org.asosat.kernel.resource.MultiClassPathFiles;
  * @author bingo 下午10:13:49
  *
  */
-public class JpaUtils {
+public abstract class JpaUtils {
 
   static final Set<Class<? extends Annotation>> PERSIS_ANN =
       asSet(Entity.class, Embeddable.class, MappedSuperclass.class, Converter.class);
-
-  public JpaUtils() {}
 
   public static boolean isPersistenceClass(Class<?> cls) {
     return cls != null && !cls.isInterface() && !Modifier.isAbstract(cls.getModifiers())
@@ -66,7 +64,7 @@ public class JpaUtils {
     new ArrayList<>(getClassPathPackageClassNames(pkg)).stream()
         .filter(c -> JpaUtils.isPersistenceClass(c)).sorted(String::compareTo)
         .map(x -> new StringBuilder("<class>").append(x).append("</class>").toString())
-        .forEach(x -> System.out.println(x));
+        .forEach(System.out::println);
   }
 
   public static void stdoutPersistes(String pkg) {

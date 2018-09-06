@@ -47,10 +47,8 @@ public class DefaultPersistenceService implements PersistenceService {
         } else {
           this.merge(event.getSource(), event.isEffectImmediately());
         }
-      } else if (event.getPhase() == LifcyclePhase.DESTROY) {
-        if (event.getSource().getId() != null) {
-          this.remove(event.getSource(), event.isEffectImmediately());
-        }
+      } else if (event.getPhase() == LifcyclePhase.DESTROY && event.getSource().getId() != null) {
+        this.remove(event.getSource(), event.isEffectImmediately());
       }
     }
   }

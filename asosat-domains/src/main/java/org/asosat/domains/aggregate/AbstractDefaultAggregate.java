@@ -48,7 +48,7 @@ public abstract class AbstractDefaultAggregate extends AbstractAggregate {
   }
 
   @Override
-  protected synchronized AggregateAssistant assistant() {
+  protected synchronized AggregateAssistant callAssistant() {
     if (this.assistant == null) {
       this.assistant = new DefaultAggregateAssistant(this, this.msgSeqNum);
     }

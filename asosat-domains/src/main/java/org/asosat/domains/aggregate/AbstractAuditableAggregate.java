@@ -29,9 +29,7 @@ public abstract class AbstractAuditableAggregate extends AbstractAggregate {
 
   public AbstractAuditableAggregate() {}
 
-  public AbstractAuditableAggregate(Stream<? extends Message> messageStream) {
-
-  }
+  public AbstractAuditableAggregate(Stream<? extends Message> messageStream) {}
 
   @Override
   public synchronized List<Message> extractMessages(boolean flush) {

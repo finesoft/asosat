@@ -27,4 +27,5 @@ class PkgMsgCds implements GlobalMessageCodes {
   static final String ERR_UOW_NOT_ACT = "unitOfWorks_error_not_activated";
   static final String ERR_UOW_CREATE = "transactionUnitOfWorks.create_error";
 
+  private PkgMsgCds() {}
 }

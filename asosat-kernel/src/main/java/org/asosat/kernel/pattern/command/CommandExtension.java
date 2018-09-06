@@ -13,7 +13,9 @@
  */
 package org.asosat.kernel.pattern.command;
 
-import static org.asosat.kernel.util.Preconditions.requireNull;
+import static org.asosat.kernel.util.MyClsUtils.getUserClass;
+import static org.asosat.kernel.util.MyObjUtils.isEquals;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -25,7 +27,6 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessInjectionTarget;
-import org.asosat.kernel.resource.GlobalMessageCodes;
 
 /**
  * @author bingo 下午2:36:49
@@ -43,15 +44,23 @@ public class CommandExtension implements Extension {
   public <H extends CommandHandler<?, ?>> void captureCommandHandlers(
       @Observes ProcessInjectionTarget<H> target) {
     Class<H> handler = target.getAnnotatedType().getJavaClass();
-    for (Type type : target.getAnnotatedType().getTypeClosure()) {
-      if (type instanceof ParameterizedType) {
-        ParameterizedType parameterizedType = (ParameterizedType) type;
-        Type genericParameterType = parameterizedType.getActualTypeArguments()[0];
-        if (genericParameterType instanceof Class
-            && Command.class.isAssignableFrom((Class<?>) genericParameterType)) {
-          requireNull(
-              this.commandHandlers.put((Class<? extends Command>) genericParameterType, handler),
-              GlobalMessageCodes.ERR_SYS);
+    if (CommandHandler.class.isAssignableFrom(handler) && !handler.isInterface()
+        && !Modifier.isAbstract(handler.getModifiers())) {
+      for (Type type : target.getAnnotatedType().getTypeClosure()) {
+        if (type instanceof ParameterizedType) {
+          ParameterizedType parameterizedType = (ParameterizedType) type;
+          Type genericParameterType = parameterizedType.getActualTypeArguments()[0];
+          if (genericParameterType instanceof Class
+              && Command.class.isAssignableFrom((Class<?>) genericParameterType)) {
+            Class<? extends Command> cmdCls = (Class<? extends Command>) genericParameterType;
+            Class<? extends CommandHandler<?, ?>> existHandler = this.commandHandlers.get(cmdCls);
+            if (existHandler == null) {
+              this.commandHandlers.put((Class<? extends Command>) genericParameterType, handler);
+            } else if (!isEquals(getUserClass(handler), getUserClass(existHandler))) {
+              throw new RuntimeException("Command " + cmdCls.getName()
+                  + " has already assigned handler " + existHandler.getName());
+            }
+          }
         }
       }
     }

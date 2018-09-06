@@ -34,18 +34,18 @@ public class DefaultContext {
         CTX = CDI.current();
       } catch (Exception e) {
         e.printStackTrace();
-
       }
     }
   }
 
   public static <U> U bean(Class<U> subtype, Annotation... qualifiers) {
-    Instance<U> inst = CTX.select(subtype, qualifiers);
-    if (inst.isResolvable()) {
-      return inst.get();
-    } else {
-      return null;
+    if (CTX != null) {
+      Instance<U> inst = CTX.select(subtype, qualifiers);
+      if (inst.isResolvable()) {
+        return inst.get();
+      }
     }
+    return null;
   }
 
   public static Commander commander() {

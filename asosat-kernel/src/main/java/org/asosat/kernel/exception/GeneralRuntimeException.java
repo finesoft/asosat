@@ -14,6 +14,8 @@
 package org.asosat.kernel.exception;
 
 import static org.asosat.kernel.util.MyBagUtils.asList;
+import static org.asosat.kernel.util.MyStrUtils.asDefaultString;
+import static org.asosat.kernel.util.MyStrUtils.defaultString;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -114,8 +116,13 @@ public class GeneralRuntimeException extends RuntimeException {
 
   @Override
   public String getLocalizedMessage() {
-    return this.getLocalizedMessage(Locale.getDefault(),
-        DefaultContext.bean(GeneralRuntimeExceptionMessager.class));
+    GeneralRuntimeExceptionMessager msger =
+        DefaultContext.bean(GeneralRuntimeExceptionMessager.class);
+    if (msger != null) {
+      return this.getLocalizedMessage(Locale.getDefault(), msger);
+    } else {
+      return defaultString(super.getMessage()) + " " + asDefaultString(this.getCode());
+    }
   }
 
   public String getLocalizedMessage(Locale locale, GeneralRuntimeExceptionMessager messager) {

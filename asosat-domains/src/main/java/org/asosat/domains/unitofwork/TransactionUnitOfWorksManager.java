@@ -15,9 +15,7 @@ package org.asosat.domains.unitofwork;
 
 import static org.asosat.domains.unitofwork.PkgMsgCds.ERR_UOW_CREATE;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Function;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
@@ -26,7 +24,6 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import org.asosat.domains.annotation.stereotype.InfrastructureServices;
-import org.asosat.domains.repository.JpaUtils;
 import org.asosat.kernel.context.DefaultContext;
 import org.asosat.kernel.exception.GeneralRuntimeException;
 
@@ -38,7 +35,6 @@ import org.asosat.kernel.exception.GeneralRuntimeException;
 public abstract class TransactionUnitOfWorksManager extends AbstractUnitOfWorksManager {
 
   final Map<Transaction, TransactionUnitOfWorks> UOWS = new ConcurrentHashMap<>(512, 0.75f, 512);
-  final Set<Class<?>> persistTypes = new CopyOnWriteArraySet<>();// FIXME
 
   public TransactionUnitOfWorksManager() {}
 
@@ -84,18 +80,4 @@ public abstract class TransactionUnitOfWorksManager extends AbstractUnitOfWorksM
     this.UOWS.clear();
   }
 
-  boolean isPersistType(Object object) {
-    if (object == null) {
-      return false;
-    }
-    Class<?> clazz = object.getClass();
-    boolean persist = this.persistTypes.contains(clazz);
-    if (!persist) {
-      if (JpaUtils.isPersistenceClass(clazz)) {
-        this.persistTypes.add(clazz);
-        persist = true;
-      }
-    }
-    return persist;
-  }
 }

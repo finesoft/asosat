@@ -13,8 +13,8 @@
  */
 package org.asosat.thorntail.example.domain;
 
-import org.asosat.kernel.domains.annotation.stereotype.InfrastructureServices;
-import org.asosat.kernel.domains.repository.AbstractJpaRepository;
+import org.asosat.domains.annotation.stereotype.InfrastructureServices;
+import org.asosat.domains.repository.AbstractJpaRepository;
 
 /**
  * asosat-thorntail-example

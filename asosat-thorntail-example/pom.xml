@@ -40,7 +40,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.asosat</groupId>
-				<artifactId>asosat-kernel</artifactId>
+				<artifactId>asosat-domains</artifactId>
 				<version>${xversion.asosat}</version>
 			</dependency>
 		</dependencies>
@@ -102,7 +102,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.asosat</groupId>
-			<artifactId>asosat-kernel</artifactId>
+			<artifactId>asosat-domains</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.jms</groupId>

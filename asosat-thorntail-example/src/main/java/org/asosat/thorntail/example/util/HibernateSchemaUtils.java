@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Properties;
 import org.apache.commons.vfs2.FileExtensionSelector;
-import org.asosat.kernel.domains.repository.JpaUtils;
+import org.asosat.domains.repository.JpaUtils;
 import org.asosat.kernel.resource.GlobalMessageCodes;
 import org.asosat.kernel.resource.MultiClassPathFiles;
 import org.hibernate.boot.model.TypeContributor;

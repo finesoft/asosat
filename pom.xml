@@ -109,5 +109,6 @@
     <module>asosat-kernel</module>
     <module>asosat-domains</module>
     <module>asosat-thorntail-example</module>
+    <module>asosat-searching</module>
   </modules>
 </project>

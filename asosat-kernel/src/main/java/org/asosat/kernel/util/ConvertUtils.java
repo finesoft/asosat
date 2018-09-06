@@ -298,11 +298,13 @@ public class ConvertUtils {
       return (LocalDate) obj;
     } else if (obj instanceof List || obj instanceof Object[]) {
       if (MyBagUtils.getSize(obj) >= 3) {
-        return LocalDate.of((int) MyBagUtils.get(obj, 0), (int) MyBagUtils.get(obj, 1),
-            (int) MyBagUtils.get(obj, 2));
+        return LocalDate.of(toInteger(MyBagUtils.get(obj, 0)), toInteger(MyBagUtils.get(obj, 1)),
+            toInteger(MyBagUtils.get(obj, 2)));
       } else {
         throw new IllegalArgumentException();
       }
+    } else if (obj instanceof java.sql.Date) {
+      return ((java.sql.Date) obj).toLocalDate();
     } else if (obj instanceof Long || obj instanceof java.util.Date || obj instanceof Temporal) {
       return toInstant(obj).atZone(ZoneId.systemDefault()).toLocalDate();
     } else if (obj != null) {
@@ -420,6 +422,8 @@ public class ConvertUtils {
   public static ZonedDateTime toZonedDateTime(Object obj, ZonedDateTime dfltVal) {
     if (obj instanceof ZonedDateTime) {
       return (ZonedDateTime) obj;
+    } else if (obj instanceof java.sql.Date) {
+      return ((java.sql.Date) obj).toLocalDate().atStartOfDay(ZoneId.systemDefault());
     } else if (obj instanceof Long || obj instanceof Temporal || obj instanceof java.util.Date) {
       return toInstant(obj).atZone(ZoneId.systemDefault());
     } else if (obj != null) {

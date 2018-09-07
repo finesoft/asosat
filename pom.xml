@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.asosat</groupId>
@@ -11,23 +13,32 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<xversion.asosat>0.0.1-SNAPSHOT</xversion.asosat>
 		<xversion.jee>7.0</xversion.jee>
 		<xversion.jms>2.0.1</xversion.jms>
+
+
+		<!-- Testing -->
+		<xversion.junit>4.12</xversion.junit>
+		<xversion.cdi-api>2.0</xversion.cdi-api>
+		<xversion.weld-junit>1.3.0.Final</xversion.weld-junit>
+		<xversion.junit.jupiter.version>5.1.1</xversion.junit.jupiter.version>
+		<xversion.junit.platform.version>1.1.1</xversion.junit.platform.version>
+
+		<!-- Open source integration -->
 		<xversion.commons-lang3>3.7</xversion.commons-lang3>
 		<xversion.commons-io>2.6</xversion.commons-io>
 		<xversion.commons-beanutils>1.9.3</xversion.commons-beanutils>
 		<xversion.commons-collections4>4.1</xversion.commons-collections4>
 		<xversion.commons-codec>1.11</xversion.commons-codec>
 		<xversion.commons-vfs2>2.2</xversion.commons-vfs2>
-		<xversion.asosat>0.0.1-SNAPSHOT</xversion.asosat>
-		<xversion.junit>4.12</xversion.junit>
-		<xversion.cdi-api>2.0</xversion.cdi-api>
-		<xversion.weld-junit>1.3.0.Final</xversion.weld-junit>
-		<xversion.junit.jupiter.version>5.1.1</xversion.junit.jupiter.version>
-		<xversion.junit.platform.version>1.1.1</xversion.junit.platform.version>
+		<xversion.mybatis>3.4.6</xversion.mybatis>
+		<xversion.elastic>6.4.0</xversion.elastic>
+
 	</properties>
 
 	<dependencyManagement>
@@ -63,28 +74,20 @@
 				<artifactId>commons-vfs2</artifactId>
 				<version>${xversion.commons-vfs2}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.mybatis</groupId>
+				<artifactId>mybatis</artifactId>
+				<version>${xversion.mybatis}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.elasticsearch.client</groupId>
+				<artifactId>transport</artifactId>
+				<version>${xversion.elastic}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.jboss.weld</groupId>
-			<artifactId>weld-junit5</artifactId>
-			<version>${xversion.weld-junit}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<version>${xversion.junit.jupiter.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.platform</groupId>
-			<artifactId>junit-platform-runner</artifactId>
-			<version>${xversion.junit.platform.version}</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>javax.enterprise</groupId>
 			<artifactId>cdi-api</artifactId>
@@ -103,12 +106,32 @@
 			<version>${xversion.jms}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-junit5</artifactId>
+			<version>${xversion.weld-junit}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${xversion.junit.jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-runner</artifactId>
+			<version>${xversion.junit.platform.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 	<description>A series of skills and technology (asosat) for enterprise system development.</description>
-  <modules>
-    <module>asosat-kernel</module>
-    <module>asosat-domains</module>
-    <module>asosat-thorntail-example</module>
-    <module>asosat-searching</module>
-  </modules>
+	<modules>
+		<module>asosat-kernel</module>
+		<module>asosat-domains</module>
+		<module>asosat-thorntail-example</module>
+		<module>asosat-elastic</module>
+		<module>asosat-mybatis</module>
+	</modules>
 </project>

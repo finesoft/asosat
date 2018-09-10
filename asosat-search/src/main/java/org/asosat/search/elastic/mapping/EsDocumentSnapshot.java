@@ -11,10 +11,6 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-/**
- * @author bingo 下午8:57:42
- *
- */
 package org.asosat.search.elastic.mapping;
 
 import java.lang.annotation.ElementType;
@@ -25,17 +21,22 @@ import java.lang.annotation.Target;
 
 /**
  *
- * @author bingo 2017年3月18日
+ * @author bingo 2018年2月1日
  * @since
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 @Inherited
-public @interface EsChildEntity {
+public @interface EsDocumentSnapshot {
 
   boolean allIndexed() default true;
 
-  EsChildConfig parentConfig();
+  String indexName();
 
-  String typeName() default "";
+  int number_of_replicas() default 1;
+
+  int number_of_shards() default 1;
+
+  EsDocumentSnapshotSpec[] specs() default {};
+
 }

@@ -37,9 +37,6 @@ import java.lang.annotation.Target;
  *
  * Dates will always be rendered as strings, even if they were initially supplied as a long in the
  * JSON document.
- *
- * @author bingo 2017年3月3日
- * @since
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

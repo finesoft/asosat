@@ -11,10 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-/**
- * @author bingo 下午8:57:42
- *
- */
+
 package org.asosat.search.elastic.mapping;
 
 import java.lang.annotation.ElementType;

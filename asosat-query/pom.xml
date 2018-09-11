@@ -21,10 +21,6 @@
 			<artifactId>asosat-kernel</artifactId>
 			<version>${xversion.asosat}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis</artifactId>
-		</dependency>
 	</dependencies>
-	<description>Integrate mybatis for Sql or NoSql querying.</description>
+	<description>For Sql or NoSql querying.</description>
 </project>

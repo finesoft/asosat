@@ -1,0 +1,82 @@
+/*
+ * Copyright (c) 2013-2018. BIN.CHEN
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package org.asosat.query.sql.paging.dialect;
+
+import static org.asosat.kernel.util.MyStrUtils.isBlank;
+
+/**
+ * asosat-query
+ *
+ * @author bingo 上午11:03:33
+ *
+ */
+public class SQLServer2005Dialect extends SQLServerDialect {
+
+  static String getOrderByPart(String sql) {
+    int orderByIndex = sql.toUpperCase().indexOf(ORDER_BY);
+    if (orderByIndex != -1) {
+      // if we find a new "order by" then we need to ignore
+      // the previous one since it was probably used for a subquery
+      return sql.substring(orderByIndex);
+    } else {
+      return "";
+    }
+  }
+
+  @Override
+  public String getLimitSql(String sql, int offset, int limit) {
+    return this.getLimitString(sql, offset, limit);
+  }
+
+  @Override
+  public boolean supportsLimit() {
+    return true;
+  }
+
+  /**
+   * Add a LIMIT clause to the given SQL SELECT
+   * <p/>
+   * The LIMIT SQL will look like:
+   * <p/>
+   * WITH query AS (SELECT TOP 100 percent ROW_NUMBER() OVER (ORDER BY CURRENT_TIMESTAMP) as
+   * __row_number__, * from table_name) SELECT * FROM query WHERE __row_number__ BETWEEN :offset and
+   * :lastRows ORDER BY __row_number__
+   *
+   * @param sql The SQL statement to base the limit query off of.
+   * @param offset Offset of the first row to be returned by the query (zero-based)
+   * @param limit Maximum number of rows to be returned by the query
+   * @return A new SQL statement with the LIMIT clause applied.
+   */
+  protected String getLimitString(String sql, int offset, int limit) {
+    String orderby = getOrderByPart(sql), distinct = "", uppered = sql.toUpperCase(), sqlPart = sql;
+    if (uppered.trim().startsWith(SELECT)) {
+      int index = SELECT_LEN;
+      if (uppered.startsWith(SELECT_DISTINCT)) {
+        distinct = "DISTINCT ";
+        index = SELECT_DISTINCT_LEN;
+      }
+      sqlPart = sqlPart.substring(index);
+    }
+    // if no ORDER BY is specified use fake ORDER BY field to avoid errors
+    if (isBlank(orderby)) {
+      orderby = SQL_DFLT_ORDERBY;
+    }
+
+    return new StringBuilder(sql.length() + 128).append("WITH query_ AS (SELECT ").append(distinct)
+        .append("TOP 100 PERCENT ROW_NUMBER() OVER (").append(orderby).append(") as row_number_, ")
+        .append(sqlPart).append(") SELECT * FROM query_ WHERE row_number_ BETWEEN ")
+        .append((offset)).append(" AND ").append((offset + limit - 1))
+        .append(" ORDER BY row_number_").toString();
+  }
+}

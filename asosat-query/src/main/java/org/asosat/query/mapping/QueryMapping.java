@@ -11,10 +11,37 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+package org.asosat.query.mapping;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * asosat-query
- * 
- * @author bingo 上午9:26:01
+ *
+ * @author bingo 下午3:41:30
  *
  */
-package org.asosat.query.mybatis;
+public class QueryMapping {
+
+  List<Query> queries = new ArrayList<>();
+  Map<String, ParameterMapping> paraMapping = new HashMap<>();
+
+  /**
+   * @return the paraMapping
+   */
+  public Map<String, ParameterMapping> getParaMapping() {
+    return this.paraMapping;
+  }
+
+  /**
+   * @return the queries
+   */
+  public List<Query> getQueries() {
+    return this.queries;
+  }
+
+
+}

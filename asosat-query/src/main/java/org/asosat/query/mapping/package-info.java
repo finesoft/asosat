@@ -14,7 +14,7 @@
 /**
  * asosat-query
  * 
- * @author bingo 上午9:27:34
+ * @author bingo 上午10:20:51
  *
  */
-package org.asosat.query.mybatis.mongo;
+package org.asosat.query.mapping;

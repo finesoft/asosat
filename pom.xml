@@ -129,9 +129,10 @@
 		<module>asosat-kernel</module>
 		<module>asosat-domains</module>
 		<module>asosat-thorntail-example</module>
-		<module>asosat-elastic</module>
-		<module>asosat-mybatis</module>
+		
+		
     <module>asosat-query</module>
     <module>asosat-search</module>
+    
   </modules>
 </project>

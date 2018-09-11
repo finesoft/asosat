@@ -13,8 +13,8 @@
  */
 /**
  * asosat-query
- * 
- * @author bingo 上午9:28:43
+ *
+ * @author bingo 上午11:02:25
  *
  */
-package org.asosat.query.mybatis.sql.paging;
+package org.asosat.query.sql.paging.dialect;

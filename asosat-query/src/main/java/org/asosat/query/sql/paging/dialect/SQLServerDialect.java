@@ -11,20 +11,21 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.mybatis.sql;
-
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.BeforeBeanDiscovery;
-import javax.enterprise.inject.spi.Extension;
+package org.asosat.query.sql.paging.dialect;
 
 /**
- * asosat-mybatis
+ * asosat-query
  *
- * @author bingo 下午5:25:59
+ * @author bingo 下午7:09:20
  *
  */
-public class MyBatisExecutorExtension implements Extension {
+public abstract class SQLServerDialect implements Dialect {
 
-  public void onBeforeBeanDiscovery(@Observes BeforeBeanDiscovery event) {}
+  public static final String SQL_DFLT_ORDERBY = "ORDER BY CURRENT_TIMESTAMP";
+
+  @Override
+  public boolean supportsLimit() {
+    return true;
+  }
 
 }

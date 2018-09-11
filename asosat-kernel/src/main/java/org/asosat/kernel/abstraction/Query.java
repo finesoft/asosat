@@ -139,10 +139,24 @@ public interface Query<Q, P> {
     }
 
     /**
+     * @return the currentPage
+     */
+    public int getCurrentPage() {
+      return currentPage;
+    }
+
+    /**
      * @return the data
      */
     public List<T> getData() {
       return data;
+    }
+
+    /**
+     * @return the pageSize
+     */
+    public int getPageSize() {
+      return pageSize;
     }
 
     /**
@@ -152,11 +166,21 @@ public interface Query<Q, P> {
       return total;
     }
 
+    public PagedList<T> withCurrentPage(int currentPage) {
+      this.currentPage = currentPage;
+      return this;
+    }
+
     public PagedList<T> withData(List<T> data) {
       this.data.clear();
       if (data != null) {
         this.data.addAll(data);
       }
+      return this;
+    }
+
+    public PagedList<T> withPageSize(int pageSize) {
+      this.pageSize = pageSize;
       return this;
     }
 

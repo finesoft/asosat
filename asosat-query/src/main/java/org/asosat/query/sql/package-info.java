@@ -14,7 +14,7 @@
 /**
  * asosat-query
  * 
- * @author bingo 上午9:27:43
+ * @author bingo 上午9:31:09
  *
  */
-package org.asosat.query.mybatis.redis;
+package org.asosat.query.sql;

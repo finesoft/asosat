@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<query-mappings xsi:schemaLocation="qm_1_0.xsd">
+	<query name="queryName" result-class="java.util.Map" cache="true"
+		version="1.1">
+		<description>
+			<![CDATA[
+				This is for testing.
+			]]>
+		</description>
+		<fetch-queries>
+			<fetch-query>
+			</fetch-query>
+		</fetch-queries>
+		<script>
+	<![CDATA[
+		SELECT * FROM TEST
+	]]>
+		</script>
+	</query>
+
+	<query name="fetchQueryName" result-class="java.util.Map"
+		cache="true" version="1.1">
+		<description>
+			<![CDATA[
+				This is for fetch query test.
+			]]>
+		</description>
+		<script>
+			<![CDATA[
+				SELECT * FROM SUB_TEST
+			]]>
+		</script>
+	</query>
+
+</query-mappings>

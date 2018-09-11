@@ -11,10 +11,23 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+package org.asosat.query.sql.paging.dialect;
+
 /**
  * asosat-query
- * 
- * @author bingo 上午9:27:52
+ *
+ * @author bingo 上午11:42:27
  *
  */
-package org.asosat.query.mybatis.sql;
+public class DerbyDialect implements Dialect {
+
+  @Override
+  public String getLimitSql(String sql, int offset, int limit) {
+    throw new UnsupportedOperationException("The database Derby limit query not supported");
+  }
+
+  @Override
+  public boolean supportsLimit() {
+    return false;
+  }
+}

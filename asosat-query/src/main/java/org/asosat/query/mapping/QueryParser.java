@@ -14,7 +14,6 @@
 package org.asosat.query.mapping;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -31,8 +30,6 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.PatternFileSelector;
 import org.asosat.kernel.resource.MultiClassPathFiles;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -43,10 +40,13 @@ import org.xml.sax.SAXException;
  */
 public class QueryParser {
 
-  public static final String SHCEMA_PATH = "classpath:org/asosat/query/mapping/qm_1_0.xsd";
-  public static final String DFLT_QUERY_FILES_REGEX = ".*dynamicQuery.*\\.xml;.*query.*\\.xml";
+  public static final String SHCEMA_NAME = "qm_1_0.xsd";
+  public static final String DFLT_QUERY_FILES_REGEX = ".*Query.*\\.xml";
+  private volatile Validator validator;
 
-  public static void main(String... strings) {}
+  public static void main(String... strings) {
+    new QueryParser().parse();
+  }
 
   public Map<String, FileObject> getQueryFiles() {
     Map<String, FileObject> map = new HashMap<>();
@@ -61,18 +61,13 @@ public class QueryParser {
   public Map<String, Query> parse() {
     Map<String, Query> map = new LinkedHashMap<>();
     this.getQueryFiles().forEach((s, f) -> {
-
+      this.parse(f);
     });
     return map;
   }
 
   public QueryMapping parse(Document doc) {
-    this.validate(new DOMSource(doc));// validate
-    NodeList queryMappings = doc.getElementsByTagName(Query.QUE_MAP_ELE);
-    if (queryMappings == null || queryMappings.getLength() == 0) {
-      throw new RuntimeException();
-    }
-    Node queryMappingNode = queryMappings.item(0);
+    this.validate(new DOMSource(doc));
     QueryMapping qm = new QueryMapping();
     return qm;
   }
@@ -92,12 +87,22 @@ public class QueryParser {
    * @param xml validate
    */
   public void validate(Source xml) {
+    if (this.validator == null) {
+      synchronized (this) {
+        if (this.validator == null) {
+          try {
+            Schema schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
+                .newSchema(MultiClassPathFiles.get(SHCEMA_NAME).getURL());
+            this.validator = schema.newValidator();
+          } catch (Exception e) {
+            throw new RuntimeException("Build query schema validator error!", e);
+          }
+        }
+      }
+    }
     try {
-      Schema schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
-          .newSchema(new URL(SHCEMA_PATH));
-      Validator validator = schema.newValidator();
-      validator.validate(xml);
-    } catch (SAXException | IOException e) {
+      this.validator.validate(xml);
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }

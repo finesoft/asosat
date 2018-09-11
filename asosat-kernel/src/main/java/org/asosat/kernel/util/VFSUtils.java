@@ -24,8 +24,11 @@ import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.vfs2.FileSelectInfo;
+import org.apache.commons.vfs2.FileSelector;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.VFS;
@@ -43,6 +46,15 @@ public class VFSUtils {
     } catch (FileSystemException e) {
       e.printStackTrace();
     }
+  }
+
+  public static SimpleFileSelector buildSelector(Predicate<FileSelectInfo> p) {
+    return fileInfo -> fileInfo != null && p.test(fileInfo);
+  }
+
+  public static SimpleFileSelector buildSelector(String classPath) {
+    return fileInfo -> fileInfo != null
+        && fileInfo.getFile().getURL().toExternalForm().contains(classPath);
   }
 
   public static FileSystemManager getFileSystemManager() {
@@ -66,6 +78,14 @@ public class VFSUtils {
         writer.append(obj == null ? StringUtils.EMPTY : obj.toString());
         writer.append(lineSpr);
       }
+    }
+  }
+
+  @FunctionalInterface
+  public static interface SimpleFileSelector extends FileSelector {
+    @Override
+    default boolean traverseDescendents(FileSelectInfo fileInfo) throws Exception {
+      return true;
     }
   }
 

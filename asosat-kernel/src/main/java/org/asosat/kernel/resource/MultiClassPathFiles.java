@@ -15,6 +15,7 @@ package org.asosat.kernel.resource;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +51,18 @@ public class MultiClassPathFiles {
 
   private MultiClassPathFiles() {}
 
+  public static FileObject get(String path) {
+    Map<String, FileObject> selectFiles = select(VFSUtils.buildSelector(path));
+    if (selectFiles.isEmpty()) {
+      return null;
+    } else {
+      if (selectFiles.size() > 1) {
+        throw new IllegalArgumentException("Single file cannot be determined!");
+      }
+      return selectFiles.values().iterator().next();
+    }
+  }
+
   public static Map<String, FileObject> select(FileSelector fs) {
     // FIXME the name is uniqueness??
     final Map<String, FileObject> combined = new ConcurrentHashMap<>();
@@ -75,6 +88,10 @@ public class MultiClassPathFiles {
 
     }
     return combined;
+  }
+
+  public static Collection<FileObject> select(String path) {
+    return select(VFSUtils.buildSelector(path)).values();
   }
 
   private static String detectScheme(String name) {

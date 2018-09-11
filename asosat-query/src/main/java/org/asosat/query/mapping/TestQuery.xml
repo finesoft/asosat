@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<query-mappings xsi:schemaLocation="qm_1_0.xsd">
+<query-mappings
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<parameters-mapping>
+		<entry name="date" type="java.util.Instant" />
+		<entry name="number" type="java.math.BigDecimal" />
+	</parameters-mapping>
 	<query name="queryName" result-class="java.util.Map" cache="true"
 		version="1.1">
 		<description>
@@ -7,15 +12,17 @@
 				This is for testing.
 			]]>
 		</description>
-		<fetch-queries>
-			<fetch-query>
-			</fetch-query>
-		</fetch-queries>
 		<script>
-	<![CDATA[
-		SELECT * FROM TEST
-	]]>
+			<![CDATA[
+				SELECT * FROM TEST
+			]]>
 		</script>
+		<fetch-query query-name="fetchQueryName"
+			property-name="propertyName">
+			<parameter name="resultParam" source="RESULT" />
+		</fetch-query>
+		<hint name="hintName1" value="hintValue1" />
+		<hint name="hintName2" value="hintValue2" />
 	</query>
 
 	<query name="fetchQueryName" result-class="java.util.Map"
@@ -31,5 +38,4 @@
 			]]>
 		</script>
 	</query>
-
 </query-mappings>

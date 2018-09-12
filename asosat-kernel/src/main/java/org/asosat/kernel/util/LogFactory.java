@@ -23,7 +23,9 @@ import javax.enterprise.inject.spi.InjectionPoint;
  */
 public class LogFactory {
 
-  public LogFactory() {}
+  public LogFactory() {
+    super();
+  }
 
   @Produces
   Logger createLogger(InjectionPoint injectionPoint) {

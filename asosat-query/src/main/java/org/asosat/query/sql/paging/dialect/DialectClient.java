@@ -71,8 +71,6 @@ public abstract class DialectClient {
         return new DB2Dialect();
       case POSTGRE:
         return new PostgreSQLDialect();
-      case SQLSERVER:
-        return new SQLServer2000Dialect();
       case SQLSERVER2005:
         return new SQLServer2005Dialect();
       case SYBASE:

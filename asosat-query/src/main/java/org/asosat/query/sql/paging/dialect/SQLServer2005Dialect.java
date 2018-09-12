@@ -14,6 +14,8 @@
 package org.asosat.query.sql.paging.dialect;
 
 import static org.asosat.kernel.util.MyStrUtils.isBlank;
+import java.util.Locale;
+import org.asosat.query.sql.SqlHelper;
 
 /**
  * asosat-query
@@ -22,17 +24,6 @@ import static org.asosat.kernel.util.MyStrUtils.isBlank;
  *
  */
 public class SQLServer2005Dialect extends SQLServerDialect {
-
-  static String getOrderByPart(String sql) {
-    int orderByIndex = sql.toUpperCase().indexOf(ORDER_BY);
-    if (orderByIndex != -1) {
-      // if we find a new "order by" then we need to ignore
-      // the previous one since it was probably used for a subquery
-      return sql.substring(orderByIndex);
-    } else {
-      return "";
-    }
-  }
 
   @Override
   public String getLimitSql(String sql, int offset, int limit) {
@@ -59,12 +50,13 @@ public class SQLServer2005Dialect extends SQLServerDialect {
    * @return A new SQL statement with the LIMIT clause applied.
    */
   protected String getLimitString(String sql, int offset, int limit) {
-    String orderby = getOrderByPart(sql), distinct = "", uppered = sql.toUpperCase(), sqlPart = sql;
-    if (uppered.trim().startsWith(SELECT)) {
-      int index = SELECT_LEN;
-      if (uppered.startsWith(SELECT_DISTINCT)) {
+    String orderby = SqlHelper.getOrderBy(sql), distinct = "",
+        lowered = sql.toLowerCase(Locale.ROOT), sqlPart = sql;
+    if (lowered.trim().startsWith(SqlHelper.SELECT_SPACE)) {
+      int index = SqlHelper.SELECT_SPACE.length();
+      if (lowered.startsWith(SqlHelper.SELECT_DISTINCT_SPACE)) {
         distinct = "DISTINCT ";
-        index = SELECT_DISTINCT_LEN;
+        index = SqlHelper.SELECT_DISTINCT_SPACE.length();
       }
       sqlPart = sqlPart.substring(index);
     }

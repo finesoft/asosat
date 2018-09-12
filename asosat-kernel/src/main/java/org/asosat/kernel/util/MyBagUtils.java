@@ -26,13 +26,18 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
+import org.asosat.kernel.exception.NotSupportedException;
 
 /**
  *
  * @author bingo 上午12:31:10
  *
  */
-public abstract class MyBagUtils {
+public class MyBagUtils {
+
+  private MyBagUtils() {
+    super();
+  }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   public static <T, C extends Collection> C addTo(final C col, T... objects) {
@@ -150,16 +155,14 @@ public abstract class MyBagUtils {
         }
       } else if (this.joinType == JoinPlanType.INNER_JOIN) {
         if (!isEmpty(this.joined)) {
-          this.from.stream().forEachOrdered(f -> {
-            this.joined.stream().forEachOrdered(j -> {
-              if (this.p.test(f, j)) {
-                result.add(this.bi.apply(f, j));
-              }
-            });
-          });
+          this.from.stream().forEachOrdered(f -> this.joined.stream().forEachOrdered(j -> {
+            if (this.p.test(f, j)) {
+              result.add(this.bi.apply(f, j));
+            }
+          }));
         }
       } else {
-
+        throw new NotSupportedException();
       }
       return result;
     }
@@ -226,7 +229,7 @@ public abstract class MyBagUtils {
       return this;
     }
 
-    static enum JoinPlanType {
+    enum JoinPlanType {
       LEFT_JION, INNER_JOIN, CARTESIAN_JOIN;
     }
   }

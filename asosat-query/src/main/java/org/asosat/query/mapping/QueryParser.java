@@ -40,7 +40,7 @@ import org.xml.sax.SAXException;
  */
 public class QueryParser {
 
-  public static final String SHCEMA_NAME = "qm_1_0.xsd";
+  public static final String SHCEMA_NAME = "org/asosat/query/mapping/qm_1_0.xsd";
   public static final String DFLT_QUERY_FILES_REGEX = ".*Query.*\\.xml";
   private volatile Validator validator;
 
@@ -50,11 +50,8 @@ public class QueryParser {
 
   public Map<String, FileObject> getQueryFiles() {
     Map<String, FileObject> map = new HashMap<>();
-    Arrays.stream(DFLT_QUERY_FILES_REGEX.split(";")).forEach(regex -> {
-      MultiClassPathFiles.select(new PatternFileSelector(regex)).forEach((s, fo) -> {
-        map.put(s, fo);
-      });
-    });
+    Arrays.stream(DFLT_QUERY_FILES_REGEX.split(";")).forEach(
+        regex -> MultiClassPathFiles.select(new PatternFileSelector(regex)).forEach(map::put));
     return map;
   }
 

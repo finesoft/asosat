@@ -13,10 +13,10 @@
  */
 package org.asosat.kernel.util;
 
+import static org.asosat.kernel.util.MyObjUtils.isNonNull;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -32,6 +32,7 @@ import org.apache.commons.vfs2.FileSelector;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.VFS;
+import org.asosat.kernel.exception.KernelRuntimeException;
 
 /**
  * @author bingo 下午7:29:35
@@ -40,6 +41,7 @@ import org.apache.commons.vfs2.VFS;
 public class VFSUtils {
 
   private static FileSystemManager fileSystemManager;
+
   static {
     try {
       fileSystemManager = VFS.getManager();
@@ -48,12 +50,16 @@ public class VFSUtils {
     }
   }
 
+  private VFSUtils() {
+    super();
+  }
+
   public static SimpleFileSelector buildSelector(Predicate<FileSelectInfo> p) {
     return fileInfo -> fileInfo != null && p.test(fileInfo);
   }
 
   public static SimpleFileSelector buildSelector(String classPath) {
-    return fileInfo -> fileInfo != null
+    return fileInfo -> isNonNull(fileInfo)
         && fileInfo.getFile().getURL().toExternalForm().contains(classPath);
   }
 
@@ -63,10 +69,11 @@ public class VFSUtils {
 
   public static void readTxtFile(String filePath, BiConsumer<String, Long> consumer) {
     AtomicLong lineNum = new AtomicLong();
-    try (Stream<String> stream = new BufferedReader(new FileReader(filePath)).lines();) {
+    try (BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        Stream<String> stream = reader.lines();) {
       stream.forEach(line -> consumer.accept(line, lineNum.incrementAndGet()));
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
+    } catch (IOException e) {
+      throw new KernelRuntimeException(e);
     }
   }
 

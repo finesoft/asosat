@@ -24,9 +24,9 @@ import java.util.function.Supplier;
  */
 public class MyObjUtils {
 
-  public final static Object[] EMPTY_ARGS = new Object[0];
+  protected static final Object[] EMPTY_ARGS = new Object[0];
 
-  public MyObjUtils() {}
+  protected MyObjUtils() {}
 
   public static <T> int compare(T a, T b, Comparator<? super T> c) {
     return Objects.compare(a, b, c);
@@ -38,6 +38,10 @@ public class MyObjUtils {
 
   public static <T> T computeIfNull(Supplier<T> sup, Supplier<T> nulSup) {
     return sup == null || sup.get() == null ? nulSup.get() : sup.get();
+  }
+
+  public static Object[] emptyArgs() {
+    return EMPTY_ARGS;
   }
 
   public static int hash(Object... values) {

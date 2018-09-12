@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.asosat</groupId>
@@ -34,8 +36,6 @@
 		<xversion.commons-collections4>4.1</xversion.commons-collections4>
 		<xversion.commons-codec>1.11</xversion.commons-codec>
 		<xversion.commons-vfs2>2.2</xversion.commons-vfs2>
-		<xversion.mybatis>3.4.6</xversion.mybatis>
-		<xversion.elastic>6.4.0</xversion.elastic>
 
 	</properties>
 
@@ -71,16 +71,6 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-vfs2</artifactId>
 				<version>${xversion.commons-vfs2}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mybatis</groupId>
-				<artifactId>mybatis</artifactId>
-				<version>${xversion.mybatis}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.elasticsearch.client</groupId>
-				<artifactId>transport</artifactId>
-				<version>${xversion.elastic}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -129,10 +119,7 @@
 		<module>asosat-kernel</module>
 		<module>asosat-domains</module>
 		<module>asosat-thorntail-example</module>
-		
-		
-    <module>asosat-query</module>
-    <module>asosat-search</module>
-    
-  </modules>
+		<module>asosat-query</module>
+		<module>asosat-search</module>
+	</modules>
 </project>

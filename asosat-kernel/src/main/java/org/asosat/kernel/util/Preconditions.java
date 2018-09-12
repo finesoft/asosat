@@ -35,7 +35,11 @@ import org.asosat.kernel.util.Precondition.SinglePrecondition;
 /**
  * @author bingo 2013年6月24日
  */
-public abstract class Preconditions {
+public class Preconditions {
+
+  private Preconditions() {
+    super();
+  }
 
   @SafeVarargs
   public static <T> T requireAllMatch(T obj, Object code, SinglePrecondition<T>... asts) {
@@ -64,7 +68,7 @@ public abstract class Preconditions {
   public static void requireAssignable(Class<?> superCls, Class<?> subCls, Object code,
       Object... parameters) {
     requireNotNull(superCls, code, parameters);
-    if (superCls == null || !superCls.isAssignableFrom(subCls)) {
+    if (!superCls.isAssignableFrom(subCls)) {
       throw new GeneralRuntimeException(code, parameters);
     }
   }
@@ -105,7 +109,7 @@ public abstract class Preconditions {
       Function<? super T, ? extends R> mapper, Object code, Object... parameters) {
     Function<? super T, ? extends R> mapperToUse = requireNotNull(mapper, code, parameters);
     if (collection != null) {
-      Set<R> tmp = collection.stream().map(e -> mapperToUse.apply(e)).collect(Collectors.toSet());
+      Set<R> tmp = collection.stream().map(mapperToUse).collect(Collectors.toSet());
       requireTrue(tmp.size() == collection.size(), code, parameters);
     }
     return collection;
@@ -309,7 +313,7 @@ public abstract class Preconditions {
   public static <T extends Comparable<T>> T requireLt(T obj, T compareObj, Object code,
       Object... parameters) {
     if (obj == null || compareObj == null) {
-      throw new GeneralRuntimeException(code, new Object[0]);
+      throw new GeneralRuntimeException(code);
     }
     if (obj.compareTo(compareObj) >= 0) {
       throw new GeneralRuntimeException(code, parameters);
@@ -634,7 +638,7 @@ public abstract class Preconditions {
     if (p.test(obj)) {
       return obj;
     } else {
-      throw new GeneralRuntimeException(code, new Object[0]);
+      throw new GeneralRuntimeException(code);
     }
   }
 
@@ -657,7 +661,7 @@ public abstract class Preconditions {
   @SuppressWarnings("rawtypes")
   public static <T extends EntityReference> T requireValidReference(T obj, Object code,
       Object... parameters) {
-    return requireTrue(obj, (o) -> o != null && o.getId() != null, code, parameters);
+    return requireTrue(obj, o -> o != null && o.getId() != null, code, parameters);
   }
 
   /**

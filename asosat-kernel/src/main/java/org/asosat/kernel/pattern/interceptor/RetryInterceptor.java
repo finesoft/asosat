@@ -41,9 +41,11 @@ public class RetryInterceptor implements Serializable {
 
   private static final long serialVersionUID = 3478803026927779685L;
 
-  static Map<MethodSignature, Map<Class<?>, String>> THROWINGS = new ConcurrentHashMap<>();
+  static final Map<MethodSignature, Map<Class<?>, String>> THROWINGS = new ConcurrentHashMap<>();
 
-  public RetryInterceptor() {}
+  public RetryInterceptor() {
+    super();
+  }
 
   @AroundInvoke
   public Object retryInvocation(InvocationContext ctx) throws Exception {

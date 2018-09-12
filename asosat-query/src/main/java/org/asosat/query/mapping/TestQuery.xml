@@ -5,8 +5,7 @@
 		<entry name="date" type="java.util.Instant" />
 		<entry name="number" type="java.math.BigDecimal" />
 	</parameters-mapping>
-	<query name="queryName" result-class="java.util.Map" cache="true"
-		version="1.1">
+	<query name="queryName" result-class="java.util.Map" cache="true" version="1.1">
 		<description>
 			<![CDATA[
 				This is for testing.
@@ -17,12 +16,11 @@
 				SELECT * FROM TEST
 			]]>
 		</script>
-		<fetch-query query-name="fetchQueryName"
-			property-name="propertyName">
-			<parameter name="resultParam" source="RESULT" />
+		<fetch-query query-name="fetchQueryName" inject-property-name="propertyName">
+			<parameter name="resultParam" source="R" />
 		</fetch-query>
-		<hint name="hintName1" value="hintValue1" />
-		<hint name="hintName2" value="hintValue2" />
+		<hint key="hintName1" value="hintValue1" />
+		<hint key="hintName2" value="hintValue2" />
 	</query>
 
 	<query name="fetchQueryName" result-class="java.util.Map"

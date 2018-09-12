@@ -22,11 +22,17 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import org.asosat.kernel.exception.KernelRuntimeException;
 
 /**
  * @author bingo 2018年3月23日
  */
-public abstract class ValidateUtils {
+public class ValidateUtils {
+
+  private ValidateUtils() {
+    super();
+  }
+
   /**
    * 判断字符串是否是HTTPURL
    *
@@ -34,12 +40,7 @@ public abstract class ValidateUtils {
    * @return
    */
   public static boolean isHttpUrl(String httpUrl) {
-    if (isNotBlank(httpUrl)) {
-      if (httpUrl.matches("[a-zA-z]+://[^\\s]*")) {
-        return true;
-      }
-    }
-    return false;
+    return isNotBlank(httpUrl) && httpUrl.matches("[a-zA-z]+://[^\\s]*");
   }
 
   public static boolean isId(Long id) {
@@ -71,13 +72,13 @@ public abstract class ValidateUtils {
       }
       return true;
     } catch (IOException ex) {
-      throw new RuntimeException(ex);
+      throw new KernelRuntimeException(ex);
     } finally {
       if (is.markSupported()) {
         try {
           is.reset();
         } catch (IOException e) {
-          throw new RuntimeException(e);
+          throw new KernelRuntimeException(e);
         }
       }
     }
@@ -90,15 +91,11 @@ public abstract class ValidateUtils {
    * @return
    */
   public static boolean isIp4Address(String ipAddress) {
-    if (isNotBlank(ipAddress)) {
-      if (Pattern.compile("\\b((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\"
-          + ".((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\"
-          + ".((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\"
-          + ".((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\b").matcher(ipAddress).matches()) {
-        return true;
-      }
-    }
-    return false;
+    return isNotBlank(ipAddress)
+        && Pattern.compile("\\b((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\"
+            + ".((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\"
+            + ".((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\"
+            + ".((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\b").matcher(ipAddress).matches();
   }
 
   /**
@@ -108,13 +105,9 @@ public abstract class ValidateUtils {
    * @return
    */
   public static boolean isMailAddress(String mailAddress) {
-    if (isNotBlank(mailAddress)) {
-      if (Pattern.compile("^(\\w+)([\\-+.\\'][\\w]+)*@(\\w[\\-\\w]*\\.){1,5}([A-Za-z]){2,6}$")
-          .matcher(mailAddress).matches()) {
-        return true;
-      }
-    }
-    return false;
+    return isNotBlank(mailAddress)
+        && Pattern.compile("^(\\w+)([\\-+.\\'][\\w]+)*@(\\w[\\-\\w]*\\.){1,5}([A-Za-z]){2,6}$")
+            .matcher(mailAddress).matches();
   }
 
   /**
@@ -124,12 +117,7 @@ public abstract class ValidateUtils {
    * @return
    */
   public static boolean isZhIDCardNumber(String idCardNumber) {
-    if (isNotBlank(idCardNumber)) {
-      if (idCardNumber.matches("\\d{15}|\\d{18}")) {
-        return true;
-      }
-    }
-    return false;
+    return isNotBlank(idCardNumber) && idCardNumber.matches("\\d{15}|\\d{18}");
   }
 
   /**
@@ -140,10 +128,8 @@ public abstract class ValidateUtils {
    */
   public static boolean isZhMobileNumber(String mobileNumber) {
     if (isNotBlank(mobileNumber)) {
-      if (Pattern.compile("^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$").matcher(mobileNumber)
-          .matches()) {
-        return true;
-      }
+      return Pattern.compile("^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$").matcher(mobileNumber)
+          .matches();
     }
     return false;
   }
@@ -156,12 +142,7 @@ public abstract class ValidateUtils {
    * @return
    */
   public static boolean isZhName(String name, int length) {
-    if (isNotBlank(name)) {
-      if (name.matches("^[\u4e00-\u9fa5]+$") && name.length() <= length) {
-        return true;
-      }
-    }
-    return false;
+    return isNotBlank(name) && name.matches("^[\u4e00-\u9fa5]+$") && name.length() <= length;
   }
 
   /**
@@ -171,13 +152,8 @@ public abstract class ValidateUtils {
    * @return
    */
   public static boolean isZhPhoneNumber(String phoneNumber) {
-    if (isNotBlank(phoneNumber)) {
-      if (Pattern.compile("\\d{4}-\\d{8}|\\d{4}-\\d{7}|\\d(3)-\\d(8)").matcher(phoneNumber)
-          .matches()) {
-        return true;
-      }
-    }
-    return false;
+    return isNotBlank(phoneNumber) && Pattern.compile("\\d{4}-\\d{8}|\\d{4}-\\d{7}|\\d(3)-\\d(8)")
+        .matcher(phoneNumber).matches();
   }
 
   /**
@@ -187,12 +163,7 @@ public abstract class ValidateUtils {
    * @return
    */
   public static boolean isZhPostcode(String postcode) {
-    if (isNotBlank(postcode)) {
-      if (postcode.matches("[1-9]\\d{5}(?!\\d)")) {
-        return true;
-      }
-    }
-    return false;
+    return isNotBlank(postcode) && postcode.matches("[1-9]\\d{5}(?!\\d)");
   }
 
   /**
@@ -205,10 +176,7 @@ public abstract class ValidateUtils {
    * @return
    */
   public static boolean maxLength(String text, int maxLen) {
-    if (text != null && text.length() > maxLen) {
-      return false;
-    }
-    return true;
+    return text == null || text.length() <= maxLen;
   }
 
   /**
@@ -219,10 +187,7 @@ public abstract class ValidateUtils {
    * @return
    */
   public static boolean minLength(String text, int minLen) {
-    if (text == null || text.length() < minLen) {
-      return false;
-    }
-    return true;
+    return text != null && text.length() >= minLen;
   }
 
   /**
@@ -236,9 +201,6 @@ public abstract class ValidateUtils {
    * @return
    */
   public static boolean minMaxLength(String text, int minLen, int maxLen) {
-    if (text == null || text.length() > maxLen || text.length() < minLen) {
-      return false;
-    }
-    return true;
+    return text != null && text.length() <= maxLen && text.length() >= minLen;
   }
 }

@@ -158,10 +158,6 @@ public class MyClsUtils {
         || clazz.equals(TimeZone.class) || clazz.equals(URI.class) || clazz.equals(URL.class);
   }
 
-  public static void main(String... strings) {
-    getClassPathPackageClassNames("org.asosat").forEach(x -> System.out.println(x));
-  }
-
   public static Class<?>[] primitivesToWrappers(final Class<?>... classes) {
     return ClassUtils.primitivesToWrappers(classes);
   }

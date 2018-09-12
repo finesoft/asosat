@@ -27,7 +27,9 @@ public class CommandRegistry {
   @SuppressWarnings("rawtypes")
   private Map<Class<? extends Command>, CommandProvider> providerMap = new HashMap<>();
 
-  public CommandRegistry() {}
+  public CommandRegistry() {
+    super();
+  }
 
   @SuppressWarnings("unchecked")
   <R, C extends Command> CommandHandler<C, R> get(Class<C> commandClass) {

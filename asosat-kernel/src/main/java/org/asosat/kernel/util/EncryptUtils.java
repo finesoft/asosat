@@ -26,6 +26,7 @@ import java.util.Locale;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.spec.SecretKeySpec;
+import org.asosat.kernel.exception.KernelRuntimeException;
 import org.asosat.kernel.util.BitUtils.BitArray;
 
 /**
@@ -53,12 +54,10 @@ public class EncryptUtils {
    */
   public static int alphabetToIntScale(String alphabet) {
     if (alphabet == null) {
-      throw new IllegalArgumentException("Param can't null!");
+      throw new KernelRuntimeException("Param can't null!");
     }
-    if (!alphabet.chars().allMatch(x -> {
-      return x >= 0x41 && x <= 0x5a || x >= 0x61 && x <= 0x7a;
-    })) {
-      throw new IllegalArgumentException("Param must be alphabet!");
+    if (!alphabet.chars().allMatch(x -> x >= 0x41 && x <= 0x5a || x >= 0x61 && x <= 0x7a)) {
+      throw new KernelRuntimeException("Param must be alphabet!");
     }
     int[] idx = {0};
     return new StringBuilder(alphabet.trim().toUpperCase(Locale.ENGLISH)).reverse().chars()
@@ -77,11 +76,11 @@ public class EncryptUtils {
     }
     int length = s.length();
     if ((length & 7) != 0) {
-      throw new IllegalArgumentException("Expecting 8 bit values to construct a byte[]");
+      throw new KernelRuntimeException("Expecting 8 bit values to construct a byte[]");
     }
     BitArray ba = BitUtils.newBitArray(length, false);
     for (int i = 0; i < length; i++) {
-      ba.setBit(i, s.charAt(i) == '1' ? true : false);
+      ba.setBit(i, s.charAt(i) == '1');
     }
     return ba.getBytes();
   }
@@ -94,7 +93,7 @@ public class EncryptUtils {
    */
   public static byte[] charToBytes(Character c) {
     if (c == null) {
-      throw new IllegalArgumentException("Expecting not null char to construct a byte[]");
+      throw new KernelRuntimeException("Expecting not null char to construct a byte[]");
     }
     byte[] b = new byte[2];
     b[0] = (byte) ((c & 0xFF00) >> 8);
@@ -172,7 +171,7 @@ public class EncryptUtils {
    * @throws GeneralSecurityException
    */
   public static String decodeAesHexStringToString(String aesHexStr, String key)
-      throws NumberFormatException, GeneralSecurityException {
+      throws GeneralSecurityException {
     return decodeAesBytesToString(hexStringToBytes(aesHexStr), key.getBytes(DFLT_CHARSET),
         DFLT_CHARSET);
   }
@@ -188,7 +187,7 @@ public class EncryptUtils {
    * @throws GeneralSecurityException
    */
   public static String decodeAesHexStringToString(String aesHexStr, String key, Charset charset)
-      throws NumberFormatException, GeneralSecurityException {
+      throws GeneralSecurityException {
     return decodeAesBytesToString(hexStringToBytes(aesHexStr), key.getBytes(charset), charset);
   }
 
@@ -252,12 +251,12 @@ public class EncryptUtils {
    */
   public static byte[] doubleToBytes(Double d) {
     if (d == null) {
-      throw new IllegalArgumentException("Expecting not null double to construct a byte[]");
+      throw new KernelRuntimeException("Expecting not null double to construct a byte[]");
     }
     byte[] b = new byte[8];
-    long l = Double.doubleToLongBits(d);
+    Long l = Double.doubleToLongBits(d);
     for (int i = 0; i < 8; i++) {
-      b[i] = new Long(l).byteValue();
+      b[i] = l.byteValue();
       l = l >> 8;
     }
     return b;
@@ -412,12 +411,12 @@ public class EncryptUtils {
    */
   public static byte[] floatToBytes(Float f) {
     if (f == null) {
-      throw new IllegalArgumentException("Expecting not null float to construct a byte[]");
+      throw new KernelRuntimeException("Expecting not null float to construct a byte[]");
     }
     byte[] b = new byte[4];
-    int l = Float.floatToIntBits(f);
+    Integer l = Float.floatToIntBits(f);
     for (int i = 0; i < 4; i++) {
-      b[i] = new Integer(l).byteValue();
+      b[i] = l.byteValue();
       l = l >> 8;
     }
     return b;
@@ -429,7 +428,7 @@ public class EncryptUtils {
    * @param hs
    * @return
    */
-  public static byte[] hexStringToBytes(String hs) throws NumberFormatException {
+  public static byte[] hexStringToBytes(String hs) {
     if (hs.length() < 1) {
       return new byte[0];
     }
@@ -450,7 +449,7 @@ public class EncryptUtils {
    */
   public static String intToAlphabetScale(int num) {
     if (num <= 0) {
-      throw new IllegalArgumentException("Param must greater than 0!");
+      throw new KernelRuntimeException("Param must greater than 0!");
     }
     StringBuilder sb = new StringBuilder();
     while (num > 0) {
@@ -472,7 +471,7 @@ public class EncryptUtils {
    */
   public static byte[] intToBytes(Integer i) {
     if (i == null) {
-      throw new IllegalArgumentException("Expecting not null int to construct a byte[]");
+      throw new KernelRuntimeException("Expecting not null int to construct a byte[]");
     }
     byte[] bt = new byte[4];
     bt[0] = (byte) (0xff & i);
@@ -490,7 +489,7 @@ public class EncryptUtils {
    */
   public static byte[] longToBytes(Long l) {
     if (l == null) {
-      throw new IllegalArgumentException("Expecting not null long to construct a byte[]");
+      throw new KernelRuntimeException("Expecting not null long to construct a byte[]");
     }
     byte[] bt = new byte[8];
     bt[0] = (byte) (0xffL & l);
@@ -502,13 +501,6 @@ public class EncryptUtils {
     bt[6] = (byte) ((0xff000000000000L & l) >> 48);
     bt[7] = (byte) ((0xff00000000000000L & l) >> 56);
     return bt;
-  }
-
-  public static void main(String... strings) {
-    char x = 'A';
-    byte[] b = charToBytes(x);
-    char xx = toChar(b);
-    System.out.println(x + "\t" + xx + "\t" + (x - xx));
   }
 
   /**
@@ -533,7 +525,7 @@ public class EncryptUtils {
           break;
         }
       }
-      result += tableIndex * Math.pow(R62_MAX_LEN, s.length() - index - 1);
+      result += tableIndex * Math.pow(R62_MAX_LEN, s.length() - index - 1d);
     }
 
     return negative ? result * -1 : result;
@@ -564,7 +556,7 @@ public class EncryptUtils {
    */
   public static byte[] shortToBytes(Short s) {
     if (s == null) {
-      throw new IllegalArgumentException("Expecting not null short to construct a byte[]");
+      throw new KernelRuntimeException("Expecting not null short to construct a byte[]");
     }
     byte[] bt = new byte[2];
     bt[0] = (byte) (0xff & s);
@@ -637,7 +629,7 @@ public class EncryptUtils {
    * @return
    */
   public static String toBinaryString(short i) {
-    return toBinaryString(Integer.valueOf(i)).substring(16);
+    return toBinaryString((int) i).substring(16);
   }
 
   /**
@@ -648,10 +640,9 @@ public class EncryptUtils {
    */
   public static Character toChar(byte[] b) {
     if (b.length != 2) {
-      throw new IllegalArgumentException("Expecting 2 byte values to construct a char");
+      throw new KernelRuntimeException("Expecting 2 byte values to construct a char");
     }
-    char c = (char) ((b[0] & 0xFF) << 8 | b[1] & 0xFF);
-    return c;
+    return (char) ((b[0] & 0xFF) << 8 | b[1] & 0xFF);
   }
 
   /**
@@ -662,7 +653,7 @@ public class EncryptUtils {
    */
   public static Double toDouble(byte[] b) {
     if (b.length != 8) {
-      throw new IllegalArgumentException("Expecting 8 byte values to construct a double");
+      throw new KernelRuntimeException("Expecting 8 byte values to construct a double");
     }
     return Double.longBitsToDouble(0xffL & b[0] | 0xffffL & (long) b[1] << 8
         | 0xffffffL & (long) b[2] << 16 | 0xffffffffL & (long) b[3] << 24
@@ -678,7 +669,7 @@ public class EncryptUtils {
    */
   public static Float toFloat(byte[] b) {
     if (b.length != 4) {
-      throw new IllegalArgumentException("Expecting 4 byte values to construct a float");
+      throw new KernelRuntimeException("Expecting 4 byte values to construct a float");
     }
     return Float.intBitsToFloat(
         b[0] & 0xFF | (b[1] & 0xFF) << 8 | (b[2] & 0xFF) << 16 | (b[3] & 0xFF) << 24);
@@ -726,7 +717,7 @@ public class EncryptUtils {
    */
   public static Integer toInt(byte[] b) {
     if (b.length != 4) {
-      throw new IllegalArgumentException("Expecting 4 byte values to construct a int");
+      throw new KernelRuntimeException("Expecting 4 byte values to construct a int");
     }
     return b[0] & 0xFF | (b[1] & 0xFF) << 8 | (b[2] & 0xFF) << 16 | (b[3] & 0xFF) << 24;
   }
@@ -742,7 +733,7 @@ public class EncryptUtils {
       return 0L;
     }
     if (b.length != 8) {
-      throw new IllegalArgumentException("Expecting 8 byte values to construct a long");
+      throw new KernelRuntimeException("Expecting 8 byte values to construct a long");
     }
     return 0xffL & b[0] | 0xff00L & (long) b[1] << 8 | 0xff0000L & (long) b[2] << 16
         | 0xff000000L & (long) b[3] << 24 | 0xff00000000L & (long) b[4] << 32
@@ -839,7 +830,7 @@ public class EncryptUtils {
     String tmp = "", result = "";
     boolean negative = false;
     if (n == 0) {
-      return Character.valueOf(R62_DIGITS[0]).toString();
+      return Character.toString(R62_DIGITS[0]);
     } else if (n < 0) {
       negative = true;
       n = -n;
@@ -874,7 +865,7 @@ public class EncryptUtils {
    */
   public static Short toShort(byte[] b) {
     if (b.length != 2) {
-      throw new IllegalArgumentException("Expecting 2 byte values to construct a short");
+      throw new KernelRuntimeException("Expecting 2 byte values to construct a short");
     }
     return Integer.valueOf(b[0] & 0xFF | (b[1] & 0xFF) << 8).shortValue();
   }

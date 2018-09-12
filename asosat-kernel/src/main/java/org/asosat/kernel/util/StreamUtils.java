@@ -33,12 +33,12 @@ import java.util.stream.StreamSupport;
  */
 public class StreamUtils {
 
-  public final static int DFLE_BATCH_SIZE = 64;
+  public static final int DFLE_BATCH_SIZE = 64;
 
   private StreamUtils() {}
 
   public static <T> Stream<List<T>> batchCollectStream(int forEachBatchSize, Stream<T> source) {
-    return new BatchCollectStreams<T>(source, forEachBatchSize).stream();
+    return new BatchCollectStreams<>(source, forEachBatchSize).stream();
   }
 
   /**
@@ -65,14 +65,12 @@ public class StreamUtils {
     if (list != null) {
       final AtomicInteger counter = new AtomicInteger(0);
       list.stream().collect(Collectors.groupingBy(it -> counter.getAndIncrement() / size)).values()
-          .forEach(x -> {
-            result.add(x);
-          });
+          .forEach(result::add);
     }
     return result;
   }
 
-  public static abstract class AbstractBatchHandlerSpliterator<T> extends AbstractSpliterator<T> {
+  public abstract static class AbstractBatchHandlerSpliterator<T> extends AbstractSpliterator<T> {
 
     private final int batchSize;
     private Consumer<Long> handler;
@@ -81,7 +79,7 @@ public class StreamUtils {
         int forEachBathSize, Consumer<Long> handler) {
       super(est, additionalCharacteristics);
       this.batchSize = forEachBathSize;
-      this.handler = handler == null ? (t) -> {
+      this.handler = handler == null ? t -> {
       } : handler;
     }
 

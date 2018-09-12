@@ -14,11 +14,16 @@
 package org.asosat.kernel.util;
 
 import java.util.Arrays;
+import org.asosat.kernel.exception.KernelRuntimeException;
 
 /**
  * @author bingo 2015年3月23日
  */
 public class BitUtils {
+
+  private BitUtils() {
+    super();
+  }
 
   public static BitArray newBitArray(byte[] bytes) {
     return new BitArray(bytes);
@@ -43,7 +48,9 @@ public class BitUtils {
     }
 
     public BitArray(int size, boolean in) {
-      assert size > 0;
+      if (size < 1) {
+        throw new KernelRuntimeException("The size must be greater then 0 zero!");
+      }
       this.array = new byte[(size >> 3) + ((size & 7) == 0 ? 0 : 1)];
       for (int i = 0; i < size; i++) {
         this.setBit(i, in);

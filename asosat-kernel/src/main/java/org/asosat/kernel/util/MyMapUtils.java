@@ -25,7 +25,11 @@ import java.util.function.Supplier;
 import org.apache.commons.collections4.MapUtils;
 import org.asosat.kernel.abstraction.DynamicAttributes.DynamicAttributeMap;
 
-public abstract class MyMapUtils {
+public class MyMapUtils {
+
+  private MyMapUtils() {
+    super();
+  }
 
   public static DynamicAttributeMap asAttributeMap(Object... objects) {
     DynamicAttributeMap map = new DynamicAttributeMap();
@@ -87,10 +91,9 @@ public abstract class MyMapUtils {
    */
   public static <T extends Enum<T>> T getMapEnumValue(final Map<?, ?> map, final Object key,
       final Class<T> enumClazz) {
-    T value = map != null && key != null && map.containsKey(key)
+    return map != null && key != null && map.containsKey(key)
         ? ConvertUtils.toEnum(map.get(key), enumClazz)
         : null;
-    return value;
   }
 
   public static <T> T getMapValue(final Map<?, ?> map, final Object key,

@@ -31,7 +31,7 @@ public interface TreeNode {
    *
    * @return
    */
-  Collection<? extends TreeNode> getChilds();
+  Collection<TreeNode> getChilds();
 
   /**
    * 父对象

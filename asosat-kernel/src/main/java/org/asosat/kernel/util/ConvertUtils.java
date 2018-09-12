@@ -13,6 +13,7 @@
  */
 package org.asosat.kernel.util;
 
+import static org.asosat.kernel.util.MyBagUtils.asSet;
 import static org.asosat.kernel.util.MyClsUtils.isSimpleClass;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -29,6 +30,7 @@ import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.Deque;
 import java.util.HashMap;
@@ -50,6 +52,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.asosat.kernel.context.DefaultSetting;
+import org.asosat.kernel.exception.KernelRuntimeException;
 
 /**
  * @author bingo 上午12:29:05
@@ -57,8 +60,10 @@ import org.asosat.kernel.context.DefaultSetting;
  */
 public class ConvertUtils {
 
-  public final static Set<String> BOOLEAN_TRUE_STRS =
-      new HashSet<>(Arrays.asList("1", "t", "true", "y", "yes", "是", "对"));
+  protected static final Set<String> BOOLEAN_TRUE_STRS =
+      Collections.unmodifiableSet(asSet("1", "t", "true", "y", "yes", "是", "对"));
+
+  protected ConvertUtils() {}
 
   public static BigDecimal toBigDecimal(Object obj) {
     return toBigDecimal(obj, null);
@@ -73,7 +78,7 @@ public class ConvertUtils {
         try {
           casted = new BigDecimal(obj.toString());
         } catch (NumberFormatException e) {
-          throw new RuntimeException(e);
+          throw new KernelRuntimeException(e);
         }
       }
       return casted;
@@ -97,7 +102,7 @@ public class ConvertUtils {
         try {
           casted = new BigInteger(obj.toString());
         } catch (NumberFormatException e) {
-          throw new RuntimeException(e);
+          throw new KernelRuntimeException(e);
         }
       }
       return casted;
@@ -175,8 +180,8 @@ public class ConvertUtils {
       return (T) obj;
     } else if (obj != null) {
       String str = obj.toString();
-      if (str.chars().allMatch(p -> Character.isDigit(p))) {
-        return enumClazz.getEnumConstants()[Integer.valueOf(str).intValue()];
+      if (str.chars().allMatch(Character::isDigit)) {
+        return enumClazz.getEnumConstants()[Integer.parseInt(str)];
       } else {
         return Enum.valueOf(enumClazz, str);
       }
@@ -185,7 +190,7 @@ public class ConvertUtils {
   }
 
   public static <T extends Enum<T>> List<T> toEnumList(Object obj, Class<T> enumClazz) {
-    List<T> list = toList(obj, (e) -> ConvertUtils.toEnum(e, enumClazz));
+    List<T> list = toList(obj, e -> ConvertUtils.toEnum(e, enumClazz));
     if (list.isEmpty() && obj != null) {
       final Deque<StringBuilder> tpl = new LinkedList<>();
       tpl.add(new StringBuilder());
@@ -196,14 +201,14 @@ public class ConvertUtils {
           tpl.offer(new StringBuilder());
         }
       });
-      List<String> tpls = tpl.stream().filter(p -> p.length() > 0).map(m -> m.toString())
+      List<String> tpls = tpl.stream().filter(p -> p.length() > 0).map(MyObjUtils::toString)
           .collect(Collectors.toList());
       tpl.clear();
       if (tpls.stream()
           .anyMatch(p -> p.chars().anyMatch(m -> Character.isAlphabetic(m) || m == '_'))) {
         list = tpls.stream().map(m -> Enum.valueOf(enumClazz, m)).collect(Collectors.toList());
       } else {
-        list = tpls.stream().map(m -> enumClazz.getEnumConstants()[Integer.valueOf(m).intValue()])
+        list = tpls.stream().map(m -> enumClazz.getEnumConstants()[Integer.parseInt(m)])
             .collect(Collectors.toList());
       }
       tpls.clear();
@@ -279,12 +284,12 @@ public class ConvertUtils {
     return toList(obj, ConvertUtils::toInteger);
   }
 
-  public static <T> List<T> toList(Object obj, Function<Object, T> f) {
+  public static <T> List<T> toList(Object obj, Function<Object, T> convert) {
     List<T> values = new ArrayList<>();
     if (obj instanceof Collection<?>) {
-      values = ((Collection<?>) obj).stream().map(x -> f.apply(x)).collect(Collectors.toList());
+      values = ((Collection<?>) obj).stream().map(convert).collect(Collectors.toList());
     } else if (obj instanceof Object[]) {
-      values = Arrays.stream((Object[]) obj).map(x -> f.apply(x)).collect(Collectors.toList());
+      values = Arrays.stream((Object[]) obj).map(convert).collect(Collectors.toList());
     }
     return values;
   }
@@ -355,7 +360,7 @@ public class ConvertUtils {
     return toList(obj, ConvertUtils::toLong);
   }
 
-  public static Map<?, ?> toMap(Object obj, String... unLoadProperties) {
+  public static Map<String, Object> toMap(Object obj, String... unLoadProperties) {
     return MapConvertor.beanToMap(obj, unLoadProperties);
   }
 
@@ -369,7 +374,7 @@ public class ConvertUtils {
         String text = obj.toString();
         return text == null ? null : NumberFormat.getInstance().parse(text);
       } catch (ParseException e) {
-        throw new RuntimeException(e);
+        throw new KernelRuntimeException(e);
       }
     }
   }
@@ -461,7 +466,7 @@ public class ConvertUtils {
      */
     public static List beanToMap(Collection<?> list, int maxLoopDeep, String... unLoadProperties) {
       if (list == null) {
-        return null;
+        return new ArrayList<>();
       }
       Set<String> unLoad = new HashSet<>();
       Map<Integer, List<Object>> hashStack = new HashMap<>();
@@ -477,14 +482,11 @@ public class ConvertUtils {
         result = beanToMap(list, hashStack, unLoad, "", temp, 1,
             maxLoopDeep < 1 ? DLFT_LOOP_DEEP : maxLoopDeep);
       } catch (Exception e) {
-        throw new RuntimeException(e);
+        throw new KernelRuntimeException(e);
       }
       temp.clear();
-      temp = null;
       hashStack.clear();
-      hashStack = null;
       unLoad.clear();
-      unLoad = null;
       return result;
     }
 
@@ -514,7 +516,7 @@ public class ConvertUtils {
       } else if (isSimpleClass(obj.getClass())) {
         return null;
       } else if (obj instanceof Collection) {
-        throw new RuntimeException("Unsupport transform class type : Collection");
+        throw new KernelRuntimeException("Unsupport transform class type : Collection");
       } else {
         Set<String> unLoad = new HashSet<>();
         Map<Integer, List<Object>> hashStack = new HashMap<>();
@@ -535,7 +537,7 @@ public class ConvertUtils {
                 maxLoopDeep < 1 ? DLFT_LOOP_DEEP : maxLoopDeep);
           }
         } catch (Exception e) {
-          throw new RuntimeException(e);
+          throw new KernelRuntimeException(e);
         }
         temp.clear();
         hashStack.clear();
@@ -559,12 +561,11 @@ public class ConvertUtils {
     // List判断是否加载在调用处已处理
     private static List beanToMap(Collection<?> list, Map<Integer, List<Object>> hashStack,
         Set<String> unLoadProperties, String prefix, Map<Object, Object> temp, int deep,
-        int maxLoopDeep) throws IllegalAccessException, InvocationTargetException,
-        NoSuchMethodException, SecurityException {
+        int maxLoopDeep)
+        throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
       List result = new ArrayList<>();
       if (deep == maxLoopDeep) {
-        // TODO : 是否加载Id
-        return result;
+        return result;// TODO : 是否加载Id
       }
       for (Object obj : list) {
         if (obj == null) {
@@ -612,8 +613,8 @@ public class ConvertUtils {
 
     private static Map beanToMap(Map map, Map<Integer, List<Object>> hashStack,
         Set<String> unLoadProperties, String prefix, Map<Object, Object> temp, int deep,
-        int maxLoopDeep) throws IllegalAccessException, InvocationTargetException,
-        NoSuchMethodException, SecurityException {
+        int maxLoopDeep)
+        throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
       Map<Object, Object> result = new HashMap<>();
       if (deep == maxLoopDeep) {
         // TODO : 是否加载Id
@@ -668,16 +669,15 @@ public class ConvertUtils {
 
     private static Map<String, Object> beanToMap(Object obj, Map<Integer, List<Object>> hashStack,
         Set<String> unLoadProperties, String prefix, Map<Object, Object> temp, int deep,
-        int maxLoopDeep) throws IllegalAccessException, InvocationTargetException,
-        NoSuchMethodException, SecurityException {
+        int maxLoopDeep)
+        throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
       if (obj == null || isSimpleClass(obj.getClass()) || (obj instanceof Map)
           || (obj instanceof Collection) || (obj instanceof Object[])) {
-        throw new RuntimeException(
+        throw new KernelRuntimeException(
             " Unsupport transform class type :" + (obj == null ? "null" : obj.getClass()));
       }
       if (deep == maxLoopDeep) {
-        // TODO : 是否加载Id
-        return null;
+        return null;// TODO : 是否加载Id
       } else {
         Map<String, Object> map = new HashMap<>();
         Class<?> clazz = obj.getClass();
@@ -739,8 +739,8 @@ public class ConvertUtils {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    private static List<Field> getClassAllFields(Class clazz) throws IllegalAccessException,
-        InvocationTargetException, NoSuchMethodException, SecurityException {
+    private static List<Field> getClassAllFields(Class clazz)
+        throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
       if (cacheClassProperty.containsKey(clazz)) {
         return cacheClassProperty.get(clazz);
       }

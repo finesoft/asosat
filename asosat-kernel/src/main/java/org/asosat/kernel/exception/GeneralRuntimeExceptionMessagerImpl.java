@@ -13,7 +13,6 @@
  */
 package org.asosat.kernel.exception;
 
-import static org.asosat.kernel.util.MyObjUtils.EMPTY_ARGS;
 import static org.asosat.kernel.util.MyStrUtils.asDefaultString;
 import static org.asosat.kernel.util.MyStrUtils.asString;
 import java.util.Arrays;
@@ -25,6 +24,7 @@ import org.asosat.kernel.resource.EnumerationResource;
 import org.asosat.kernel.resource.GlobalMessageCodes;
 import org.asosat.kernel.resource.MessageSeverity;
 import org.asosat.kernel.resource.PropertyMessageResource;
+import org.asosat.kernel.util.MyObjUtils;
 
 /**
  * @author bingo 上午10:31:53
@@ -39,7 +39,9 @@ public class GeneralRuntimeExceptionMessagerImpl implements GeneralRuntimeExcept
   @Inject
   private EnumerationResource enumSource;
 
-  public GeneralRuntimeExceptionMessagerImpl() {}
+  public GeneralRuntimeExceptionMessagerImpl() {
+    super();
+  }
 
   public String genMessageKey(String code, String subCode) {
     StringBuilder sb = new StringBuilder(MessageSeverity.ERR.name()).append(".").append(code);
@@ -73,7 +75,7 @@ public class GeneralRuntimeExceptionMessagerImpl implements GeneralRuntimeExcept
   @Override
   public String getUnknowErrorMessage(Locale locale) {
     return this.messageSource.getMessage(locale,
-        this.genMessageKey(GlobalMessageCodes.ERR_UNKNOW, null), EMPTY_ARGS);
+        this.genMessageKey(GlobalMessageCodes.ERR_UNKNOW, null), MyObjUtils.emptyArgs());
   }
 
   @SuppressWarnings("rawtypes")

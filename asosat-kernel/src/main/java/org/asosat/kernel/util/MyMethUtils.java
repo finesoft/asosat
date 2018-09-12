@@ -107,10 +107,7 @@ public class MyMethUtils extends MethodUtils {
       } else if (!this.methodName.equals(other.methodName)) {
         return false;
       }
-      if (!Arrays.equals(this.parameterTypes, other.parameterTypes)) {
-        return false;
-      }
-      return true;
+      return Arrays.equals(this.parameterTypes, other.parameterTypes);
     }
 
     public String getMethodName() {

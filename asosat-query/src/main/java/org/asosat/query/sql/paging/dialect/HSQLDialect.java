@@ -13,6 +13,8 @@
  */
 package org.asosat.query.sql.paging.dialect;
 
+import org.asosat.query.sql.SqlHelper;
+
 /**
  * asosat-query
  *
@@ -29,14 +31,14 @@ public class HSQLDialect implements Dialect {
   /**
    * <pre>
    * dialect.getLimitString("select * from user", 12, ":offset",0,":limit") will return
-   * select * from user limit :offset,:limit
+   * select limit 0 12 * from user
    * </pre>
    */
   public String getLimitString(String sql, int offset, String offsetPlaceholder,
       String limitPlaceholder) {
     boolean hasOffset = offset > 0;
     return new StringBuffer(sql.length() + 10).append(sql)
-        .insert(sql.toUpperCase().indexOf(SELECT) + SELECT_LEN,
+        .insert(SqlHelper.shallowIndexOfPattern(sql, SqlHelper.SELECT_PATTERN, 0) + 7,
             hasOffset ? " LIMIT " + offsetPlaceholder + " " + limitPlaceholder
                 : " TOP " + limitPlaceholder)
         .toString();

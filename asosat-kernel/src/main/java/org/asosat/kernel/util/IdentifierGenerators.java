@@ -29,6 +29,7 @@ import org.apache.commons.codec.binary.Base32;
 public class IdentifierGenerators {
 
   public static final long TIME_EPOCH = 1_451_372_606_990L;
+
   static final SecureRandom SEC_RDM_INST = new SecureRandom();
   static final Map<Integer, IdentifierGenerator> SNOWFLAKE_UUID_GENERATOR =
       new ConcurrentHashMap<>();
@@ -38,6 +39,10 @@ public class IdentifierGenerators {
   static final IdentifierGenerator JAVA_UUID_GENERATOR = new JavaUUIDGenerator();
   static volatile SnowflakeUUIDGenerator lastSnowflakeUUIDGenerator;
   static volatile SnowflakeBufferUUIDGenerator lastSnowflakeBufferUUIDGenerator;
+
+  private IdentifierGenerators() {
+    super();
+  }
 
   public static String javaUUID() {
     return JAVA_UUID_GENERATOR.generate(null).toString();
@@ -71,7 +76,7 @@ public class IdentifierGenerators {
     } else {
       int key = dataCenterId << SnowflakeUUIDGenerator.DATACENTER_ID_BITS | workerId;
       return SNOWFLAKE_UUID_GENERATOR.computeIfAbsent(key,
-          (k) -> lastSnowflakeUUIDGenerator = new SnowflakeUUIDGenerator(dataCenterId, workerId));
+          k -> lastSnowflakeUUIDGenerator = new SnowflakeUUIDGenerator(dataCenterId, workerId));
     }
   }
 
@@ -182,10 +187,7 @@ public class IdentifierGenerators {
         return false;
       }
       SnowflakeBufferUUIDGenerator other = (SnowflakeBufferUUIDGenerator) obj;
-      if (this.workerId != other.workerId) {
-        return false;
-      }
-      return true;
+      return this.workerId == other.workerId;
     }
 
     @Override
@@ -216,8 +218,6 @@ public class IdentifierGenerators {
       if (cursor == 0) {
         this.lastTimestamp = tilMillis(timeGener, this.lastTimestamp, false);
       }
-      // System.out.println(
-      // this.workerId + "\t" + this.lastTimestamp + "\t" + this.sequence + "\t" + cursor);
       return this.nextId(this.lastTimestamp, cursor);
     }
 
@@ -232,7 +232,6 @@ public class IdentifierGenerators {
       } else {
         this.sequence = 0;
       }
-      // System.out.println(this.workerId + "\t" + timestamp + "\t" + this.sequence);
       this.lastTimestamp = timestamp;
       return this.nextId(timestamp, this.sequence);
     }
@@ -362,10 +361,7 @@ public class IdentifierGenerators {
       if (this.dataCenterId != other.dataCenterId) {
         return false;
       }
-      if (this.workerId != other.workerId) {
-        return false;
-      }
-      return true;
+      return this.workerId == other.workerId;
     }
 
     @Override
@@ -380,7 +376,6 @@ public class IdentifierGenerators {
       } else {
         this.sequence = 0;
       }
-      // System.out.println(this.workerId + "\t" + timestamp + "\t" + this.sequence);
       this.lastTimestamp = timestamp;
       return timestamp - TIME_EPOCH << TIMESTAMP_LEFT_SHIFT | this.dataCenterSegm | this.workerSegm
           | this.sequence;

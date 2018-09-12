@@ -25,7 +25,7 @@ import javax.script.ScriptException;
 
 /**
  * nashorn script engine wrapped
- * 
+ *
  * @author bingo 上午9:59:37
  *
  */
@@ -34,7 +34,9 @@ public class DefaultJavascriptEngine {
 
   private ScriptEngine javascriptEngine;
 
-  public DefaultJavascriptEngine() {}
+  public DefaultJavascriptEngine() {
+    super();
+  }
 
   public Bindings createBindings() {
     return this.javascriptEngine.createBindings();

@@ -20,7 +20,11 @@ import org.apache.commons.lang3.StringUtils;
  * @author bingo 上午12:31:35
  *
  */
-public abstract class MyStrUtils {
+public class MyStrUtils {
+
+  private MyStrUtils() {
+    super();
+  }
 
   public static String asDefaultIfBlank(final Object obj, final String defaultStr) {
     return defaultIfBlank(asDefaultString(obj), defaultStr);

@@ -87,9 +87,11 @@ public class AsynchronousExecutor {
 
   private volatile boolean shutdown = true;
 
-  private final Collection<CreationalContext<?>> contexts = new ArrayList<CreationalContext<?>>(8);
+  private final Collection<CreationalContext<?>> contexts = new ArrayList<>(8);
 
-  public AsynchronousExecutor() {}
+  public AsynchronousExecutor() {
+    super();
+  }
 
   public static AsynchronousExecutor instance() {
     return DefaultContext.bean(AsynchronousExecutor.class);
@@ -255,7 +257,7 @@ public class AsynchronousExecutor {
     if (this.linkedExecutorService == null) {
       final int capacity =
           this.config.getValue(AE_QUEUE_CAPACITY, ConvertUtils::toInteger, Integer.MAX_VALUE);
-      final BlockingQueue<Runnable> linked = new LinkedBlockingQueue<Runnable>(capacity);
+      final BlockingQueue<Runnable> linked = new LinkedBlockingQueue<>(capacity);
       final ThreadFactory threadFactory = new DefaultThreadFactory(threadFactoryName + "-linked");
       this.linkedExecutorService = new ThreadPoolExecutor(coreSize, maxSize, keepAlive, timeUnit,
           linked, threadFactory, rejectedHandler);
@@ -263,7 +265,7 @@ public class AsynchronousExecutor {
 
     if (this.arrayExecutorService == null) {
       final int size = this.config.getValue(AE_QUEUE_FAIR, ConvertUtils::toInteger, 1024);
-      final BlockingQueue<Runnable> array = new ArrayBlockingQueue<Runnable>(size, false);
+      final BlockingQueue<Runnable> array = new ArrayBlockingQueue<>(size, false);
       final ThreadFactory threadFactory = new DefaultThreadFactory(threadFactoryName + "-array");
       this.arrayExecutorService = new ThreadPoolExecutor(coreSize, maxSize, keepAlive, timeUnit,
           array, threadFactory, rejectedHandler);

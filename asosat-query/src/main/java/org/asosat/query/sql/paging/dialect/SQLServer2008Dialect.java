@@ -21,10 +21,4 @@ package org.asosat.query.sql.paging.dialect;
  */
 public class SQLServer2008Dialect extends SQLServer2005Dialect {
 
-  public static void main(String... strings) {
-    System.out
-        .println(new SQLServer2008Dialect().getLimitSql("SELECT * FROM CT_DMMS_GenMeaUnit", 1, 20));
-    System.out.println(new SQLServer2008Dialect().getCountSql("SELECT * FROM CT_DMMS_GenMeaUnit"));
-  }
-
 }

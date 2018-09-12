@@ -26,13 +26,15 @@ import java.util.Random;
  */
 public class MacAddrUtils {
 
+  private MacAddrUtils() {
+    super();
+  }
+
   public static long getIp4LongValue() {
     try {
       InetAddress inetAddress = InetAddress.getLocalHost();
       byte[] ip = inetAddress.getAddress();
-
       return Math.abs((ip[0] << 24) | (ip[1] << 16) | (ip[2] << 8) | ip[3]);
-
     } catch (Exception ex) {
       ex.printStackTrace();
       return 0;
@@ -54,7 +56,7 @@ public class MacAddrUtils {
       }
     }
     // Could not find a mac address
-    return null;
+    return new byte[0];
   }
 
 

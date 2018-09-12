@@ -22,7 +22,7 @@ import org.asosat.kernel.exception.NotSupportedException;
 public interface CompositeIterable<T> {
 
   /**
-   * 获取下一级迭代器
+   * The next iterator
    *
    * @param node
    * @return
@@ -35,7 +35,7 @@ public interface CompositeIterable<T> {
    * @author bingo 2013年10月12日
    * @since 1.0
    */
-  final static class BreadthCompositeIterator<T extends CompositeIterable<T>> {
+  static final class BreadthCompositeIterator<T extends CompositeIterable<T>> {
 
     private final CompositeIterable<T> node;
 
@@ -48,7 +48,7 @@ public interface CompositeIterable<T> {
         return null;
       }
       return new Iterator<T>() {
-        private Queue<Iterator<T>> queue = new LinkedList<Iterator<T>>();
+        private Queue<Iterator<T>> queue = new LinkedList<>();
         {
           queue.offer(node.getCompositeIterator());
         }
@@ -100,7 +100,7 @@ public interface CompositeIterable<T> {
    * @author bingo 2013年10月12日
    * @since 1.0
    */
-  final static class DepthCompositeIterator<T extends CompositeIterable<T>> {
+  static final class DepthCompositeIterator<T extends CompositeIterable<T>> {
 
     private final CompositeIterable<T> node;
 

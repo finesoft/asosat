@@ -40,7 +40,9 @@ public class AsynchronousInterceptor implements Serializable {
   @Inject
   transient AsynchronousExecutor executor;
 
-  public AsynchronousInterceptor() {}
+  public AsynchronousInterceptor() {
+    super();
+  }
 
   @AroundInvoke
   public Object asyncInvocation(final InvocationContext ctx) throws Exception {

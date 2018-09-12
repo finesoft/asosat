@@ -35,9 +35,11 @@ import org.asosat.kernel.util.MyMethUtils.MethodSignature;
 @Priority(Interceptor.Priority.PLATFORM_BEFORE)
 public class ConcurrencyThrottleInterceptor {
 
-  static Map<MethodSignature, Semaphore> THROTTLES = new ConcurrentHashMap<>();
+  static final Map<MethodSignature, Semaphore> THROTTLES = new ConcurrentHashMap<>();
 
-  public ConcurrencyThrottleInterceptor() {}
+  public ConcurrencyThrottleInterceptor() {
+    super();
+  }
 
   @AroundInvoke
   public Object concurrencyThrottleInvocation(final InvocationContext ctx) throws Exception {

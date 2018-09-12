@@ -33,11 +33,16 @@ import org.asosat.kernel.resource.GlobalMessageCodes;
  */
 public class RetryUtils {
 
-  protected static final transient Logger LOGGER = Logger.getLogger(RetryUtils.class.toString());
+  protected static final Logger LOGGER = Logger.getLogger(RetryUtils.class.toString());
 
   static final String RTY_LOG =
       "An exception occurred during execution, enter the retry phase, the retry times is %s, interval is %s.";
+
   static final String RTY_ERR_LOG = "An exception occurred during supplier.";
+
+  private RetryUtils() {
+    super();
+  }
 
   @SuppressWarnings("unchecked")
   public static <T> Retrier<T> retrier(InvocationContext ctx) {
@@ -78,12 +83,12 @@ public class RetryUtils {
     }
   }
 
-  public static abstract class Retrier<T> {
+  public abstract static class Retrier<T> {
 
     private int times = 8;
     private Duration interval = Duration.ofMillis(1000L);
     private Function<Exception, RuntimeException> transfer =
-        (e) -> new GeneralRuntimeException(e, GlobalMessageCodes.ERR_SYS);
+        e -> new GeneralRuntimeException(e, GlobalMessageCodes.ERR_SYS);
     private Set<Class<? extends Exception>> on = new LinkedHashSet<>();
 
     public T execute() {
@@ -105,6 +110,7 @@ public class RetryUtils {
             Thread.sleep(this.interval.toMillis());
           } catch (InterruptedException te) {
             te.addSuppressed(e);
+            Thread.currentThread().interrupt();
             throw this.transfer.apply(te);
           }
         } finally {

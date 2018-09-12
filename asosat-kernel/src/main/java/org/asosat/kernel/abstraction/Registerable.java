@@ -41,16 +41,15 @@ public interface Registerable<D, C> {
   void unregister(Class<D> datCls, C consumer);
 
 
-  public static abstract class DefaultRegisterable<D, C> implements Registerable<D, C> {
+  public abstract static class DefaultRegisterable<D, C> implements Registerable<D, C> {
 
-    protected final transient Logger logger = Logger.getLogger(getClass().toString());
+    protected final Logger logger = Logger.getLogger(getClass().toString());
 
     private final ConcurrentMap<Class<D>, Set<C>> registration = new ConcurrentHashMap<>();
 
     @Override
     public void register(Class<D> datCls, C consumer) {
-      this.registration.computeIfAbsent(datCls, (ec) -> new CopyOnWriteArraySet<>()).add(consumer);
-      this.logger.fine("register event:" + datCls.getSimpleName() + ",consumers:" + consumer);
+      this.registration.computeIfAbsent(datCls, ec -> new CopyOnWriteArraySet<>()).add(consumer);
     }
 
     @Override
@@ -63,16 +62,15 @@ public interface Registerable<D, C> {
     }
   }
 
-  public static abstract class DefaultRegisterableSingle<D, C> implements Registerable<D, C> {
+  public abstract static class DefaultRegisterableSingle<D, C> implements Registerable<D, C> {
 
-    protected final transient Logger logger = Logger.getLogger(getClass().toString());
+    protected final Logger logger = Logger.getLogger(getClass().toString());
 
     private final ConcurrentMap<Class<D>, C> registration = new ConcurrentHashMap<>();
 
     @Override
     public void register(Class<D> datCls, C consumer) {
       this.registration.put(datCls, consumer);
-      this.logger.fine("register event:" + datCls.getSimpleName() + ",consumers:" + consumer);
     }
 
     @Override

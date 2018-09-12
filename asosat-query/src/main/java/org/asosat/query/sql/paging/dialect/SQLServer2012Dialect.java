@@ -13,6 +13,8 @@
  */
 package org.asosat.query.sql.paging.dialect;
 
+import org.asosat.query.sql.SqlHelper;
+
 /**
  * asosat-query
  *
@@ -37,7 +39,7 @@ public class SQLServer2012Dialect extends SQLServer2008Dialect {
   protected String getLimitString(String sql, int offset, int limit) {
     StringBuilder sbd = new StringBuilder(50 + sql.length());
     sbd.append(sql).append(" ");
-    if (!sql.toUpperCase().contains(ORDER_BY)) {
+    if (!SqlHelper.containOrderBy(sql)) {
       sbd.append(SQL_DFLT_ORDERBY);
     }
     sbd.append(" OFFSET ").append(offset).append(" ROWS");
@@ -46,4 +48,5 @@ public class SQLServer2012Dialect extends SQLServer2008Dialect {
     }
     return sbd.toString();
   }
+
 }

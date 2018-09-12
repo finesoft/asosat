@@ -13,6 +13,8 @@
  */
 package org.asosat.query.sql.paging.dialect;
 
+import org.asosat.query.sql.SqlHelper;
+
 /**
  * asosat-query
  *
@@ -33,11 +35,11 @@ public class DB2Dialect implements Dialect {
    * </pre>
    */
   public String getLimitString(String sql, int offset, int limit) {
-    int startOfSelect = sql.toUpperCase().indexOf(SELECT);
+    int startOfSelect = SqlHelper.shallowIndexOfPattern(sql, SqlHelper.SELECT_PATTERN, 0);
     StringBuilder sqlToUse =
         new StringBuilder(sql.length() + 128).append(sql.substring(0, startOfSelect))
             .append("SELECT * FROM ( SELECT ").append(this.getRowNumber(sql));
-    if (this.hasDistinct(sql)) {
+    if (SqlHelper.containDistinct(sql)) {
       sqlToUse.append(" row_.* FROM ( ").append(sql.substring(startOfSelect)).append(" ) AS row_");
     } else {
       sqlToUse.append(sql.substring(startOfSelect + 6));
@@ -58,16 +60,12 @@ public class DB2Dialect implements Dialect {
 
   private String getRowNumber(String sql) {
     StringBuilder rownumber = new StringBuilder(50).append("ROWNUMBER() OVER(");
-    int orderByIndex = sql.toUpperCase().lastIndexOf(ORDER_BY);
-    if (orderByIndex > 0 && !this.hasDistinct(sql)) {
-      rownumber.append(sql.substring(orderByIndex));
+    String orderBy = SqlHelper.getOrderBy(sql);
+    if (orderBy != null) {
+      rownumber.append(orderBy);
     }
     rownumber.append(") as rownumber_,");
     return rownumber.toString();
-  }
-
-  private boolean hasDistinct(String sql) {
-    return sql.toUpperCase().contains(SELECT_DISTINCT);
   }
 
 }

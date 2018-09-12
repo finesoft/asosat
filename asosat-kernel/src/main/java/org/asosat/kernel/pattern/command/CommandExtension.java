@@ -27,6 +27,7 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessInjectionTarget;
+import org.asosat.kernel.exception.KernelRuntimeException;
 
 /**
  * @author bingo 下午2:36:49
@@ -38,7 +39,9 @@ public class CommandExtension implements Extension {
   private Map<Class<? extends Command>, Class<? extends CommandHandler<?, ?>>> commandHandlers =
       new HashMap<>();
 
-  public CommandExtension() {}
+  public CommandExtension() {
+    super();
+  }
 
 
   public <H extends CommandHandler<?, ?>> void captureCommandHandlers(
@@ -57,7 +60,7 @@ public class CommandExtension implements Extension {
             if (existHandler == null) {
               this.commandHandlers.put((Class<? extends Command>) genericParameterType, handler);
             } else if (!isEquals(getUserClass(handler), getUserClass(existHandler))) {
-              throw new RuntimeException("Command " + cmdCls.getName()
+              throw new KernelRuntimeException("Command " + cmdCls.getName()
                   + " has already assigned handler " + existHandler.getName());
             }
           }

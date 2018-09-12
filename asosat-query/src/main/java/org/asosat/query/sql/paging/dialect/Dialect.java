@@ -13,7 +13,7 @@
  */
 package org.asosat.query.sql.paging.dialect;
 
-import org.asosat.query.sql.RemoveHelper;
+import org.asosat.query.sql.SqlHelper;
 
 /**
  * asosat-query
@@ -23,15 +23,9 @@ import org.asosat.query.sql.RemoveHelper;
  */
 public interface Dialect {
 
-  public static final String SELECT = "SELECT ";
-  public static final int SELECT_LEN = SELECT.length() - 1;
-  public static final String SELECT_DISTINCT = "SELECT DISTINCT ";
-  public static final int SELECT_DISTINCT_LEN = SELECT_DISTINCT.length() - 1;
-  public static final String ORDER_BY = "ORDER BY ";
-  public static final int ORDER_BY_LEN = ORDER_BY.length() - 1;
 
   public static String getNonOrderByPart(String sql) {
-    return RemoveHelper.removeOrders(sql);
+    return SqlHelper.removeOrderBy(sql);
   }
 
 
@@ -62,7 +56,7 @@ public interface Dialect {
    */
   boolean supportsLimit();
 
-  public static enum DBMS {
+  public enum DBMS {
     MYSQL, ORACLE, DB2, H2, HSQL, POSTGRE, SQLSERVER, SQLSERVER2005, SYBASE,
   }
 }

@@ -39,8 +39,7 @@ public class GeneralRuntimeExceptionWrapper {
   }
 
   public Builder whatever() {
-    Builder builder = new Builder(this, null);
-    return builder;
+    return new Builder(this, null);
   }
 
   public static class Builder {
@@ -71,7 +70,7 @@ public class GeneralRuntimeExceptionWrapper {
     }
 
     public Builder thenAttributes(Map<Object, Object> attributes) {
-      return this.thenAttributes((t) -> attributes);
+      return this.thenAttributes(t -> attributes);
     }
 
     public Builder thenParameters(Function<List<Object>, List<Object>> func) {
@@ -83,7 +82,7 @@ public class GeneralRuntimeExceptionWrapper {
     }
 
     public Builder thenParameters(List<Object> parameters) {
-      return this.thenParameters((t) -> parameters);
+      return this.thenParameters(t -> parameters);
     }
 
     public Builder thenSubCode(Object subCode) {
@@ -92,8 +91,8 @@ public class GeneralRuntimeExceptionWrapper {
     }
 
     public GeneralRuntimeException wrap() {
-      GeneralRuntimeException ex = this.wrapper.exception.attributes((t) -> this.getAttributes())
-          .parameters((t) -> asList(this.getParameters())).subCode(this.getSubCode());
+      GeneralRuntimeException ex = this.wrapper.exception.attributes(t -> this.getAttributes())
+          .parameters(t -> asList(this.getParameters())).subCode(this.getSubCode());
       this.attributes.clear();
       return ex;
     }
@@ -177,8 +176,8 @@ public class GeneralRuntimeExceptionWrapper {
     public GeneralRuntimeException wrap() {
       for (Builder builder : this.getWrapper().builders) {
         if (Objects.equals(builder.code, this.getWrapper().exception.getCode())) {
-          this.getWrapper().exception.attributes((t) -> builder.attributes)
-              .parameters((t) -> asList(builder.parameters)).subCode(builder.subCode);
+          this.getWrapper().exception.attributes(t -> builder.attributes)
+              .parameters(t -> asList(builder.parameters)).subCode(builder.subCode);
           break;
         } else {
           builder.attributes.clear();

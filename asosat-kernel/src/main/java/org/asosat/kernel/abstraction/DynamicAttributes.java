@@ -16,6 +16,7 @@ package org.asosat.kernel.abstraction;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.asosat.kernel.exception.KernelRuntimeException;
 import org.asosat.kernel.util.WrappedMap;
 
 /**
@@ -54,14 +55,7 @@ public interface DynamicAttributes {
         return false;
       }
       DynamicAttributeMap other = (DynamicAttributeMap) obj;
-      if (map == null) {
-        if (other.map != null) {
-          return false;
-        }
-      } else if (!map.equals(other.map)) {
-        return false;
-      }
-      return true;
+      return map.equals(other.map);
     }
 
     @Override
@@ -72,7 +66,7 @@ public interface DynamicAttributes {
       } else if (obj instanceof DynamicAttributeMap) {
         return (DynamicAttributeMap) obj;
       } else {
-        throw new RuntimeException("Can't get entry from key " + key);
+        throw new KernelRuntimeException("Can't get subset from key " + key);
       }
     }
 
@@ -80,7 +74,7 @@ public interface DynamicAttributes {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((map == null) ? 0 : map.hashCode());
+      result = prime * result + map.hashCode();
       return result;
     }
 
@@ -102,7 +96,7 @@ public interface DynamicAttributes {
 
   }
 
-  public static enum DynamicAttributeType {
+  public enum DynamicAttributeType {
     ENUM, STRING, BOOL, NUMBER, TEMPORAL
   }
 

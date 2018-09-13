@@ -14,9 +14,10 @@
 package org.asosat.query.mapping;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.SAXParserFactory;
@@ -44,19 +45,15 @@ public class QueryParser {
   public static final String DFLT_QUERY_FILES_REGEX = ".*Query.*\\.xml";
 
   public static void main(String... strings) {
-    Map<String, QueryMapping> map = new QueryParser().parse();
-    map.forEach((s, m) -> {
-      System.out.println(s);
+    new QueryParser().parse().forEach(m -> {
+      m.selfValidate().forEach(System.out::println);
     });
   }
 
-  public Map<String, QueryMapping> parse() {
-    Map<String, QueryMapping> map = new LinkedHashMap<>();
+  public List<QueryMapping> parse() {
+    List<QueryMapping> qmList = new ArrayList<>();
     final QueryParserErrorHandler errHdl = new QueryParserErrorHandler();
-    final SAXParserFactory factory = SAXParserFactory.newInstance();
-    factory.setSchema(this.getSchema());
-    factory.setNamespaceAware(true);
-    factory.setValidating(false);
+    final SAXParserFactory factory = this.createSAXParserFactory();
     this.getQueryMappingFiles().forEach((s, f) -> {
       try (InputStream is = f.getContent().getInputStream()) {
         QueryParseHandler handler = new QueryParseHandler(s);
@@ -64,13 +61,21 @@ public class QueryParser {
         reader.setErrorHandler(errHdl);
         reader.setContentHandler(handler);
         reader.parse(new InputSource(is));
-        map.put(s, handler.getMapping());
+        qmList.add(handler.getMapping());
       } catch (Exception ex) {
         String errMsg = String.format("Parse query mapping file [%s] error!", s);
         throw new QueryRuntimeException(errMsg, ex);
       }
     });
-    return map;
+    return qmList;
+  }
+
+  SAXParserFactory createSAXParserFactory() {
+    SAXParserFactory factory = SAXParserFactory.newInstance();
+    factory.setSchema(this.getSchema());
+    factory.setNamespaceAware(true);
+    factory.setValidating(false);
+    return factory;
   }
 
   Map<String, FileObject> getQueryMappingFiles() {
@@ -85,7 +90,7 @@ public class QueryParser {
       return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
           .newSchema(MultiClassPathFiles.get(SCHEMA_URL).getURL());
     } catch (Exception e) {
-      String errMsg = String.format("Build script schema [%S] validator error!", SCHEMA_URL);
+      String errMsg = String.format("Build query mapping xml schema [%s] error!", SCHEMA_URL);
       throw new QueryRuntimeException(errMsg, e);
     }
   }

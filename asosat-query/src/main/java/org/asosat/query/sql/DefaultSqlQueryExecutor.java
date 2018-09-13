@@ -27,7 +27,7 @@ import javax.sql.DataSource;
  *
  */
 @ApplicationScoped
-public class DefaultSqlQuerier implements SqlQuerier {
+public class DefaultSqlQueryExecutor implements SqlQueryExecutor {
 
   @Inject
   DataSource dataSource;

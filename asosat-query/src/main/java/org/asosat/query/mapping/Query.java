@@ -18,6 +18,7 @@ import static org.asosat.kernel.util.MyStrUtils.isNotBlank;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * asosat-query
@@ -29,16 +30,16 @@ public class Query implements Serializable {
 
   private static final long serialVersionUID = -2142303696673387541L;
 
-  String name;
-  Class<?> resultClass = java.util.Map.class;
-  Class<?> resultSetMapping;
-  boolean cache = true;
-  boolean cacheResultSetMetadata = true;
-  String description;
-  String script;
-  List<FetchQuery> fetchQueries = new ArrayList<>();
-  List<QueryHint> hints = new ArrayList<>();
-  String version = "";
+  private String name;
+  private Class<?> resultClass = java.util.Map.class;
+  private Class<?> resultSetMapping;
+  private boolean cache = true;
+  private boolean cacheResultSetMetadata = true;
+  private String description;
+  private String script;
+  private List<FetchQuery> fetchQueries = new ArrayList<>();
+  private List<QueryHint> hints = new ArrayList<>();
+  private String version = "";
 
   /**
    * @return the description
@@ -96,6 +97,11 @@ public class Query implements Serializable {
     return this.version;
   }
 
+  public List<String> getVersionedFetchQueryNames() {
+    return this.getFetchQueries().stream().map(f -> f.getVersionedReferenceQueryName())
+        .collect(Collectors.toList());
+  }
+
   public String getVersionedName() {
     return defaultString(this.name) + (isNotBlank(this.version) ? "_" + this.version : "");
   }
@@ -112,5 +118,37 @@ public class Query implements Serializable {
    */
   public boolean isCacheResultSetMetadata() {
     return this.cacheResultSetMetadata;
+  }
+
+  void setCache(boolean cache) {
+    this.cache = cache;
+  }
+
+  void setCacheResultSetMetadata(boolean cacheResultSetMetadata) {
+    this.cacheResultSetMetadata = cacheResultSetMetadata;
+  }
+
+  void setDescription(String description) {
+    this.description = description;
+  }
+
+  void setName(String name) {
+    this.name = name;
+  }
+
+  void setResultClass(Class<?> resultClass) {
+    this.resultClass = resultClass;
+  }
+
+  void setResultSetMapping(Class<?> resultSetMapping) {
+    this.resultSetMapping = resultSetMapping;
+  }
+
+  void setScript(String script) {
+    this.script = script;
+  }
+
+  void setVersion(String version) {
+    this.version = version;
   }
 }

@@ -67,7 +67,8 @@
     <xsd:attribute name="reference-query" type="xsd:string" use="required"></xsd:attribute>
     <xsd:attribute name="inject-property-name" type="xsd:string" use="required"></xsd:attribute>
     <xsd:attribute name="max-fetch-size" type="xsd:positiveInteger" use="optional"></xsd:attribute>
-    <xsd:attribute name="version" type="xsd:string" use="optional"></xsd:attribute>
+    <xsd:attribute name="reference-query-version" type="xsd:string" use="optional"></xsd:attribute>
+    <xsd:attribute name="result-class" type="xsd:string" use="optional"></xsd:attribute>
   </xsd:complexType>
 
   <xsd:complexType name="hint">
@@ -80,7 +81,7 @@
       <xsd:documentation>The fetch query parameters</xsd:documentation>
     </xsd:annotation>
     <xsd:attribute name="name" type="xsd:string" use="required"></xsd:attribute>
-    <xsd:attribute name="source" type="fetch-query-parameter-source" use="optional" default="R"></xsd:attribute>
+    <xsd:attribute name="source" type="fetch-query-parameter-source" use="required"></xsd:attribute>
   </xsd:complexType>
 
   <xsd:simpleType name="fetch-query-parameter-source">

@@ -8,7 +8,7 @@
 	<common-segment>
 		This is common segment!
 	</common-segment>
-	<query name="queryName" result-class="java.util.Map" cache="true"
+	<query name="queryName1" result-class="java.util.Map" cache="true"
 		cache-resuleset-metadata="false">
 		<description>
 			<![CDATA[
@@ -20,7 +20,7 @@
 				SELECT * FROM TEST
 			]]>
 		</script>
-		<fetch-query reference-query="queryName1"
+		<fetch-query reference-query="queryName"
 			inject-property-name="propertyName">
 			<parameter name="resultParam" source="R" />
 		</fetch-query>
@@ -28,7 +28,7 @@
 		<hint key="hintName2" value="hintValue2" />
 	</query>
 
-	<query name="fetchQueryName" result-class="java.util.Map"
+	<query name="fetchQueryName1" result-class="java.util.Map"
 		cache="true">
 		<description>
 			<![CDATA[

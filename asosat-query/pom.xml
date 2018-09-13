@@ -21,6 +21,11 @@
 			<artifactId>asosat-kernel</artifactId>
 			<version>${xversion.asosat}</version>
 		</dependency>
+		<dependency>
+			<groupId>commons-dbutils</groupId>
+			<artifactId>commons-dbutils</artifactId>
+			<version>1.7</version>
+		</dependency>
 	</dependencies>
 	<description>For Sql or NoSql querying.</description>
 </project>

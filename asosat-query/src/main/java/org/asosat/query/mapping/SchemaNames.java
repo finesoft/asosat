@@ -50,7 +50,7 @@ public class SchemaNames {
   public static final String FQE_ATT_NAME = "reference-query";
   public static final String FQE_ATT_PRO_NAME = "inject-property-name";
   public static final String FQE_ATT_MAX_SIZE = "max-size";
-  public static final String FQE_ATT_VER = "version";
+  public static final String FQE_ATT_VER = "reference-query-version";
 
 
   private SchemaNames() {}

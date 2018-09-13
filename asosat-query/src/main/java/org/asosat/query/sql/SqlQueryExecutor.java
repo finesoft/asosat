@@ -24,7 +24,7 @@ import java.util.Map;
  * @author bingo 下午5:20:01
  *
  */
-public interface SqlQuerier {
+public interface SqlQueryExecutor {
 
   Map<String, Object> get(String sql) throws SQLException;
 

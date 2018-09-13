@@ -25,8 +25,8 @@ public class ParameterMapping implements Serializable {
 
   private static final long serialVersionUID = -1992270251269637655L;
 
-  String name;
-  Class<?> type;
+  private String name;
+  private Class<?> type;
 
   /**
    * @return the name
@@ -40,6 +40,14 @@ public class ParameterMapping implements Serializable {
    */
   public Class<?> getType() {
     return this.type;
+  }
+
+  void setName(String name) {
+    this.name = name;
+  }
+
+  void setType(Class<?> type) {
+    this.type = type;
   }
 
 

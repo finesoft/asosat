@@ -36,14 +36,15 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class QueryParseHandler extends DefaultHandler {
 
+  private final String url;
   private final List<Query> queries = new ArrayList<>();
   private final List<ParameterMapping> paraMappings = new ArrayList<>();
-  private final Stack<Object> valueStack = new Stack<>();
-  private final Stack<String> nameStack = new Stack<>();
   private String commonSegment;
   private QueryMapping mapping;
-  private final StringBuilder charBuffer = new StringBuilder();
-  private final String url;
+
+  private final Stack<Object> valueStack = new Stack<>();
+  private final Stack<String> nameStack = new Stack<>();
+  private final StringBuilder charStack = new StringBuilder();
 
   public QueryParseHandler(String url) {
     this.url = url;
@@ -55,7 +56,7 @@ public class QueryParseHandler extends DefaultHandler {
     if (SchemaNames.COMMON_SGEMENT.equalsIgnoreCase(cqn)
         || SchemaNames.QUE_DESC_ELE.equalsIgnoreCase(cqn)
         || SchemaNames.QUE_SCPT_ELE.equalsIgnoreCase(cqn)) {
-      this.charBuffer.append(ch, start, length);
+      this.charStack.append(ch, start, length);
     }
   }
 
@@ -63,7 +64,7 @@ public class QueryParseHandler extends DefaultHandler {
   public void endDocument() throws SAXException {
     this.mapping.commonSegment = this.commonSegment;
     this.mapping.paraMapping
-        .putAll(this.paraMappings.stream().collect(Collectors.toMap(p -> p.name, p -> p)));
+        .putAll(this.paraMappings.stream().collect(Collectors.toMap(p -> p.getName(), p -> p)));
     this.mapping.queries.addAll(this.queries);
     this.valueStack.clear();
     this.nameStack.clear();
@@ -126,8 +127,8 @@ public class QueryParseHandler extends DefaultHandler {
     if (start) {
       this.nameStack.push(qName);
     } else {
-      String segment = this.charBuffer.toString();
-      this.charBuffer.delete(0, this.charBuffer.length());
+      String segment = this.charStack.toString();
+      this.charStack.delete(0, this.charStack.length());
       this.commonSegment = segment.trim();
       this.nameStack.pop();
     }
@@ -139,13 +140,15 @@ public class QueryParseHandler extends DefaultHandler {
       for (int i = 0; i < attributes.getLength(); i++) {
         String aqn = attributes.getQName(i), atv = attributes.getValue(i);
         if (aqn.equals(SchemaNames.FQE_ATT_NAME)) {
-          fq.referenceQuery = atv;
+          fq.setReferenceQuery(atv);
         } else if (aqn.equalsIgnoreCase(SchemaNames.FQE_ATT_MAX_SIZE)) {
-          fq.maxSize = ConvertUtils.toInteger(atv);
+          fq.setMaxSize(ConvertUtils.toInteger(atv));
         } else if (aqn.equalsIgnoreCase(SchemaNames.FQE_ATT_PRO_NAME)) {
-          fq.propertyName = atv;
+          fq.setInjectPropertyName(atv);
         } else if (aqn.equalsIgnoreCase(SchemaNames.FQE_ATT_VER)) {
-          fq.version = defaultString(atv);
+          fq.setReferenceQueryversion(defaultString(atv));
+        } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_ATT_RST_CLS)) {
+          fq.setResultClass(isBlank(atv) ? java.util.Map.class : tryToLoadClassForName(atv));
         }
       }
       this.valueStack.push(fq);
@@ -156,7 +159,7 @@ public class QueryParseHandler extends DefaultHandler {
       if (q == null) {
         throw new QueryRuntimeException("Parse error the fetch query must be in query element!");
       }
-      q.fetchQueries.add((FetchQuery) obj);
+      q.getFetchQueries().add((FetchQuery) obj);
       this.nameStack.pop();
     }
   }
@@ -167,10 +170,10 @@ public class QueryParseHandler extends DefaultHandler {
       FetchQueryParameter fqp = new FetchQueryParameter();
       for (int i = 0; i < attributes.getLength(); i++) {
         String aqn = attributes.getQName(i), atv = attributes.getValue(i);
-        if (aqn.equals(SchemaNames.PARAM_ENTRY_ATT_NME)) {
-          fqp.name = atv;
-        } else if (aqn.equalsIgnoreCase(SchemaNames.PARAM_ENTRY_ATT_TYP)) {
-          fqp.source = ConvertUtils.toEnum(atv, FetchQueryParameterSource.class);
+        if (aqn.equals(SchemaNames.FQE_ELE_PARAM_ATT_NME)) {
+          fqp.setName(atv);
+        } else if (aqn.equalsIgnoreCase(SchemaNames.FQE_ELE_PARAM_ATT_SRC)) {
+          fqp.setSource(ConvertUtils.toEnum(atv, FetchQueryParameterSource.class));
         }
       }
       this.valueStack.push(fqp);
@@ -182,7 +185,7 @@ public class QueryParseHandler extends DefaultHandler {
         throw new QueryRuntimeException(
             "Parse error the fetch query parameter must be in fetch query element!");
       }
-      q.parameters.add((FetchQueryParameter) obj);
+      q.getParameters().add((FetchQueryParameter) obj);
       this.nameStack.pop();
     }
   }
@@ -193,9 +196,9 @@ public class QueryParseHandler extends DefaultHandler {
       for (int i = 0; i < attributes.getLength(); i++) {
         String aqn = attributes.getQName(i), atv = attributes.getValue(i);
         if (aqn.equals(SchemaNames.PARAM_ENTRY_ATT_NME)) {
-          pm.name = atv;
+          pm.setName(atv);
         } else if (aqn.equalsIgnoreCase(SchemaNames.PARAM_ENTRY_ATT_TYP)) {
-          pm.type = tryToLoadClassForName(atv);
+          pm.setType(tryToLoadClassForName(atv));
         }
       }
       this.valueStack.push(pm);
@@ -213,17 +216,17 @@ public class QueryParseHandler extends DefaultHandler {
       for (int i = 0; i < attributes.getLength(); i++) {
         String aqn = attributes.getQName(i), atv = attributes.getValue(i);
         if (aqn.equals(SchemaNames.QUE_ATT_NAME)) {
-          q.name = atv;
+          q.setName(atv);
         } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_ATT_CACHE)) {
-          q.cache = ConvertUtils.toBoolean(atv);
+          q.setCache(ConvertUtils.toBoolean(atv));
         } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_ATT_CACHE_RS_MD)) {
-          q.cacheResultSetMetadata = ConvertUtils.toBoolean(atv);
+          q.setCacheResultSetMetadata(ConvertUtils.toBoolean(atv));
         } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_ATT_RST_CLS)) {
-          q.resultClass = isBlank(atv) ? java.util.Map.class : tryToLoadClassForName(atv);
+          q.setResultClass(isBlank(atv) ? java.util.Map.class : tryToLoadClassForName(atv));
         } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_ATT_RST_SET_CLS)) {
-          q.resultSetMapping = isBlank(atv) ? null : tryToLoadClassForName(atv);
+          q.setResultSetMapping(isBlank(atv) ? null : tryToLoadClassForName(atv));
         } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_ATT_VER)) {
-          q.version = defaultString(atv);
+          q.setVersion(defaultString(atv));
         }
       }
       this.valueStack.push(q);
@@ -239,14 +242,14 @@ public class QueryParseHandler extends DefaultHandler {
     if (start) {
       this.nameStack.push(qName);
     } else {
-      String desc = this.charBuffer.toString();
-      this.charBuffer.delete(0, this.charBuffer.length());
+      String desc = this.charStack.toString();
+      this.charStack.delete(0, this.charStack.length());
       Query q = this.currentObject();
       if (q == null) {
         throw new QueryRuntimeException(
             "Parse error the query description must be in query element!");
       }
-      q.description = desc.trim();
+      q.setDescription(desc.trim());
       this.nameStack.pop();
     }
   }
@@ -257,9 +260,9 @@ public class QueryParseHandler extends DefaultHandler {
       for (int i = 0; i < attributes.getLength(); i++) {
         String aqn = attributes.getQName(i), atv = attributes.getValue(i);
         if (aqn.equals(SchemaNames.QUE_HIT_ATT_KEY)) {
-          hit.key = atv;
+          hit.setKey(atv);
         } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_HIT_ATT_KEY)) {
-          hit.value = atv;
+          hit.setValue(atv);
         }
       }
       this.valueStack.push(hit);
@@ -270,7 +273,7 @@ public class QueryParseHandler extends DefaultHandler {
       if (q == null) {
         throw new QueryRuntimeException("Parse error the query hit must be in query element!");
       }
-      q.hints.add((QueryHint) obj);
+      q.getHints().add((QueryHint) obj);
       this.nameStack.pop();
     }
   }
@@ -279,14 +282,14 @@ public class QueryParseHandler extends DefaultHandler {
     if (start) {
       this.nameStack.push(qName);
     } else {
-      String script = this.charBuffer.toString();
-      this.charBuffer.delete(0, this.charBuffer.length());
+      String script = this.charStack.toString();
+      this.charStack.delete(0, this.charStack.length());
       Query q = this.currentObject();
       if (q == null || isBlank(script)) {
         throw new QueryRuntimeException(
             "Parse error the query script must be in query element and script can't null!");
       }
-      q.script = script.trim();
+      q.setScript(script.trim());
       this.nameStack.pop();
     }
   }

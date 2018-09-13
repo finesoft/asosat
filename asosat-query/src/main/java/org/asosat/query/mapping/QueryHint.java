@@ -20,8 +20,8 @@ package org.asosat.query.mapping;
  *
  */
 public class QueryHint {
-  String key;
-  String value;
+  private String key;
+  private String value;
 
   /**
    * @return the key
@@ -35,6 +35,14 @@ public class QueryHint {
    */
   public String getValue() {
     return this.value;
+  }
+
+  void setKey(String key) {
+    this.key = key;
+  }
+
+  void setValue(String value) {
+    this.value = value;
   }
 
 }

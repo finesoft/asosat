@@ -32,7 +32,7 @@ import org.apache.commons.dbutils.handlers.MapListHandler;
  */
 public class DefaultSqlQueryExecutor implements SqlQueryExecutor {
 
-  QueryRunner runner;
+  protected QueryRunner runner;
 
   public DefaultSqlQueryExecutor(DataSource dataSource) {
     this.runner = new QueryRunner(dataSource);
@@ -40,23 +40,23 @@ public class DefaultSqlQueryExecutor implements SqlQueryExecutor {
 
   @Override
   public Map<String, Object> get(String sql) throws SQLException {
-    return this.runner.query(sql, new MapHandler());
+    return this.getRunner().query(sql, new MapHandler());
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public <T> T get(String sql, Class<T> resultClass, Object... args) throws SQLException {
     if (Map.class.isAssignableFrom(resultClass)) {
-      Object obj = this.runner.query(sql, new MapHandler(), args);
+      Object obj = this.getRunner().query(sql, new MapHandler(), args);
       return obj == null ? null : (T) obj;
     } else {
-      return this.runner.query(sql, new BeanHandler<>(resultClass), args);
+      return this.getRunner().query(sql, new BeanHandler<>(resultClass), args);
     }
   }
 
   @Override
   public List<Map<String, Object>> select(String sql) throws SQLException {
-    List<Map<String, Object>> tmp = this.runner.query(sql, new MapListHandler());
+    List<Map<String, Object>> tmp = this.getRunner().query(sql, new MapListHandler());
     return tmp == null ? new ArrayList<>() : tmp;
   }
 
@@ -65,12 +65,15 @@ public class DefaultSqlQueryExecutor implements SqlQueryExecutor {
   public <T> List<T> select(String sql, Class<T> resultClass, Object... args) throws SQLException {
     if (Map.class.isAssignableFrom(resultClass)) {
       @SuppressWarnings("rawtypes")
-      List tmp = this.runner.query(sql, new MapListHandler(), args);
+      List tmp = this.getRunner().query(sql, new MapListHandler(), args);
       return tmp == null ? new ArrayList<>() : tmp;
     } else {
-      List<T> tmp = this.runner.query(sql, new BeanListHandler<>(resultClass), args);
+      List<T> tmp = this.getRunner().query(sql, new BeanListHandler<>(resultClass), args);
       return tmp == null ? new ArrayList<>() : tmp;
     }
+  }
 
+  protected QueryRunner getRunner() {
+    return this.runner;
   }
 }

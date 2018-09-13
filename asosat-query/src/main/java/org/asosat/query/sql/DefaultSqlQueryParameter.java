@@ -13,20 +13,11 @@
  */
 package org.asosat.query.sql;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.asosat.query.ParameterResolver.Parameter;
-import org.asosat.query.QueryRuntimeException;
 import org.asosat.query.mapping.FetchQuery;
-import org.asosat.query.mapping.ParameterMapping;
-import org.asosat.query.mapping.Query;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
+import org.asosat.query.sql.DefaultSqlQueryTemplate.ScriptAndParam;
 
 /**
  * asosat-query
@@ -41,11 +32,12 @@ public class DefaultSqlQueryParameter implements Parameter<String, Object[], Fet
   final Class<?> resultClass;
   final List<FetchQuery> fetchQueries;
 
-  public DefaultSqlQueryParameter(QueryTemplate tpl, Map<String, Object> param) {
+  public DefaultSqlQueryParameter(DefaultSqlQueryTemplate tpl, Map<String, Object> param) {
     super();
     this.fetchQueries = tpl.fetchQueries;
-    this.script = tpl.process(param);
-    this.convertedParams = param.values().toArray(new Object[0]);
+    ScriptAndParam snp = tpl.process(param);
+    this.script = snp.script;
+    this.convertedParams = snp.params;
     this.resultClass = tpl.resultClass;
   }
 
@@ -73,36 +65,4 @@ public class DefaultSqlQueryParameter implements Parameter<String, Object[], Fet
     return this.script;
   }
 
-  public static class QueryTemplate {
-    final String name;
-    final Template scriptTpl;
-    final Map<String, ParameterMapping> paramMappings;
-    final long lastModified;
-    final Class<?> resultClass;
-    final List<FetchQuery> fetchQueries = new ArrayList<>();
-
-    QueryTemplate(Query query) {
-      this.fetchQueries.addAll(query.getFetchQueries());
-      this.name = query.getName();
-      this.resultClass = query.getResultClass() == null ? Map.class : query.getResultClass();
-      try {
-        this.scriptTpl =
-            new Template(this.name, query.getScript(), DefaultSqlQueryParameterResolver.FM_CFG);
-        this.paramMappings = Collections.unmodifiableMap(query.getParamMappings());
-        this.lastModified = Instant.now().toEpochMilli();
-      } catch (IOException e) {
-        throw new QueryRuntimeException(e);
-      }
-    }
-
-    String process(Map<String, Object> param) {
-      StringWriter sw = new StringWriter();
-      try {
-        this.scriptTpl.process(param, sw);
-      } catch (TemplateException | IOException | NullPointerException e) {
-        throw new QueryRuntimeException("Freemarker process stringTemplate is error", e);
-      }
-      return sw.toString();
-    }
-  }
 }

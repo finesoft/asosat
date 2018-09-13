@@ -50,10 +50,13 @@ public abstract class AbstractSqlQuery implements Query<String, Map<String, Obje
   public <T> T get(String q, Map<String, Object> param) {
     Parameter<String, Object[], FetchQuery> paramToUse = this.paramResolver.resolve(q, param);
     Class<T> rcls = paramToUse.getResultClass();
+    Object[] queryParam = paramToUse.getConvertedParameters();
+    List<FetchQuery> fetchQueries = paramToUse.getFetchQueries();
+    String sql = paramToUse.getScript();
     try {
-      T obj = this.executor.get(paramToUse.getScript(), rcls, paramToUse.getConvertedParameters());
-      this.fetch(obj, paramToUse.getFetchQueries(), param);
-      return obj;
+      T result = this.executor.get(sql, rcls, queryParam);
+      this.fetch(result, fetchQueries, param);
+      return result;
     } catch (SQLException e) {
       throw new QueryRuntimeException(e);
     }
@@ -65,20 +68,22 @@ public abstract class AbstractSqlQuery implements Query<String, Map<String, Obje
         limit = getMapValue(param, "limit", ConvertUtils::toInteger, 16);
     Parameter<String, Object[], FetchQuery> paramToUse = this.paramResolver.resolve(q, param);
     Class<T> rcls = paramToUse.getResultClass();
+    Object[] queryParam = paramToUse.getConvertedParameters();
+    List<FetchQuery> fetchQueries = paramToUse.getFetchQueries();
     String sql = paramToUse.getScript();
     String limitSql = this.getDialect().getLimitSql(sql, start, limit + 1);
     try {
-      IteratedList<T> il = IteratedList.inst();
-      List<T> list = this.executor.select(limitSql, rcls, paramToUse.getConvertedParameters());
-      this.fetch(list, paramToUse.getFetchQueries(), param);
+      IteratedList<T> result = IteratedList.inst();
+      List<T> list = this.executor.select(limitSql, rcls, queryParam);
+      this.fetch(list, fetchQueries, param);
       if (list.size() > limit) {
         list.remove(list.size() - 1);
-        il.withData(list);
-        il.withHasNext(true);
+        result.withData(list);
+        result.withHasNext(true);
       } else {
-        il.withData(list);
+        result.withData(list);
       }
-      return il;
+      return result;
     } catch (SQLException e) {
       throw new QueryRuntimeException(e);
     }
@@ -90,21 +95,24 @@ public abstract class AbstractSqlQuery implements Query<String, Map<String, Obje
         limit = getMapValue(param, "limit", ConvertUtils::toInteger, 16);
     Parameter<String, Object[], FetchQuery> paramToUse = this.paramResolver.resolve(q, param);
     Class<T> rcls = paramToUse.getResultClass();
+    Object[] queryParam = paramToUse.getConvertedParameters();
+    List<FetchQuery> fetchQueries = paramToUse.getFetchQueries();
     String sql = paramToUse.getScript();
     String limitSql = this.getDialect().getLimitSql(sql, start, limit);
     try {
-      List<T> list = this.executor.select(limitSql, rcls, paramToUse.getConvertedParameters());
-      PagedList<T> pl = PagedList.inst();
+      List<T> list = this.executor.select(limitSql, rcls, queryParam);
+      PagedList<T> result = PagedList.inst();
       int count = list.size();
       if (count > (limit - start)) {
-        pl.withTotal(start + count);
+        result.withTotal(start + count);
       } else {
-        pl.withTotal(getMapValue(this.executor.get(this.getDialect().getCountSql(sql)), "total",
-            ConvertUtils::toInteger));
+        result.withTotal(getMapValue(
+            this.executor.get(this.getDialect().getCountSql(sql), Map.class, queryParam),
+            Dialect.COUNT_FIELD_NAME, ConvertUtils::toInteger));
       }
-      this.fetch(list, paramToUse.getFetchQueries(), param);
-      pl.withData(list);
-      return pl;
+      this.fetch(list, fetchQueries, param);
+      result.withData(list);
+      return result;
     } catch (SQLException e) {
       throw new QueryRuntimeException(e);
     }
@@ -114,10 +122,12 @@ public abstract class AbstractSqlQuery implements Query<String, Map<String, Obje
   public <T> List<T> select(String q, Map<String, Object> param) {
     Parameter<String, Object[], FetchQuery> paramToUse = this.paramResolver.resolve(q, param);
     Class<T> rcls = paramToUse.getResultClass();
+    Object[] queryParam = paramToUse.getConvertedParameters();
+    List<FetchQuery> fetchQueries = paramToUse.getFetchQueries();
+    String sql = paramToUse.getScript();
     try {
-      List<T> list =
-          this.executor.select(paramToUse.getScript(), rcls, paramToUse.getConvertedParameters());
-      this.fetch(list, paramToUse.getFetchQueries(), param);
+      List<T> list = this.executor.select(sql, rcls, queryParam);
+      this.fetch(list, fetchQueries, param);
       return list;
     } catch (SQLException e) {
       throw new QueryRuntimeException(e);
@@ -179,7 +189,8 @@ public abstract class AbstractSqlQuery implements Query<String, Map<String, Obje
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
           throw new QueryRuntimeException(
               String.format("Can not extract value from query result for fetch query param!",
-                  fetchQuery.getReferenceQuery()));
+                  fetchQuery.getReferenceQuery()),
+              e);
         }
       }
     });

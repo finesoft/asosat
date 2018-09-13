@@ -23,6 +23,7 @@ import org.asosat.query.sql.SqlHelper;
  */
 public interface Dialect {
 
+  public static final String COUNT_FIELD_NAME = "_total";
 
   public static String getNonOrderByPart(String sql) {
     return SqlHelper.removeOrderBy(sql);
@@ -36,8 +37,9 @@ public interface Dialect {
    * @return Count SQL statement
    */
   default String getCountSql(String sql) {
-    return new StringBuilder(sql.length() + 40).append("SELECT COUNT(1) FROM ( ")
-        .append(Dialect.getNonOrderByPart(sql)).append(" ) AS tmp_count_").toString();
+    return new StringBuilder(sql.length() + 40).append("SELECT COUNT(1) ").append(COUNT_FIELD_NAME)
+        .append(" FROM ( ").append(Dialect.getNonOrderByPart(sql)).append(" ) AS tmp_count_")
+        .toString();
   }
 
   /**

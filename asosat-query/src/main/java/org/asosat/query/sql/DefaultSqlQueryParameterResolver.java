@@ -22,7 +22,6 @@ import org.asosat.query.QueryRuntimeException;
 import org.asosat.query.mapping.FetchQuery;
 import org.asosat.query.mapping.Query;
 import org.asosat.query.mapping.QueryMappingService;
-import org.asosat.query.sql.DefaultSqlQueryParameter.QueryTemplate;
 import freemarker.template.Configuration;
 
 /**
@@ -37,7 +36,7 @@ public class DefaultSqlQueryParameterResolver
 
   static final Configuration FM_CFG = new Configuration(Configuration.VERSION_2_3_28);
 
-  final Map<String, QueryTemplate> cachedQueryTpls = new ConcurrentHashMap<>();
+  final Map<String, DefaultSqlQueryTemplate> cachedQueryTpls = new ConcurrentHashMap<>();
 
   @Inject
   QueryMappingService mappingService;
@@ -45,15 +44,15 @@ public class DefaultSqlQueryParameterResolver
   @Override
   public DefaultSqlQueryParameter resolve(String key, Map<String, Object> param) {
     return new DefaultSqlQueryParameter(
-        this.cachedQueryTpls.computeIfAbsent(key, this::nonQueryTemplate), param);
+        this.cachedQueryTpls.computeIfAbsent(key, this::buildQueryTemplate), param);
   }
 
-  protected QueryTemplate nonQueryTemplate(String key) {
+  protected DefaultSqlQueryTemplate buildQueryTemplate(String key) {
     Query query = this.mappingService.getQuery(key);
     if (query == null) {
       throw new QueryRuntimeException("Can not found Query for key " + key);
     }
-    return new QueryTemplate(query);
+    return new DefaultSqlQueryTemplate(query);
   }
 
 }

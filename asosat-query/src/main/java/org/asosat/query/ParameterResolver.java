@@ -11,26 +11,29 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.sql;
+package org.asosat.query;
 
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 /**
- * asosat-script
+ * asosat-query
  *
- * @author bingo 下午5:20:01
+ * @author bingo 下午3:13:37
  *
  */
-public interface SqlQueryExecutor {
+public interface ParameterResolver<K, P, S, CP, F> {
 
-  Map<String, Object> get(String sql) throws SQLException;
+  Parameter<S, CP, F> resolve(K key, P param);
 
-  <T> T get(String sql, Class<T> resultClass, Object... args) throws SQLException;
+  static interface Parameter<S, CP, F> {
 
-  List<Map<String, Object>> select(String sql) throws SQLException;
+    CP getConvertedParameters();
 
-  <T> List<T> select(String sql, Class<T> resultClass, Object... args) throws SQLException;
+    List<F> getFetchQueries();
+
+    <T> Class<T> getResultClass();
+
+    S getScript();
+  }
 
 }

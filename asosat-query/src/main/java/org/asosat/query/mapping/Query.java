@@ -17,7 +17,9 @@ import static org.asosat.kernel.util.MyStrUtils.defaultString;
 import static org.asosat.kernel.util.MyStrUtils.isNotBlank;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +42,7 @@ public class Query implements Serializable {
   private List<FetchQuery> fetchQueries = new ArrayList<>();
   private List<QueryHint> hints = new ArrayList<>();
   private String version = "";
+  private Map<String, ParameterMapping> paramMappings = new HashMap<>();
 
   /**
    * @return the description
@@ -67,6 +70,13 @@ public class Query implements Serializable {
    */
   public String getName() {
     return this.name;
+  }
+
+  /**
+   * @return the paramMappings
+   */
+  public Map<String, ParameterMapping> getParamMappings() {
+    return this.paramMappings;
   }
 
   /**

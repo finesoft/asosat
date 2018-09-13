@@ -13,24 +13,19 @@
  */
 package org.asosat.query.sql;
 
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
+import javax.sql.DataSource;
+import org.asosat.query.sql.paging.dialect.Dialect;
 
 /**
- * asosat-script
+ * asosat-query
  *
- * @author bingo 下午5:20:01
+ * @author bingo 下午5:56:03
  *
  */
-public interface SqlQueryExecutor {
+public interface SqlDataSource {
 
-  Map<String, Object> get(String sql) throws SQLException;
+  DataSource getDataSource();
 
-  <T> T get(String sql, Class<T> resultClass, Object... args) throws SQLException;
-
-  List<Map<String, Object>> select(String sql) throws SQLException;
-
-  <T> List<T> select(String sql, Class<T> resultClass, Object... args) throws SQLException;
+  Dialect getDialect();
 
 }

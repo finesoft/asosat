@@ -14,11 +14,15 @@
 package org.asosat.query.sql;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.sql.DataSource;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.BeanHandler;
+import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.apache.commons.dbutils.handlers.MapHandler;
+import org.apache.commons.dbutils.handlers.MapListHandler;
 
 /**
  * asosat-script
@@ -26,42 +30,47 @@ import javax.sql.DataSource;
  * @author bingo 下午5:31:55
  *
  */
-@ApplicationScoped
 public class DefaultSqlQueryExecutor implements SqlQueryExecutor {
 
-  @Inject
-  DataSource dataSource;
+  QueryRunner runner;
+
+  public DefaultSqlQueryExecutor(DataSource dataSource) {
+    this.runner = new QueryRunner(dataSource);
+  }
 
   @Override
   public Map<String, Object> get(String sql) throws SQLException {
-    return null;
+    return this.runner.query(sql, new MapHandler());
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public <T> T get(String sql, Object[] args, int[] argTypes, RowMapper<T> mapper)
-      throws SQLException {
-    return null;
-  }
-
-  @Override
-  public <T> T get(String sql, RowMapper<T> mapper, Object... args) throws SQLException {
-    return null;
+  public <T> T get(String sql, Class<T> resultClass, Object... args) throws SQLException {
+    if (Map.class.isAssignableFrom(resultClass)) {
+      Object obj = this.runner.query(sql, new MapHandler(), args);
+      return obj == null ? null : (T) obj;
+    } else {
+      return this.runner.query(sql, new BeanHandler<>(resultClass), args);
+    }
   }
 
   @Override
   public List<Map<String, Object>> select(String sql) throws SQLException {
-    return null;
+    List<Map<String, Object>> tmp = this.runner.query(sql, new MapListHandler());
+    return tmp == null ? new ArrayList<>() : tmp;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public <T> List<T> select(String sql, Object[] args, int[] argTypes, RowMapper<T> mapper)
-      throws SQLException {
-    return null;
-  }
+  public <T> List<T> select(String sql, Class<T> resultClass, Object... args) throws SQLException {
+    if (Map.class.isAssignableFrom(resultClass)) {
+      @SuppressWarnings("rawtypes")
+      List tmp = this.runner.query(sql, new MapListHandler(), args);
+      return tmp == null ? new ArrayList<>() : tmp;
+    } else {
+      List<T> tmp = this.runner.query(sql, new BeanListHandler<>(resultClass), args);
+      return tmp == null ? new ArrayList<>() : tmp;
+    }
 
-  @Override
-  public <T> List<T> select(String sql, RowMapper<T> mapper, Object... args) throws SQLException {
-    return null;
   }
-
 }

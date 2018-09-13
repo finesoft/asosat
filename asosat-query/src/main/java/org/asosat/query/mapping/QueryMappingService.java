@@ -33,10 +33,6 @@ public class QueryMappingService {
 
   private Map<String, Query> queries = new HashMap<>();
 
-  public static void main(String... m) {
-    new QueryMappingService().init();
-  }
-
   public Query getQuery(String name) {
     return this.queries.get(name);
   }
@@ -49,6 +45,7 @@ public class QueryMappingService {
         throw new QueryRuntimeException(String.join("\n", brokens.toArray(new String[0])));
       }
       m.getQueries().forEach(q -> {
+        q.getParamMappings().putAll(m.getParaMapping());// copy
         if (this.queries.containsKey(q.getVersionedName())) {
           throw new QueryRuntimeException(
               String.format("The 'name' [%s] of query element in query file [%s] can not repeat!",

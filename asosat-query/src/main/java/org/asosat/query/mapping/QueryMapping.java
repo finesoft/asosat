@@ -76,7 +76,7 @@ public class QueryMapping {
       }
     });
     if (isEmpty(this.getQueries())) {
-      brokens.add(String.format("The query file [%s] must have 'query' elements!", this.url));
+      brokens.add(String.format("The query file [%s] must have 'query' elements!", this.getUrl()));
     }
     Set<String> queryNames = new HashSet<>();
     // validate query elements

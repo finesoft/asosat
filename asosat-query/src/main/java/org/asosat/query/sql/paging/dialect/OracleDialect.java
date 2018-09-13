@@ -21,13 +21,6 @@ package org.asosat.query.sql.paging.dialect;
  */
 public class OracleDialect implements Dialect {
 
-  @Override
-  public String getCountSql(String sql) {
-    return new StringBuilder(sql.length() + 40).append("SELECT COUNT(1) FROM ( ")
-        .append(Dialect.getNonOrderByPart(sql)).append(" ) tmp_count_").toString();
-  }
-
-
 
   @Override
   public String getLimitSql(String sql, int offset, int limit) {

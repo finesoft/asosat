@@ -13,94 +13,97 @@
  */
 package org.asosat.query.mapping;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.PatternFileSelector;
 import org.asosat.kernel.resource.MultiClassPathFiles;
-import org.w3c.dom.Document;
+import org.asosat.query.QueryRuntimeException;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
 
 /**
- * asosat-query
+ * asosat-script
  *
  * @author bingo 上午10:56:43
  *
  */
 public class QueryParser {
 
-  public static final String SHCEMA_NAME = "org/asosat/query/mapping/qm_1_0.xsd";
+  public static final String SCHEMA_URL = "org/asosat/query/mapping/qm_1_0.xsd";
   public static final String DFLT_QUERY_FILES_REGEX = ".*Query.*\\.xml";
-  private volatile Validator validator;
 
   public static void main(String... strings) {
-    new QueryParser().parse();
+    Map<String, QueryMapping> map = new QueryParser().parse();
+    map.forEach((s, m) -> {
+      System.out.println(s);
+    });
   }
 
-  public Map<String, FileObject> getQueryFiles() {
+  public Map<String, QueryMapping> parse() {
+    Map<String, QueryMapping> map = new LinkedHashMap<>();
+    final QueryParserErrorHandler errHdl = new QueryParserErrorHandler();
+    final SAXParserFactory factory = SAXParserFactory.newInstance();
+    factory.setSchema(this.getSchema());
+    factory.setNamespaceAware(true);
+    factory.setValidating(false);
+    this.getQueryMappingFiles().forEach((s, f) -> {
+      try (InputStream is = f.getContent().getInputStream()) {
+        QueryParseHandler handler = new QueryParseHandler(s);
+        XMLReader reader = factory.newSAXParser().getXMLReader();
+        reader.setErrorHandler(errHdl);
+        reader.setContentHandler(handler);
+        reader.parse(new InputSource(is));
+        map.put(s, handler.getMapping());
+      } catch (Exception ex) {
+        String errMsg = String.format("Parse query mapping file [%s] error!", s);
+        throw new QueryRuntimeException(errMsg, ex);
+      }
+    });
+    return map;
+  }
+
+  Map<String, FileObject> getQueryMappingFiles() {
     Map<String, FileObject> map = new HashMap<>();
     Arrays.stream(DFLT_QUERY_FILES_REGEX.split(";")).forEach(
         regex -> MultiClassPathFiles.select(new PatternFileSelector(regex)).forEach(map::put));
     return map;
   }
 
-  public Map<String, Query> parse() {
-    Map<String, Query> map = new LinkedHashMap<>();
-    this.getQueryFiles().forEach((s, f) -> {
-      this.parse(f);
-    });
-    return map;
-  }
-
-  public QueryMapping parse(Document doc) {
-    this.validate(new DOMSource(doc));
-    QueryMapping qm = new QueryMapping();
-    return qm;
-  }
-
-  public QueryMapping parse(FileObject fo) {
+  Schema getSchema() {
     try {
-      return this.parse(DocumentBuilderFactory.newInstance().newDocumentBuilder()
-          .parse(fo.getContent().getInputStream()));
-    } catch (SAXException | IOException | ParserConfigurationException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  /**
-   * validate query mapping file
-   *
-   * @param xml validate
-   */
-  public void validate(Source xml) {
-    if (this.validator == null) {
-      synchronized (this) {
-        if (this.validator == null) {
-          try {
-            Schema schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
-                .newSchema(MultiClassPathFiles.get(SHCEMA_NAME).getURL());
-            this.validator = schema.newValidator();
-          } catch (Exception e) {
-            throw new RuntimeException("Build query schema validator error!", e);
-          }
-        }
-      }
-    }
-    try {
-      this.validator.validate(xml);
+      return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
+          .newSchema(MultiClassPathFiles.get(SCHEMA_URL).getURL());
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      String errMsg = String.format("Build script schema [%S] validator error!", SCHEMA_URL);
+      throw new QueryRuntimeException(errMsg, e);
+    }
+  }
+
+  static class QueryParserErrorHandler implements ErrorHandler {
+    @Override
+    public void error(SAXParseException exception) throws SAXException {
+      throw new QueryRuntimeException(exception);
+    }
+
+    @Override
+    public void fatalError(SAXParseException exception) throws SAXException {
+      throw new QueryRuntimeException(exception);
+    }
+
+    @Override
+    public void warning(SAXParseException exception) throws SAXException {
+      throw new QueryRuntimeException(exception);
     }
   }
 }

@@ -14,7 +14,7 @@
 package org.asosat.query.sql.paging.dialect;
 
 /**
- * asosat-query
+ * asosat-script
  *
  * @author bingo 上午11:47:15
  *
@@ -29,12 +29,12 @@ public class SybaseDialect implements Dialect {
 
   @Override
   public String getLimitSql(String sql, int offset, int limit) {
-    throw new UnsupportedOperationException("The database Sybase limit query not supported");
+    throw new UnsupportedOperationException("The database Sybase limit script not supported");
   }
 
   public String getLimitString(String sql, int offset, String offsetPlaceholder, int limit,
       String limitPlaceholder) {
-    throw new UnsupportedOperationException("The database Sybase limit query not supported");
+    throw new UnsupportedOperationException("The database Sybase limit script not supported");
   }
 
   @Override

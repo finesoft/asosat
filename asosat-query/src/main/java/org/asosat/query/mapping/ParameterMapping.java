@@ -25,13 +25,8 @@ public class ParameterMapping implements Serializable {
 
   private static final long serialVersionUID = -1992270251269637655L;
 
-  public static final String ELE_PARAM = "parameters-mapping";
-  public static final String ELE_PARAM_ENTRY = "entry";
-  public static final String PARAM_ATT_NME = "name";
-  public static final String PARAM_ATT_TYP = "type";
-
   String name;
-  String type;
+  Class<?> type;
 
   /**
    * @return the name
@@ -43,7 +38,7 @@ public class ParameterMapping implements Serializable {
   /**
    * @return the type
    */
-  public String getType() {
+  public Class<?> getType() {
     return this.type;
   }
 

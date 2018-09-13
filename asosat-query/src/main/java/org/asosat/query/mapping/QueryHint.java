@@ -11,23 +11,30 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.sql.paging.dialect;
+package org.asosat.query.mapping;
 
 /**
- * asosat-script
+ * asosat-query
  *
- * @author bingo 上午11:42:27
+ * @author bingo 下午7:35:54
  *
  */
-public class DerbyDialect implements Dialect {
+public class QueryHint {
+  String key;
+  String value;
 
-  @Override
-  public String getLimitSql(String sql, int offset, int limit) {
-    throw new UnsupportedOperationException("The database Derby limit script not supported");
+  /**
+   * @return the key
+   */
+  public String getKey() {
+    return this.key;
   }
 
-  @Override
-  public boolean supportsLimit() {
-    return false;
+  /**
+   * @return the value
+   */
+  public String getValue() {
+    return this.value;
   }
+
 }

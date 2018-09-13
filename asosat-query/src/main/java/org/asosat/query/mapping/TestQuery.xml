@@ -5,7 +5,11 @@
 		<entry name="date" type="java.util.Instant" />
 		<entry name="number" type="java.math.BigDecimal" />
 	</parameters-mapping>
-	<query name="queryName" result-class="java.util.Map" cache="true" version="1.1">
+	<common-segment>
+		This is common segment!
+	</common-segment>
+	<query name="queryName" result-class="java.util.Map" cache="true"
+		version="1.1" cache-resuleset-metadata="false">
 		<description>
 			<![CDATA[
 				This is for testing.
@@ -16,7 +20,8 @@
 				SELECT * FROM TEST
 			]]>
 		</script>
-		<fetch-query query-name="fetchQueryName" inject-property-name="propertyName">
+		<fetch-query query-name="fetchQueryName"
+			inject-property-name="propertyName">
 			<parameter name="resultParam" source="R" />
 		</fetch-query>
 		<hint key="hintName1" value="hintValue1" />

@@ -19,7 +19,7 @@ import java.util.Map;
 import org.asosat.query.sql.paging.dialect.Dialect.DBMS;
 
 /**
- * asosat-query
+ * asosat-script
  *
  * @author bingo 上午10:59:44
  *

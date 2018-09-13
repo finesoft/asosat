@@ -16,7 +16,7 @@ package org.asosat.query.sql.paging.dialect;
 import org.asosat.query.sql.SqlHelper;
 
 /**
- * asosat-query
+ * asosat-script
  *
  * @author bingo 上午11:03:33
  *
@@ -30,9 +30,9 @@ public class SQLServer2012Dialect extends SQLServer2008Dialect {
    * <p/>
    * SELET XXX FROM T OFFSET offset FETCH NEXT limit ROWS ONLY
    *
-   * @param sql The SQL statement to base the limit query off of.
-   * @param offset Offset of the first row to be returned by the query (zero-based)
-   * @param limit Maximum number of rows to be returned by the query
+   * @param sql The SQL statement to base the limit script off of.
+   * @param offset Offset of the first row to be returned by the script (zero-based)
+   * @param limit Maximum number of rows to be returned by the script
    * @return A new SQL statement with the LIMIT clause applied.
    */
   @Override

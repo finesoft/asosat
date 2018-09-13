@@ -19,7 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * asosat-query
+ * asosat-script
  *
  * @author bingo 上午11:04:34
  *

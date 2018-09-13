@@ -17,9 +17,7 @@ import static org.asosat.kernel.util.MyStrUtils.defaultString;
 import static org.asosat.kernel.util.MyStrUtils.isNotBlank;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * asosat-query
@@ -31,28 +29,15 @@ public class Query implements Serializable {
 
   private static final long serialVersionUID = -2142303696673387541L;
 
-  public static final String QUE_MAP_ELE = "query-mapping";
-  public static final String QUE_ELE = "query";
-  public static final String QUE_DESC_ELE = "description";
-  public static final String QUE_SCPT_ELE = "script";
-  public static final String QUE_FQ_ELE = "fetch-queries";
-  public static final String QUE_HIT_ELE = "hint";
-
-  public static final String ATT_NAME = "name";
-  public static final String ATT_RST_CLS = "result-class";
-  public static final String ATT_RST_SET_CLS = "result-set-mapping";
-  public static final String ATT_CACHE = "cache";
-  public static final String ATT_VER = "version";
-
-
   String name;
-  Class<?> resultClass;
+  Class<?> resultClass = java.util.Map.class;
   Class<?> resultSetMapping;
-  boolean cache;
+  boolean cache = true;
+  boolean cacheResultSetMetadata = true;
   String description;
-  String query;
+  String script;
   List<FetchQuery> fetchQueries = new ArrayList<>();
-  Map<String, String> hints = new HashMap<>();
+  List<QueryHint> hints = new ArrayList<>();
   String version = "";
 
   /**
@@ -72,7 +57,7 @@ public class Query implements Serializable {
   /**
    * @return the hints
    */
-  public Map<String, String> getHints() {
+  public List<QueryHint> getHints() {
     return this.hints;
   }
 
@@ -81,13 +66,6 @@ public class Query implements Serializable {
    */
   public String getName() {
     return this.name;
-  }
-
-  /**
-   * @return the query
-   */
-  public String getQuery() {
-    return this.query;
   }
 
   /**
@@ -102,6 +80,13 @@ public class Query implements Serializable {
    */
   public Class<?> getResultSetMapping() {
     return this.resultSetMapping;
+  }
+
+  /**
+   * @return the script
+   */
+  public String getScript() {
+    return this.script;
   }
 
   /**
@@ -122,4 +107,10 @@ public class Query implements Serializable {
     return this.cache;
   }
 
+  /**
+   * @return the cacheResultSetMetadata
+   */
+  public boolean isCacheResultSetMetadata() {
+    return this.cacheResultSetMetadata;
+  }
 }

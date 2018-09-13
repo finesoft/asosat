@@ -27,16 +27,8 @@ public class FetchQuery implements Serializable {
 
   private static final long serialVersionUID = 449192431797295206L;
 
-  public static final String ELE_PARAM = "parameter";
-  public static final String PARAM_ATT_NME = "name";
-  public static final String PARAM_ATT_SRC = "source";
 
-  public static final String ATT_NAME = "query-name";
-  public static final String ATT_PRO_NAME = "property-name";
-  public static final String ATT_MAX_SIZE = "max-size";
-  public static final String ATT_VER = "version";
-
-  String queryName;
+  String referenceQuery;
   String propertyName;
   int maxSize;
   List<FetchQueryParameter> parameters = new ArrayList<>();
@@ -65,10 +57,10 @@ public class FetchQuery implements Serializable {
   }
 
   /**
-   * @return the queryName
+   * @return the referenceQuery
    */
-  public String getQueryName() {
-    return this.queryName;
+  public String getReferenceQuery() {
+    return this.referenceQuery;
   }
 
   /**
@@ -101,7 +93,7 @@ public class FetchQuery implements Serializable {
 
   }
 
-  public static enum FetchQueryParameterSource {
-    PARAM, RESULT
+  public enum FetchQueryParameterSource {
+    P, R
   }
 }

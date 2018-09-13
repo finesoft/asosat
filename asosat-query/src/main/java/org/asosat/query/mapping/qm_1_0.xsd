@@ -42,6 +42,7 @@
     </xsd:attribute>
     <xsd:attribute name="result-set-mapping" type="xsd:string" use="optional"></xsd:attribute>
     <xsd:attribute name="cache" type="xsd:boolean" use="optional"></xsd:attribute>
+    <xsd:attribute name="cache-resuleset-metadata" type="xsd:boolean" use="optional" default="true"></xsd:attribute>
     <xsd:attribute name="version" type="xsd:string" use="optional"></xsd:attribute>
   </xsd:complexType>
 
@@ -63,7 +64,7 @@
     <xsd:sequence>
       <xsd:element name="parameter" type="fetch-query-parameter" minOccurs="0" maxOccurs="unbounded"></xsd:element>
     </xsd:sequence>
-    <xsd:attribute name="query-name" type="xsd:string" use="required"></xsd:attribute>
+    <xsd:attribute name="reference-query" type="xsd:string" use="required"></xsd:attribute>
     <xsd:attribute name="inject-property-name" type="xsd:string" use="required"></xsd:attribute>
     <xsd:attribute name="max-fetch-size" type="xsd:positiveInteger" use="optional"></xsd:attribute>
     <xsd:attribute name="version" type="xsd:string" use="optional"></xsd:attribute>

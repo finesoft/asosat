@@ -16,7 +16,7 @@ package org.asosat.query.sql.paging.dialect;
 import org.asosat.query.sql.SqlHelper;
 
 /**
- * asosat-query
+ * asosat-script
  *
  * @author bingo 上午11:02:47
  *

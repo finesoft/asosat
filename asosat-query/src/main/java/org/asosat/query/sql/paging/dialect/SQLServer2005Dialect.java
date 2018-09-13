@@ -18,7 +18,7 @@ import java.util.Locale;
 import org.asosat.query.sql.SqlHelper;
 
 /**
- * asosat-query
+ * asosat-script
  *
  * @author bingo 上午11:03:33
  *
@@ -40,13 +40,13 @@ public class SQLServer2005Dialect extends SQLServerDialect {
    * <p/>
    * The LIMIT SQL will look like:
    * <p/>
-   * WITH query AS (SELECT TOP 100 percent ROW_NUMBER() OVER (ORDER BY CURRENT_TIMESTAMP) as
-   * __row_number__, * from table_name) SELECT * FROM query WHERE __row_number__ BETWEEN :offset and
+   * WITH script AS (SELECT TOP 100 percent ROW_NUMBER() OVER (ORDER BY CURRENT_TIMESTAMP) as
+   * __row_number__, * from table_name) SELECT * FROM script WHERE __row_number__ BETWEEN :offset and
    * :lastRows ORDER BY __row_number__
    *
-   * @param sql The SQL statement to base the limit query off of.
-   * @param offset Offset of the first row to be returned by the query (zero-based)
-   * @param limit Maximum number of rows to be returned by the query
+   * @param sql The SQL statement to base the limit script off of.
+   * @param offset Offset of the first row to be returned by the script (zero-based)
+   * @param limit Maximum number of rows to be returned by the script
    * @return A new SQL statement with the LIMIT clause applied.
    */
   protected String getLimitString(String sql, int offset, int limit) {

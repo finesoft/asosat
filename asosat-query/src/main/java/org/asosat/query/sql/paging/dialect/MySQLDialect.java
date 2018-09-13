@@ -14,7 +14,7 @@
 package org.asosat.query.sql.paging.dialect;
 
 /**
- * asosat-query
+ * asosat-script
  *
  * @author bingo 上午11:44:38
  *

@@ -15,6 +15,7 @@ package org.asosat.kernel.abstraction;
 
 import java.io.Serializable;
 import java.time.Instant;
+import org.asosat.kernel.abstraction.Entity.EntityIdentifier;
 
 /**
  * @author bingo 上午10:41:55
@@ -58,6 +59,13 @@ public interface Message extends Serializable, Readable<Message> {
     return getMetadata() == null ? null : getMetadata().getTrackingToken();
   }
 
+  public interface ExchangedMessage extends Message {
+
+    MessageIdentifier getOriginalMessage();
+
+  }
+
+
   public static interface MessageHandling extends Serializable {
 
     Instant getHandledTime();
@@ -92,6 +100,13 @@ public interface Message extends Serializable, Readable<Message> {
     default String getTrackingToken() {
       return null;
     }
+
+    void resetSequenceNumber(long sequenceNumber);
+  }
+
+  public interface MessageQueues {
+
+    static final String DFLT = "default";
 
   }
 

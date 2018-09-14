@@ -15,11 +15,11 @@ package org.asosat.thorntail.example.providers;
 
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
-import org.asosat.domains.annotation.stereotype.InfrastructureServices;
-import org.asosat.domains.message.AbstractGenericMessage;
-import org.asosat.domains.message.AbstractGenericMessageConvertor;
-import org.asosat.domains.message.ExchangedMessage;
 import org.asosat.kernel.abstraction.Message;
+import org.asosat.kernel.abstraction.Message.ExchangedMessage;
+import org.asosat.kernel.stereotype.InfrastructureServices;
+import org.asosat.message.AbstractGenericMessage;
+import org.asosat.message.AbstractGenericMessageConvertor;
 
 /**
  * @author bingo 下午3:27:05

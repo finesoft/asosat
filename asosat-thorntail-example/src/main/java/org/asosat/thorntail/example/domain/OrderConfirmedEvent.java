@@ -13,7 +13,7 @@
  */
 package org.asosat.thorntail.example.domain;
 
-import org.asosat.domains.event.AbstractEvent;
+import org.asosat.domain.event.AbstractEvent;
 
 /**
  * asosat-thorntail-example

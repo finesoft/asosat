@@ -117,9 +117,11 @@
 	<description>A series of skills and technology (asosat) for enterprise system development.</description>
 	<modules>
 		<module>asosat-kernel</module>
-		<module>asosat-domains</module>
-		<module>asosat-thorntail-example</module>
+		<module>asosat-unitwork</module>
 		<module>asosat-query</module>
 		<module>asosat-search</module>
-	</modules>
+		<module>asosat-domain</module>
+		<module>asosat-message</module>
+		<module>asosat-thorntail-example</module>
+  </modules>
 </project>

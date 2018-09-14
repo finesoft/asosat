@@ -40,7 +40,17 @@
 			</dependency>
 			<dependency>
 				<groupId>org.asosat</groupId>
-				<artifactId>asosat-domains</artifactId>
+				<artifactId>asosat-domain</artifactId>
+				<version>${xversion.asosat}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.asosat</groupId>
+				<artifactId>asosat-message</artifactId>
+				<version>${xversion.asosat}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.asosat</groupId>
+				<artifactId>asosat-unitwork</artifactId>
 				<version>${xversion.asosat}</version>
 			</dependency>
 		</dependencies>
@@ -102,7 +112,15 @@
 		</dependency>
 		<dependency>
 			<groupId>org.asosat</groupId>
-			<artifactId>asosat-domains</artifactId>
+			<artifactId>asosat-domain</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.asosat</groupId>
+			<artifactId>asosat-unitwork</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.asosat</groupId>
+			<artifactId>asosat-message</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.jms</groupId>

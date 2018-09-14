@@ -14,6 +14,7 @@
 package org.asosat.kernel.abstraction;
 
 import java.io.Serializable;
+import javax.persistence.EntityManager;
 
 /**
  * @author bingo 上午12:26:44
@@ -25,4 +26,20 @@ public interface Entity extends Serializable {
    * @return
    */
   Serializable getId();
+
+  public static interface EntityIdentifier extends Value, Readable<EntityIdentifier> {
+
+    Serializable getId();
+
+    Serializable getType();
+
+  }
+
+  @FunctionalInterface
+  public static interface EntityManagerProvider {
+
+    EntityManager getEntityManager();
+
+  }
+
 }

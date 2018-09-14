@@ -34,14 +34,14 @@ public interface Query<Q, P> {
     return func.apply(t, this);
   }
 
-  <T> IteratedList<T> iterating(Q q, P param);
+  <T> ContinuousList<T> continuing(Q q, P param);
 
-  default <R, T> IteratedList<T> iterating(Q q, P param, BiFunction<R, Query<Q, P>, T> func) {
-    IteratedList<R> raw = iterating(q, param);
+  default <R, T> ContinuousList<T> continuing(Q q, P param, BiFunction<R, Query<Q, P>, T> func) {
+    ContinuousList<R> raw = continuing(q, param);
     if (raw == null) {
-      return IteratedList.inst();
+      return ContinuousList.inst();
     } else {
-      IteratedList<T> result = new IteratedList<>();
+      ContinuousList<T> result = new ContinuousList<>();
       return result
           .withData(
               raw.getData().stream().map(i -> func.apply(i, this)).collect(Collectors.toList()))
@@ -77,19 +77,19 @@ public interface Query<Q, P> {
 
   <T> Stream<T> stream(Q q, P param);
 
-  public static class IteratedList<T> {
+  public static class ContinuousList<T> {
 
     private boolean hasNext;
     private final List<T> data = new ArrayList<>();
 
-    IteratedList() {}
+    ContinuousList() {}
 
-    public static <T> IteratedList<T> inst() {
-      return new IteratedList<>();
+    public static <T> ContinuousList<T> inst() {
+      return new ContinuousList<>();
     }
 
-    public static <T> IteratedList<T> of(List<T> data, boolean hasNext) {
-      IteratedList<T> il = new IteratedList<>();
+    public static <T> ContinuousList<T> of(List<T> data, boolean hasNext) {
+      ContinuousList<T> il = new ContinuousList<>();
       return il.withHasNext(hasNext).withHasNext(hasNext);
     }
 
@@ -107,7 +107,7 @@ public interface Query<Q, P> {
       return hasNext;
     }
 
-    public IteratedList<T> withData(List<T> data) {
+    public ContinuousList<T> withData(List<T> data) {
       this.data.clear();
       if (data != null) {
         this.data.addAll(data);
@@ -115,7 +115,7 @@ public interface Query<Q, P> {
       return this;
     }
 
-    public IteratedList<T> withHasNext(boolean hasNext) {
+    public ContinuousList<T> withHasNext(boolean hasNext) {
       this.hasNext = hasNext;
       return this;
     }

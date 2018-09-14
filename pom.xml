@@ -120,8 +120,6 @@
 		<module>asosat-search</module>
 		<module>asosat-domain</module>
 		<module>asosat-message</module>
-		
-    
-    <module>asosat-zest-throntail</module>
+    	<module>asosat-zest-throntail</module>
   </modules>
 </project>

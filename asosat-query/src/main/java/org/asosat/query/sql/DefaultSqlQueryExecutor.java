@@ -17,8 +17,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.sql.DataSource;
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.StatementConfiguration;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.MapHandler;
@@ -34,8 +34,11 @@ public class DefaultSqlQueryExecutor implements SqlQueryExecutor {
 
   protected QueryRunner runner;
 
-  public DefaultSqlQueryExecutor(DataSource dataSource) {
-    this.runner = new QueryRunner(dataSource);
+  public DefaultSqlQueryExecutor(SqlQueryConfiguration confiuration) {
+    this.runner = new QueryRunner(confiuration.getDataSource(),
+        new StatementConfiguration(confiuration.getFetchDirection(), confiuration.getFetchSize(),
+            confiuration.getMaxFieldSize(), confiuration.getMaxRows(),
+            confiuration.getQueryTimeout()));
   }
 
   @Override

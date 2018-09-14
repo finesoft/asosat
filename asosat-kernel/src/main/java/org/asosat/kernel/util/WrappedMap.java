@@ -13,9 +13,20 @@
  */
 package org.asosat.kernel.util;
 
-import static org.asosat.kernel.util.MyMapUtils.getMapEnumValue;
+import static org.asosat.kernel.util.MyMapUtils.getMapBigDecimal;
+import static org.asosat.kernel.util.MyMapUtils.getMapBigInteger;
+import static org.asosat.kernel.util.MyMapUtils.getMapBoolean;
+import static org.asosat.kernel.util.MyMapUtils.getMapCurrency;
+import static org.asosat.kernel.util.MyMapUtils.getMapDouble;
+import static org.asosat.kernel.util.MyMapUtils.getMapEnum;
+import static org.asosat.kernel.util.MyMapUtils.getMapFloat;
+import static org.asosat.kernel.util.MyMapUtils.getMapInstant;
+import static org.asosat.kernel.util.MyMapUtils.getMapInteger;
+import static org.asosat.kernel.util.MyMapUtils.getMapList;
+import static org.asosat.kernel.util.MyMapUtils.getMapLocalDate;
+import static org.asosat.kernel.util.MyMapUtils.getMapLocale;
+import static org.asosat.kernel.util.MyMapUtils.getMapLong;
 import static org.asosat.kernel.util.MyMapUtils.getMapValue;
-import static org.asosat.kernel.util.MyMapUtils.getMapValueList;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
@@ -62,105 +73,103 @@ public interface WrappedMap<K, V> extends Map<K, V> {
   }
 
   default BigDecimal getBigDecimal(K key) {
-    return getMapValue(unwrap(), key, ConvertUtils::toBigDecimal);
+    return getMapBigDecimal(unwrap(), key);
   }
 
   default BigDecimal getBigDecimal(K key, BigDecimal dflt) {
-    return getMapValue(unwrap(), key, ConvertUtils::toBigDecimal, dflt);
+    return getMapBigDecimal(unwrap(), key, dflt);
   }
 
   default BigInteger getBigInteger(K key) {
-    return getMapValue(unwrap(), key, ConvertUtils::toBigInteger);
+    return getMapBigInteger(unwrap(), key);
   }
 
   default BigInteger getBigInteger(K key, BigInteger dflt) {
-    return getMapValue(unwrap(), key, ConvertUtils::toBigInteger, dflt);
+    return getMapBigInteger(unwrap(), key, dflt);
   }
 
   default Boolean getBoolean(K key) {
-    return getMapValue(unwrap(), key, ConvertUtils::toBoolean);
+    return getMapBoolean(unwrap(), key);
   }
 
   default Currency getCurrency(K key) {
-    return getMapValue(unwrap(), key, ConvertUtils::toCurrency);
+    return getMapCurrency(unwrap(), key);
   }
 
   default Currency getCurrency(K key, Currency dflt) {
-    return getMapValue(unwrap(), key, ConvertUtils::toCurrency, dflt);
+    return getMapCurrency(unwrap(), key, dflt);
   }
 
   default Double getDouble(K key) {
-    return getMapValue(unwrap(), key, ConvertUtils::toDouble);
+    return getMapDouble(unwrap(), key);
   }
 
   default Double getDouble(K key, Double dflt) {
-    return getMapValue(unwrap(), key, ConvertUtils::toDouble, dflt);
+    return getMapDouble(unwrap(), key, dflt);
   }
 
   default <T extends Enum<T>> T getEnum(K key, final Class<T> enumClazz) {
-    return getMapEnumValue(unwrap(), key, enumClazz);
+    return getMapEnum(unwrap(), key, enumClazz);
   }
 
   default <T extends Enum<T>> T getEnum(K key, final Class<T> enumClazz, T dflt) {
-    T enumObj = this.getEnum(key, enumClazz);
-    return enumObj == null ? dflt : enumObj;
+    return getMapEnum(unwrap(), key, enumClazz, dflt);
   }
 
   default Float getFloat(K key) {
-    return getMapValue(unwrap(), key, ConvertUtils::toFloat);
+    return getMapFloat(unwrap(), key);
   }
 
   default Float getFloat(K key, Float dflt) {
-    return getMapValue(unwrap(), key, ConvertUtils::toFloat, dflt);
+    return getMapFloat(unwrap(), key, dflt);
   }
 
   default Instant getInstant(K key) {
-    return getMapValue(unwrap(), key, ConvertUtils::toInstant);
+    return getMapInstant(unwrap(), key);
   }
 
   default Instant getInstant(K key, Instant dflt) {
-    return getMapValue(unwrap(), key, ConvertUtils::toInstant, dflt);
+    return getMapInstant(unwrap(), key, dflt);
   }
 
   default Integer getInteger(K key) {
-    return getMapValue(unwrap(), key, ConvertUtils::toInteger);
+    return getMapInteger(unwrap(), key);
   }
 
   default Integer getInteger(K key, Integer dflt) {
-    return getMapValue(unwrap(), key, ConvertUtils::toInteger, dflt);
+    return getMapInteger(unwrap(), key, dflt);
   }
 
-  @SuppressWarnings("unchecked")
   default <T> List<T> getList(K key) {
-    return getList(key, o -> (T) o);
+    return getMapList(unwrap(), key);
   }
 
   default <T> List<T> getList(K key, final Function<Object, T> objFunc) {
-    return getMapValueList(unwrap(), key, (v) -> ConvertUtils.toList(v, objFunc));
+    return getMapList(unwrap(), key, objFunc);
   }
 
   default LocalDate getLocalDate(K key) {
-    return getMapValue(unwrap(), key, ConvertUtils::toLocalDate);
+    return getMapLocalDate(unwrap(), key);
   }
 
   default LocalDate getLocalDate(K key, LocalDate dflt) {
-    return getMapValue(unwrap(), key, ConvertUtils::toLocalDate, dflt);
+    return getMapLocalDate(unwrap(), key, dflt);
   }
 
   default Locale getLocale(K key) {
-    return getMapValue(unwrap(), key, ConvertUtils::toLocale);
+    return getMapLocale(unwrap(), key);
   }
 
   default Locale getLocale(K key, Locale dflt) {
-    return getMapValue(unwrap(), key, ConvertUtils::toLocale, dflt);
+    return getMapLocale(unwrap(), key, dflt);
   }
 
   default Long getLong(K key) {
-    return getMapValue(unwrap(), key, ConvertUtils::toLong);
+    return getMapLong(unwrap(), key);
   }
 
   default Long getLong(K key, Long dflt) {
-    return getMapValue(unwrap(), key, ConvertUtils::toLong, dflt);
+    return getMapLong(unwrap(), key, dflt);
   }
 
   @SuppressWarnings("rawtypes")

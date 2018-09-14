@@ -13,13 +13,18 @@
  */
 package org.asosat.query.mapping;
 
+import java.io.Serializable;
+
 /**
  * asosat-query
  *
  * @author bingo 下午7:35:54
  *
  */
-public class QueryHint {
+public class QueryHint implements Serializable {
+
+  private static final long serialVersionUID = 50753651544743202L;
+
   private String key;
   private String value;
 

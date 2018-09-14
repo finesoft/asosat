@@ -13,9 +13,15 @@
  */
 package org.asosat.kernel.util;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -80,20 +86,142 @@ public class MyMapUtils {
     return p;
   }
 
-  /**
-   * Return enum instance from supplied map and key and enum class type, the value with supplied key
-   * may be String/int.
-   *
-   * @param map
-   * @param key
-   * @param enumClazz
-   * @return bingo 下午4:01:15
-   */
-  public static <T extends Enum<T>> T getMapEnumValue(final Map<?, ?> map, final Object key,
+  public static BigDecimal getMapBigDecimal(final Map<?, ?> map, final Object key) {
+    return getMapValue(map, key, ConvertUtils::toBigDecimal);
+  }
+
+  public static BigDecimal getMapBigDecimal(final Map<?, ?> map, final Object key,
+      BigDecimal dflt) {
+    return getMapValue(map, key, ConvertUtils::toBigDecimal, dflt);
+  }
+
+  public static BigInteger getMapBigInteger(final Map<?, ?> map, final Object key) {
+    return getMapValue(map, key, ConvertUtils::toBigInteger);
+  }
+
+  public static BigInteger getMapBigInteger(final Map<?, ?> map, final Object key,
+      BigInteger dflt) {
+    return getMapValue(map, key, ConvertUtils::toBigInteger, dflt);
+  }
+
+  public static Boolean getMapBoolean(final Map<?, ?> map, final Object key) {
+    return getMapValue(map, key, ConvertUtils::toBoolean);
+  }
+
+  public static Currency getMapCurrency(final Map<?, ?> map, final Object key) {
+    return getMapValue(map, key, ConvertUtils::toCurrency);
+  }
+
+  public static Currency getMapCurrency(final Map<?, ?> map, final Object key, Currency dflt) {
+    return getMapValue(map, key, ConvertUtils::toCurrency, dflt);
+  }
+
+  public static Double getMapDouble(final Map<?, ?> map, final Object key) {
+    return getMapValue(map, key, ConvertUtils::toDouble);
+  }
+
+  public static Double getMapDouble(final Map<?, ?> map, final Object key, Double dflt) {
+    return getMapValue(map, key, ConvertUtils::toDouble, dflt);
+  }
+
+  public static <T extends Enum<T>> T getMapEnum(final Map<?, ?> map, final Object key,
       final Class<T> enumClazz) {
     return map != null && key != null && map.containsKey(key)
         ? ConvertUtils.toEnum(map.get(key), enumClazz)
         : null;
+  }
+
+  public static <T extends Enum<T>> T getMapEnum(final Map<?, ?> map, final Object key,
+      final Class<T> enumClazz, T dflt) {
+    T enumObj = getMapEnum(map, key, enumClazz);
+    return enumObj == null ? dflt : enumObj;
+  }
+
+  public static Float getMapFloat(final Map<?, ?> map, final Object key) {
+    return getMapValue(map, key, ConvertUtils::toFloat);
+  }
+
+  public static Float getMapFloat(final Map<?, ?> map, final Object key, Float dflt) {
+    return getMapValue(map, key, ConvertUtils::toFloat, dflt);
+  }
+
+  public static Instant getMapInstant(final Map<?, ?> map, final Object key) {
+    return getMapValue(map, key, ConvertUtils::toInstant);
+  }
+
+  public static Instant getMapInstant(final Map<?, ?> map, final Object key, Instant dflt) {
+    return getMapValue(map, key, ConvertUtils::toInstant, dflt);
+  }
+
+  public static Integer getMapInteger(final Map<?, ?> map, final Object key) {
+    return getMapValue(map, key, ConvertUtils::toInteger);
+  }
+
+  public static Integer getMapInteger(final Map<?, ?> map, final Object key, Integer dflt) {
+    return getMapValue(map, key, ConvertUtils::toInteger, dflt);
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T> List<T> getMapList(final Map<?, ?> map, final Object key) {
+    return getMapList(map, key, o -> (T) o);
+  }
+
+  public static <T> List<T> getMapList(final Map<?, ?> map, final Object key,
+      final Function<Object, T> objFunc) {
+    return getMapValueList(map, key, (v) -> ConvertUtils.toList(v, objFunc));
+  }
+
+  public static LocalDate getMapLocalDate(final Map<?, ?> map, final Object key) {
+    return getMapValue(map, key, ConvertUtils::toLocalDate);
+  }
+
+  public static LocalDate getMapLocalDate(final Map<?, ?> map, final Object key, LocalDate dflt) {
+    return getMapValue(map, key, ConvertUtils::toLocalDate, dflt);
+  }
+
+  public static Locale getMapLocale(final Map<?, ?> map, final Object key) {
+    return getMapValue(map, key, ConvertUtils::toLocale);
+  }
+
+  public static Locale getMapLocale(final Map<?, ?> map, final Object key, Locale dflt) {
+    return getMapValue(map, key, ConvertUtils::toLocale, dflt);
+  }
+
+  public static Long getMapLong(final Map<?, ?> map, final Object key) {
+    return getMapValue(map, key, ConvertUtils::toLong);
+  }
+
+  public static Long getMapLong(final Map<?, ?> map, final Object key, Long dflt) {
+    return getMapValue(map, key, ConvertUtils::toLong, dflt);
+  }
+
+  @SuppressWarnings("rawtypes")
+  public static Map getMapMap(final Map<?, ?> map, final Object key) {
+    Object v = map.get(key);
+    if (v == null) {
+      return null;
+    } else if (v instanceof Map) {
+      return (Map) v;
+    } else {
+      throw new RuntimeException("Can't get map from key " + key);
+    }
+  }
+
+  public static Short getMapShort(final Map<?, ?> map, final Object key) {
+    return getMapValue(map, key, ConvertUtils::toShort);
+  }
+
+  public static Short getMapShort(final Map<?, ?> map, final Object key, Short dflt) {
+    return getMapValue(map, key, ConvertUtils::toShort, dflt);
+  }
+
+  public static String getMapString(final Map<?, ?> map, final Object key) {
+    return getMapValue(map, key, ConvertUtils::toString);
+  }
+
+  public static String getMapString(final Map<?, ?> map, final Object key, String dflt) {
+    String att = getMapValue(map, key, ConvertUtils::toString);
+    return att == null ? dflt : att;
   }
 
   public static <T> T getMapValue(final Map<?, ?> map, final Object key,

@@ -13,6 +13,7 @@
  */
 package org.asosat.query.sql;
 
+import java.sql.ResultSet;
 import javax.sql.DataSource;
 import org.asosat.query.sql.paging.dialect.Dialect;
 
@@ -22,10 +23,30 @@ import org.asosat.query.sql.paging.dialect.Dialect;
  * @author bingo 下午5:56:03
  *
  */
-public interface SqlDataSource {
+public interface SqlQueryConfiguration {
 
   DataSource getDataSource();
 
   Dialect getDialect();
+
+  default Integer getFetchDirection() {
+    return ResultSet.FETCH_UNKNOWN;
+  }
+
+  default Integer getFetchSize() {
+    return 16;
+  }
+
+  default Integer getMaxFieldSize() {
+    return 0;
+  }
+
+  default Integer getMaxRows() {
+    return 0;
+  }
+
+  default Integer getQueryTimeout() {
+    return 0;
+  }
 
 }

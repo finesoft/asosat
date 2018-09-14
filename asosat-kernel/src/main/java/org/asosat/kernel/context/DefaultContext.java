@@ -17,7 +17,6 @@ import java.lang.annotation.Annotation;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.CDI;
-import org.asosat.kernel.annotation.AsynchronousEvent;
 import org.asosat.kernel.pattern.command.Command;
 import org.asosat.kernel.pattern.command.Commander;
 
@@ -60,21 +59,24 @@ public class DefaultContext {
     return CTX.getBeanManager().getEvent();
   }
 
+  public static void fireAsyncEvent(org.asosat.kernel.abstraction.Event event,
+      Annotation... qualifiers) {
+    if (event != null) {
+      if (qualifiers.length > 0) {
+        event().select(qualifiers).fireAsync(event);
+      } else {
+        event().fireAsync(event);
+      }
+    }
+  }
+
   public static void fireEvent(org.asosat.kernel.abstraction.Event event,
       Annotation... qualifiers) {
     if (event != null) {
-      if (event.getClass().isAnnotationPresent(AsynchronousEvent.class)) {
-        if (qualifiers.length > 0) {
-          event().select(qualifiers).fireAsync(event);
-        } else {
-          event().fireAsync(event);
-        }
+      if (qualifiers.length > 0) {
+        event().select(qualifiers).fire(event);
       } else {
-        if (qualifiers.length > 0) {
-          event().select(qualifiers).fire(event);
-        } else {
-          event().fire(event);
-        }
+        event().fire(event);
       }
     }
   }

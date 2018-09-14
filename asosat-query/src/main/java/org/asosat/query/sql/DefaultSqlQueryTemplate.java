@@ -15,16 +15,12 @@ package org.asosat.query.sql;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import org.asosat.query.QueryRuntimeException;
-import org.asosat.query.mapping.FetchQuery;
-import org.asosat.query.mapping.ParameterMapping;
+import org.asosat.query.dynamic.FreemarkerQueryTemplate;
+import org.asosat.query.dynamic.QueryTemplateMethodModelEx;
 import org.asosat.query.mapping.Query;
-import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 /**
@@ -33,52 +29,44 @@ import freemarker.template.TemplateException;
  * @author bingo 下午7:46:22
  *
  */
-public class DefaultSqlQueryTemplate {
-  final String name;
-  final Template scriptTpl;
-  final Map<String, ParameterMapping> paramMappings;
-  final long lastModified;
-  final Class<?> resultClass;
-  final List<FetchQuery> fetchQueries = new ArrayList<>();
+public class DefaultSqlQueryTemplate
+    extends FreemarkerQueryTemplate<DefaultSqlQueryParameter, Object[]> {
 
-  DefaultSqlQueryTemplate(Query query) {
-    this.fetchQueries.addAll(query.getFetchQueries());
-    this.name = query.getName();
-    this.resultClass = query.getResultClass() == null ? Map.class : query.getResultClass();
-    try {
-      this.scriptTpl =
-          new Template(this.name, query.getScript(), DefaultSqlQueryParameterResolver.FM_CFG);
-      this.paramMappings = Collections.unmodifiableMap(query.getParamMappings());
-      this.lastModified = Instant.now().toEpochMilli();
-    } catch (IOException e) {
-      throw new QueryRuntimeException(e);
-    }
+  /**
+   * @param query
+   */
+  public DefaultSqlQueryTemplate(Query query) {
+    super(query);
   }
 
-  ScriptAndParam process(Map<String, Object> param) {
+  @Override
+  public DefaultSqlQueryParameter doProcess(Map<String, Object> param) {
     StringWriter sw = new StringWriter();
     try {
-      this.scriptTpl.process(param, sw);
+      Map<String, Object> paramClone = new HashMap<>(param);
+      this.getTemplate().process(paramClone, sw);
     } catch (TemplateException | IOException | NullPointerException e) {
       throw new QueryRuntimeException("Freemarker process stringTemplate is error", e);
     }
-    return new ScriptAndParam(sw.toString(), new Object[0]); // TODO FIXME
+    return new DefaultSqlQueryParameter(sw.toString(), new Object[0], this.getResultClass(),
+        this.getFetchQueries());// FIXME process parameter
   }
 
-  public static class ScriptAndParam {
-
-    final String script;
-    final Object[] params;
-
-    /**
-     * @param script
-     * @param params
-     */
-    public ScriptAndParam(String script, Object[] params) {
-      super();
-      this.script = script;
-      this.params = params;
-    }
-
+  @Override
+  protected QueryTemplateMethodModelEx<Object[]> getTemplateMethodModel() {
+    return new DefaultSqlTemplateMethodModelEx();
   }
+
+  @Override
+  protected void postProcess(DefaultSqlQueryParameter result,
+      QueryTemplateMethodModelEx<Object[]> qtmm) {
+    result.withParam(qtmm.getParameters());
+    super.postProcess(result, qtmm);
+  }
+
+  @Override
+  protected void preProcess(Map<String, Object> param, QueryTemplateMethodModelEx<Object[]> qtmm) {
+    super.preProcess(param, qtmm);
+  }
+
 }

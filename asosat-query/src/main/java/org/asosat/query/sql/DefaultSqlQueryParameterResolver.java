@@ -22,7 +22,6 @@ import org.asosat.query.QueryRuntimeException;
 import org.asosat.query.mapping.FetchQuery;
 import org.asosat.query.mapping.Query;
 import org.asosat.query.mapping.QueryMappingService;
-import freemarker.template.Configuration;
 
 /**
  * asosat-query
@@ -34,8 +33,6 @@ import freemarker.template.Configuration;
 public class DefaultSqlQueryParameterResolver
     implements ParameterResolver<String, Map<String, Object>, String, Object[], FetchQuery> {
 
-  static final Configuration FM_CFG = new Configuration(Configuration.VERSION_2_3_28);
-
   final Map<String, DefaultSqlQueryTemplate> cachedQueryTpls = new ConcurrentHashMap<>();
 
   @Inject
@@ -43,8 +40,7 @@ public class DefaultSqlQueryParameterResolver
 
   @Override
   public DefaultSqlQueryParameter resolve(String key, Map<String, Object> param) {
-    return new DefaultSqlQueryParameter(
-        this.cachedQueryTpls.computeIfAbsent(key, this::buildQueryTemplate), param);
+    return this.cachedQueryTpls.computeIfAbsent(key, this::buildQueryTemplate).process(param);
   }
 
   protected DefaultSqlQueryTemplate buildQueryTemplate(String key) {

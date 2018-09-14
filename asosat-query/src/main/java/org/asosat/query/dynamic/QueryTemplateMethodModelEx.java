@@ -11,35 +11,24 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.sql;
+package org.asosat.query.dynamic;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateMethodModelEx;
-import freemarker.template.TemplateModelException;
 
 /**
  * asosat-query
  *
- * @author bingo 下午7:56:57
+ * @author bingo 下午5:40:20
  *
  */
-public class DefaultTemplateMethodModelEx implements TemplateMethodModelEx {
+public interface QueryTemplateMethodModelEx<CP> extends TemplateMethodModelEx {
 
-  public static final SimpleScalar SQL_PLACE_HOLDER = new SimpleScalar("?");
+  CP getParameters();
 
-  private List<Object> parameters = new ArrayList<>();
+  QueryTemplateMethodModelType getType();
 
-  @SuppressWarnings("rawtypes")
-  @Override
-  public Object exec(List arguments) throws TemplateModelException {
-    return null;
-  }
-
-  public List<Object> getParameters() {
-    return Collections.unmodifiableList(this.parameters);
+  public enum QueryTemplateMethodModelType {
+    SQLTMM, MONGOTMM, ELASTICTMM
   }
 
 }

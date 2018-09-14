@@ -29,8 +29,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.asosat.kernel.abstraction.EntityReference;
+import org.asosat.kernel.abstraction.Precondition.SinglePrecondition;
 import org.asosat.kernel.exception.GeneralRuntimeException;
-import org.asosat.kernel.util.Precondition.SinglePrecondition;
 
 /**
  * @author bingo 2013年6月24日

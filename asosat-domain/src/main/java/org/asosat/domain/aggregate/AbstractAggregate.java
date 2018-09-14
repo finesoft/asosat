@@ -63,6 +63,14 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
   }
 
   /**
+   * Publish event to bus.
+   */
+  @Override
+  public void fireAsync(Event event, Annotation... qualifiers) {
+    this.callAssistant().fireAsync(event, qualifiers);
+  }
+
+  /**
    * Return an aggregate evolutionary version number, this is equivalent to
    * {@link javax.persistence.Version} in JPA
    */

@@ -104,6 +104,14 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
   }
 
   @Override
+  public void fireAsync(Event event, Annotation... qualifiers) {
+    if (event != null) {
+      this.logger.log(Level.FINE, String.format(FIRE_LOG, event.toString()));
+      DefaultContext.fireAsyncEvent(event, qualifiers);
+    }
+  }
+
+  @Override
   public Aggregate getAggregate() {
     return this.aggregate;
   }

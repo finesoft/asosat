@@ -13,11 +13,10 @@
  */
 package org.asosat.query.sql;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import org.asosat.query.ParameterResolver.Parameter;
 import org.asosat.query.mapping.FetchQuery;
-import org.asosat.query.sql.DefaultSqlQueryTemplate.ScriptAndParam;
 
 /**
  * asosat-query
@@ -28,18 +27,37 @@ import org.asosat.query.sql.DefaultSqlQueryTemplate.ScriptAndParam;
 public class DefaultSqlQueryParameter implements Parameter<String, Object[], FetchQuery> {
 
   final String script;
-  final Object[] convertedParams;
+  Object[] convertedParams;
   final Class<?> resultClass;
   final List<FetchQuery> fetchQueries;
 
-  public DefaultSqlQueryParameter(DefaultSqlQueryTemplate tpl, Map<String, Object> param) {
+
+  /**
+   * @param script
+   * @param resultClass
+   * @param fetchQueries
+   */
+  public DefaultSqlQueryParameter(String script, Class<?> resultClass,
+      List<FetchQuery> fetchQueries) {
     super();
-    this.fetchQueries = tpl.fetchQueries;
-    ScriptAndParam snp = tpl.process(param);
-    this.script = snp.script;
-    this.convertedParams = snp.params;
-    this.resultClass = tpl.resultClass;
+    this.script = script;
+    this.resultClass = resultClass;
+    this.fetchQueries = fetchQueries;
   }
+
+
+  /**
+   * @param script
+   * @param convertedParams
+   * @param resultClass
+   * @param fetchQueries
+   */
+  public DefaultSqlQueryParameter(String script, Object[] convertedParams, Class<?> resultClass,
+      List<FetchQuery> fetchQueries) {
+    this(script, resultClass, fetchQueries);
+    this.setConvertedParams(convertedParams);
+  }
+
 
   @Override
   public Object[] getConvertedParameters() {
@@ -65,4 +83,12 @@ public class DefaultSqlQueryParameter implements Parameter<String, Object[], Fet
     return this.script;
   }
 
+  void setConvertedParams(Object[] param) {
+    this.convertedParams = param == null ? new Object[0] : Arrays.copyOf(param, param.length);
+  }
+
+  DefaultSqlQueryParameter withParam(Object[] convertedParams) {
+    this.setConvertedParams(convertedParams);
+    return this;
+  }
 }

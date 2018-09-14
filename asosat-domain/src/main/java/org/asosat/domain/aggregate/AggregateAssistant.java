@@ -38,9 +38,14 @@ public interface AggregateAssistant {
   List<Message> extractMessages(boolean flush);
 
   /**
-   * Handle aggregate event
+   * fire aggregate event
    */
   void fire(Event event, Annotation... qualifiers);
+
+  /**
+   * fire aggregate asynchronous event
+   */
+  void fireAsync(Event event, Annotation... qualifiers);
 
   /**
    * The aggregate which it serve

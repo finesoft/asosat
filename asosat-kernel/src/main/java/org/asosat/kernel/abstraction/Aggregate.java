@@ -35,6 +35,11 @@ public interface Aggregate extends Entity, Being, Readable<Aggregate> {
   void fire(Event event, Annotation... qualifiers);
 
   /**
+   * fire asynchronous events
+   */
+  void fireAsync(Event event, Annotation... qualifiers);
+
+  /**
    * In this case, it means whether it is persisted or not
    */
   default boolean isEnabled() {

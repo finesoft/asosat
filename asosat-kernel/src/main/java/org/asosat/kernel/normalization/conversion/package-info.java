@@ -11,14 +11,10 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.dynamic;
-
 /**
- * asosat-query
- *
- * @author bingo 下午4:25:27
+ * asosat-kernel
+ * 
+ * @author bingo 下午11:28:13
  *
  */
-public interface ParameterConvertor<T> {
-  T convert(Object raw);
-}
+package org.asosat.kernel.normalization.conversion;

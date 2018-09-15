@@ -113,7 +113,7 @@ public abstract class FreemarkerQueryTemplate<T, P> implements QueryTemplate<T> 
   protected void preProcess(Map<String, Object> param, QueryTemplateMethodModelEx<P> qtmm) {
     this.getParamConvertSchema().forEach((pn, pc) -> {
       if (param.containsKey(pn)) {
-        param.put(pn, ParameterConvertors.convert(param.get(pn), pc));
+        // param.put(pn, ParameterConvertors.convert(param.get(pn), pc));
       }
     });
     param.put(qtmm.getType().name(), qtmm);

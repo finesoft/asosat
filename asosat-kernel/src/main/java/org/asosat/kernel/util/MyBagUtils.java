@@ -14,6 +14,7 @@
 package org.asosat.kernel.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -47,6 +48,18 @@ public class MyBagUtils {
       }
     }
     return col;
+  }
+
+  public static Collection<?> asCollection(Object obj) {
+    if (obj == null) {
+      return new ArrayList<>();
+    } else if (obj instanceof Collection) {
+      return (Collection<?>) obj;
+    } else if (obj.getClass().isArray()) {
+      return new ArrayList<>(Arrays.asList((Object[]) obj));
+    } else {
+      return new ArrayList<>(Arrays.asList(new Object[] {obj}));
+    }
   }
 
   @SafeVarargs

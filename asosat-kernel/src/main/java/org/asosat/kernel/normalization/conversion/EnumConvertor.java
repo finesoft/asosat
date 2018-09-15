@@ -24,6 +24,10 @@ import org.apache.commons.beanutils.converters.AbstractConverter;
 public class EnumConvertor extends AbstractConverter implements Convertor {
 
 
+  public static void main(String... strings) {
+    System.out.println(Enum.class.isEnum());
+  }
+
   public static <T extends Enum<T>> T toEnum(Object obj, Class<T> enumClazz) {
     if (obj instanceof Enum<?> && obj.getClass().isAssignableFrom(enumClazz)) {
       return enumClazz.cast(obj);

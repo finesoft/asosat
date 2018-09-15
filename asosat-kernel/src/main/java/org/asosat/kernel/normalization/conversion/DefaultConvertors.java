@@ -13,6 +13,12 @@
  */
 package org.asosat.kernel.normalization.conversion;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.util.Currency;
+import java.util.TimeZone;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.ConvertUtilsBean;
@@ -29,8 +35,11 @@ public class DefaultConvertors implements Convertors {
 
   ConvertUtilsBean provider = BeanUtilsBean.getInstance().getConvertUtils();
 
+  EnumConvertor enumConvertor = new EnumConvertor();
+
   @Override
   public Object convert(Object value, Class<?> clazz) {
+    this.autoRegisterEnumConvertor(clazz);
     return this.provider.convert(value, clazz);
   }
 
@@ -52,6 +61,25 @@ public class DefaultConvertors implements Convertors {
   @Override
   public <T> void register(Convertor convertor, Class<T> clazz) {
     this.provider.register(convertor, clazz);
+  }
+
+  protected void autoRegisterEnumConvertor(Class<?> clazz) {
+    if (clazz != null && clazz.isEnum() && this.provider.lookup(clazz) == null) {
+      synchronized (this) {
+        if (this.provider.lookup(clazz) == null) {
+          this.provider.register(this.enumConvertor, clazz);
+        }
+      }
+    }
+  }
+
+  @PostConstruct
+  void init() {
+    this.provider.register(new InstantConvertor(), Instant.class);
+    this.provider.register(new LocalDateConvertor(), LocalDate.class);
+    this.provider.register(new CurrencyConvertor(), Currency.class);
+    this.provider.register(new TimeZoneConvertor(), TimeZone.class);
+    this.provider.register(new ZonedDateTimeConvertor(), ZonedDateTime.class);
   }
 
 }

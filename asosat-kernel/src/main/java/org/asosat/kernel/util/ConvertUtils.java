@@ -51,8 +51,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.asosat.kernel.context.DefaultSetting;
 import org.asosat.kernel.exception.KernelRuntimeException;
+import org.asosat.kernel.normalization.setting.DefaultSetting;
 
 /**
  * @author bingo 上午12:29:05

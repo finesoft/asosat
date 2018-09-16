@@ -13,7 +13,6 @@
  */
 package org.asosat.query.sql;
 
-import java.sql.ResultSet;
 import javax.sql.DataSource;
 import org.asosat.query.sql.paging.dialect.Dialect;
 
@@ -30,7 +29,7 @@ public interface SqlQueryConfiguration {
   Dialect getDialect();
 
   default Integer getFetchDirection() {
-    return ResultSet.FETCH_UNKNOWN;
+    return null;
   }
 
   default Integer getFetchSize() {

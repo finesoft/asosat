@@ -28,7 +28,7 @@ public interface QueryTemplateMethodModelEx<CP> extends TemplateMethodModelEx {
   QueryTemplateMethodModelType getType();
 
   public enum QueryTemplateMethodModelType {
-    SQLTMM, MONGOTMM, ELASTICTMM
+    SP, MP, EP
   }
 
 }

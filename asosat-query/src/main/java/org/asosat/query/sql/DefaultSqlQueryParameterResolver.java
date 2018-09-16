@@ -34,7 +34,7 @@ import org.asosat.query.mapping.QueryMappingService;
 public class DefaultSqlQueryParameterResolver
     implements ParameterResolver<String, Map<String, Object>, String, Object[], FetchQuery> {
 
-  final Map<String, DefaultSqlQueryTemplate> cachedQueryTpls = new ConcurrentHashMap<>();
+  final Map<String, DefaultSqlQueryTemplate> cachedQueTpls = new ConcurrentHashMap<>();
 
   @Inject
   QueryMappingService mappingService;
@@ -44,7 +44,7 @@ public class DefaultSqlQueryParameterResolver
 
   @Override
   public DefaultSqlQueryParameter resolve(String key, Map<String, Object> param) {
-    return this.cachedQueryTpls.computeIfAbsent(key, this::buildQueryTemplate).process(param);
+    return this.cachedQueTpls.computeIfAbsent(key, this::buildQueryTemplate).process(param);
   }
 
   protected DefaultSqlQueryTemplate buildQueryTemplate(String key) {

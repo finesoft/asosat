@@ -117,32 +117,8 @@ public class FetchQuery implements Serializable {
     private static final long serialVersionUID = 5013658267151165784L;
 
     private String name;
+    private String sourceName;
     private FetchQueryParameterSource source;
-
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj) {
-        return true;
-      }
-      if (obj == null) {
-        return false;
-      }
-      if (this.getClass() != obj.getClass()) {
-        return false;
-      }
-      FetchQueryParameter other = (FetchQueryParameter) obj;
-      if (this.name == null) {
-        if (other.name != null) {
-          return false;
-        }
-      } else if (!this.name.equals(other.name)) {
-        return false;
-      }
-      if (this.source != other.source) {
-        return false;
-      }
-      return true;
-    }
 
     /**
      * @return the name
@@ -158,13 +134,11 @@ public class FetchQuery implements Serializable {
       return this.source;
     }
 
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-      result = prime * result + ((this.source == null) ? 0 : this.source.hashCode());
-      return result;
+    /**
+     * @return the sourceName
+     */
+    public String getSourceName() {
+      return this.sourceName;
     }
 
     void setName(String name) {
@@ -173,6 +147,10 @@ public class FetchQuery implements Serializable {
 
     void setSource(FetchQueryParameterSource source) {
       this.source = source;
+    }
+
+    void setSourceName(String sourceName) {
+      this.sourceName = sourceName;
     }
 
   }

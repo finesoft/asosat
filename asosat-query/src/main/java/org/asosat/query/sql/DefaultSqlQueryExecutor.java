@@ -50,10 +50,12 @@ public class DefaultSqlQueryExecutor implements SqlQueryExecutor {
   @Override
   public <T> T get(String sql, Class<T> resultClass, Object... args) throws SQLException {
     if (Map.class.isAssignableFrom(resultClass)) {
-      Object obj = this.getRunner().query(sql, new MapHandler(), args);
+      Object obj = (args.length > 0) ? this.getRunner().query(sql, new MapHandler(), args)
+          : this.getRunner().query(sql, new MapHandler());
       return obj == null ? null : (T) obj;
     } else {
-      return this.getRunner().query(sql, new BeanHandler<>(resultClass), args);
+      return (args.length > 0) ? this.getRunner().query(sql, new BeanHandler<>(resultClass), args)
+          : this.getRunner().query(sql, new BeanHandler<>(resultClass));
     }
   }
 
@@ -68,10 +70,13 @@ public class DefaultSqlQueryExecutor implements SqlQueryExecutor {
   public <T> List<T> select(String sql, Class<T> resultClass, Object... args) throws SQLException {
     if (Map.class.isAssignableFrom(resultClass)) {
       @SuppressWarnings("rawtypes")
-      List tmp = this.getRunner().query(sql, new MapListHandler(), args);
+      List tmp = (args.length > 0) ? this.getRunner().query(sql, new MapListHandler(), args)
+          : this.getRunner().query(sql, new MapListHandler());
       return tmp == null ? new ArrayList<>() : tmp;
     } else {
-      List<T> tmp = this.getRunner().query(sql, new BeanListHandler<>(resultClass), args);
+      List<T> tmp =
+          (args.length > 0) ? this.getRunner().query(sql, new BeanListHandler<>(resultClass), args)
+              : this.getRunner().query(sql, new BeanListHandler<>(resultClass));
       return tmp == null ? new ArrayList<>() : tmp;
     }
   }

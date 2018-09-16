@@ -15,9 +15,16 @@ package org.asosat.query.sql;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.asosat.query.QueryRuntimeException;
 import org.asosat.query.dynamic.QueryTemplateMethodModelEx;
+import freemarker.ext.util.WrapperTemplateModel;
 import freemarker.template.SimpleScalar;
+import freemarker.template.TemplateBooleanModel;
+import freemarker.template.TemplateDateModel;
 import freemarker.template.TemplateModelException;
+import freemarker.template.TemplateNumberModel;
+import freemarker.template.TemplateScalarModel;
+import freemarker.template.TemplateSequenceModel;
 
 /**
  * asosat-query
@@ -31,10 +38,25 @@ public class DefaultSqlTemplateMethodModelEx implements QueryTemplateMethodModel
 
   private List<Object> parameters = new ArrayList<>();
 
-  @SuppressWarnings("rawtypes")
+  @SuppressWarnings({"rawtypes"})
   @Override
   public Object exec(List arguments) throws TemplateModelException {
-    return null;
+    if (arguments != null && arguments.size() == 1) {
+      Object arg = this.getParamValue(arguments.get(0));
+      if (arg instanceof List) {
+        List ss = List.class.cast(arg);
+        List<String> sphs = new ArrayList<>(ss.size());
+        for (int i = 0; i < ss.size(); i++) {
+          this.parameters.add(ss.get(i));
+          sphs.add(SQL_PLACE_HOLDER.getAsString());
+        }
+        return new SimpleScalar(String.join(",", sphs.toArray(new String[0])));
+      } else {
+        this.parameters.add(arg);
+        return SQL_PLACE_HOLDER;
+      }
+    }
+    return arguments;
   }
 
   @Override
@@ -44,7 +66,31 @@ public class DefaultSqlTemplateMethodModelEx implements QueryTemplateMethodModel
 
   @Override
   public QueryTemplateMethodModelType getType() {
-    return QueryTemplateMethodModelType.SQLTMM;
+    return QueryTemplateMethodModelType.SP;
+  }
+
+  Object getParamValue(Object arg) throws TemplateModelException {
+    if (arg instanceof TemplateScalarModel) {
+      return ((TemplateScalarModel) arg).getAsString().trim();
+    } else if (arg instanceof TemplateDateModel) {
+      return ((TemplateDateModel) arg).getAsDate();
+    } else if (arg instanceof TemplateNumberModel) {
+      return ((TemplateNumberModel) arg).getAsNumber();
+    } else if (arg instanceof TemplateBooleanModel) {
+      return ((TemplateBooleanModel) arg).getAsBoolean();
+    } else if (arg instanceof TemplateSequenceModel) {
+      List<Object> list = new ArrayList<>();
+      TemplateSequenceModel ss = (TemplateSequenceModel) arg;
+      for (int i = 0; i < ss.size(); i++) {
+        list.add(this.getParamValue(ss.get(i)));
+      }
+      return list;
+    } else if (arg instanceof WrapperTemplateModel) {
+      return ((WrapperTemplateModel) arg).getWrappedObject();
+    } else {
+      throw new QueryRuntimeException(
+          "Unknow arguement,the class is " + (arg == null ? "null" : arg.getClass()));
+    }
   }
 
 }

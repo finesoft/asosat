@@ -81,6 +81,7 @@
       <xsd:documentation>The fetch query parameters</xsd:documentation>
     </xsd:annotation>
     <xsd:attribute name="name" type="xsd:string" use="required"></xsd:attribute>
+     <xsd:attribute name="source-name" type="xsd:string" use="required"></xsd:attribute>
     <xsd:attribute name="source" type="fetch-query-parameter-source" use="required"></xsd:attribute>
   </xsd:complexType>
 

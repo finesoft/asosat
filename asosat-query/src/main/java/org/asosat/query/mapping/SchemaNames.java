@@ -47,6 +47,7 @@ public class SchemaNames {
   public static final String FQE_ELE_PARAM = "parameter";
   public static final String FQE_ELE_PARAM_ATT_NME = "name";
   public static final String FQE_ELE_PARAM_ATT_SRC = "source";
+  public static final String FQE_ELE_PARAM_ATT_SRC_NME = "source-name";
   public static final String FQE_ATT_NAME = "reference-query";
   public static final String FQE_ATT_PRO_NAME = "inject-property-name";
   public static final String FQE_ATT_MAX_SIZE = "max-size";

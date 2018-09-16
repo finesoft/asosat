@@ -312,13 +312,8 @@ public class Conversions {
   }
 
   public static TimeZone toTimeZone(Object obj) {
-    if (obj == null) {
-      return null;
-    } else if (obj instanceof TimeZone) {
-      return (TimeZone) obj;
-    } else {
-      return TimeZone.getTimeZone(obj.toString());
-    }
+    Object val = provider.convert(obj, TimeZone.class);
+    return val != null ? TimeZone.class.cast(val) : null;
   }
 
   public static ZonedDateTime toZonedDateTime(Object obj) {

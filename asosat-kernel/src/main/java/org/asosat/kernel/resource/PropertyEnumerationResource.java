@@ -28,7 +28,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.apache.commons.vfs2.PatternFileSelector;
 import org.asosat.kernel.context.DefaultContext;
-import org.asosat.kernel.util.ConvertUtils;
+import org.asosat.kernel.normalization.conversion.Conversions;
 
 /**
  * @author bingo 上午10:30:07
@@ -143,9 +143,9 @@ public class PropertyEnumerationResource implements EnumerationResource {
   @PostConstruct
   synchronized void init() {
     if (this.config != null) {
-      this.pathRegex = this.config.getValue(ENUM_REC_PATH_REG_KEY, ConvertUtils::toString,
+      this.pathRegex = this.config.getValue(ENUM_REC_PATH_REG_KEY, Conversions::toString,
           DFLT_ENUM_REF_PATH_REG);
-      this.lazyLoad = this.config.getValue(ENUM_REC_LOAD_WAY, ConvertUtils::toBoolean, false);
+      this.lazyLoad = this.config.getValue(ENUM_REC_LOAD_WAY, Conversions::toBoolean, false);
     }
     if (!this.lazyLoad) {
       this.load();

@@ -11,45 +11,50 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.normalization.conversion;
+package org.asosat.kernel.normalization.conversion.convertor;
 
+import java.util.TimeZone;
 import org.apache.commons.beanutils.converters.AbstractConverter;
+import org.asosat.kernel.normalization.conversion.Convertor;
 
 /**
  * asosat-kernel
  *
- * @author bingo 上午12:28:27
+ * @author bingo 上午1:25:21
  *
  */
-public class EnumConvertor extends AbstractConverter implements Convertor {
+public class TimeZoneConvertor extends AbstractConverter implements Convertor {
 
 
-  public static void main(String... strings) {
-    System.out.println(Enum.class.isEnum());
+
+  /**
+   *
+   */
+  public TimeZoneConvertor() {
+    super();
   }
 
-  public static <T extends Enum<T>> T toEnum(Object obj, Class<T> enumClazz) {
-    if (obj instanceof Enum<?> && obj.getClass().isAssignableFrom(enumClazz)) {
-      return enumClazz.cast(obj);
-    } else if (obj != null) {
-      String str = obj.toString();
-      if (str.chars().allMatch(Character::isDigit)) {
-        return enumClazz.getEnumConstants()[Integer.parseInt(str)];
-      } else {
-        return Enum.valueOf(enumClazz, str);
-      }
+  /**
+   * @param defaultValue
+   */
+  public TimeZoneConvertor(TimeZone defaultValue) {
+    super(defaultValue);
+  }
+
+  public static TimeZone toTimeZone(Object obj) {
+    if (obj == null) {
+      return null;
+    } else if (obj instanceof TimeZone) {
+      return (TimeZone) obj;
+    } else {
+      return TimeZone.getTimeZone(obj.toString());
     }
-    return null;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   protected <T> T convertToType(Class<T> type, Object value) throws Throwable {
-    if (type != null && type.isEnum()) {
-      @SuppressWarnings("rawtypes")
-      Class _type = type;
-      Object obj = toEnum(value, _type);
-      return type.cast(obj);
+    if (type != null && type.equals(TimeZone.class)) {
+      return type.cast(toTimeZone(value));
     }
     throw this.conversionException(type, value);
   }

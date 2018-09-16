@@ -11,12 +11,13 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.normalization.conversion;
+package org.asosat.kernel.normalization.conversion.convertor;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.Temporal;
 import org.apache.commons.beanutils.converters.AbstractConverter;
+import org.asosat.kernel.normalization.conversion.Convertor;
 
 /**
  * asosat-kernel
@@ -25,6 +26,22 @@ import org.apache.commons.beanutils.converters.AbstractConverter;
  *
  */
 public class ZonedDateTimeConvertor extends AbstractConverter implements Convertor {
+
+
+
+  /**
+   *
+   */
+  public ZonedDateTimeConvertor() {
+    super();
+  }
+
+  /**
+   * @param defaultValue
+   */
+  public ZonedDateTimeConvertor(ZonedDateTime defaultValue) {
+    super(defaultValue);
+  }
 
   public static ZonedDateTime toZonedDateTime(Object obj, ZonedDateTime dfltVal) {
     if (obj instanceof ZonedDateTime) {

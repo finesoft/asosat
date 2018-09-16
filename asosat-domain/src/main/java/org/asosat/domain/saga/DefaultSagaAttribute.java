@@ -20,8 +20,8 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.MappedSuperclass;
 import org.asosat.kernel.abstraction.DynamicAttributes.DynamicAttributeType;
+import org.asosat.kernel.normalization.conversion.Conversions;
 import org.asosat.kernel.abstraction.Value;
-import org.asosat.kernel.util.ConvertUtils;
 
 /**
  * @author bingo 下午5:59:30
@@ -54,13 +54,13 @@ public class DefaultSagaAttribute implements SagaAttribute, Value {
   public DefaultSagaAttribute(String name, Boolean boolValue) {
     this.setType(DynamicAttributeType.BOOL);
     this.setName(name);
-    this.setBoolValue(ConvertUtils.toBoolean(boolValue));
+    this.setBoolValue(Conversions.toBoolean(boolValue));
   }
 
   public DefaultSagaAttribute(String name, Number numberValue) {
     this.setType(DynamicAttributeType.NUMBER);
     this.setName(name);
-    this.setNumberValue(ConvertUtils.toBigDecimal(numberValue));
+    this.setNumberValue(Conversions.toBigDecimal(numberValue));
   }
 
   public DefaultSagaAttribute(String name, String stringValue) {
@@ -72,7 +72,7 @@ public class DefaultSagaAttribute implements SagaAttribute, Value {
   public DefaultSagaAttribute(String name, Temporal temporalValue) {
     this.setType(DynamicAttributeType.TEMPORAL);
     this.setName(name);
-    this.setTemporalValue(ConvertUtils.toZonedDateTime(temporalValue));
+    this.setTemporalValue(Conversions.toZonedDateTime(temporalValue));
   }
 
   protected DefaultSagaAttribute() {}

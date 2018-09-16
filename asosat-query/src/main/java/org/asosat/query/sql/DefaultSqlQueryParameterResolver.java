@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import org.asosat.kernel.normalization.conversion.ConversionService;
 import org.asosat.query.ParameterResolver;
 import org.asosat.query.QueryRuntimeException;
 import org.asosat.query.mapping.FetchQuery;
@@ -38,6 +39,9 @@ public class DefaultSqlQueryParameterResolver
   @Inject
   QueryMappingService mappingService;
 
+  @Inject
+  ConversionService conversionService;
+
   @Override
   public DefaultSqlQueryParameter resolve(String key, Map<String, Object> param) {
     return this.cachedQueryTpls.computeIfAbsent(key, this::buildQueryTemplate).process(param);
@@ -48,7 +52,7 @@ public class DefaultSqlQueryParameterResolver
     if (query == null) {
       throw new QueryRuntimeException("Can not found Query for key " + key);
     }
-    return new DefaultSqlQueryTemplate(query);
+    return new DefaultSqlQueryTemplate(query, this.conversionService);
   }
 
 }

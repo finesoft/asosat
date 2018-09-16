@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.normalization.conversion;
+package org.asosat.kernel.normalization.conversion.convertor;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.commons.beanutils.ConversionException;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.AbstractConverter;
+import org.asosat.kernel.normalization.conversion.Convertor;
 import org.asosat.kernel.util.MyBagUtils;
 
 /**
@@ -29,6 +30,20 @@ import org.asosat.kernel.util.MyBagUtils;
  *
  */
 public class LocalDateConvertor extends AbstractConverter implements Convertor {
+
+  /**
+   *
+   */
+  public LocalDateConvertor() {
+    super();
+  }
+
+  /**
+   * @param defaultValue
+   */
+  public LocalDateConvertor(LocalDate defaultValue) {
+    super(defaultValue);
+  }
 
   static LocalDate toLocalDate(Object obj, LocalDate dfltVal) {
     if (obj instanceof LocalDate) {

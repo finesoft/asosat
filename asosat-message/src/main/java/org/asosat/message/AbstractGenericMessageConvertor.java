@@ -29,9 +29,9 @@ import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.asosat.kernel.abstraction.Message.ExchangedMessage;
 import org.asosat.kernel.abstraction.MessageService.MessageConvertor;
 import org.asosat.kernel.exception.GeneralRuntimeException;
+import org.asosat.kernel.normalization.conversion.Conversions;
 import org.asosat.kernel.resource.ConfigResource;
 import org.asosat.kernel.stereotype.InfrastructureServices;
-import org.asosat.kernel.util.ConvertUtils;
 import org.asosat.kernel.util.JpaUtils;
 
 /**
@@ -78,7 +78,7 @@ public abstract class AbstractGenericMessageConvertor<P, A> implements MessageCo
   @PostConstruct
   @SuppressWarnings("unchecked")
   protected synchronized void enable() {
-    String paths = this.configResource.getValue(MSG_PKG, ConvertUtils::toString, DFLT_MSG_PKG);
+    String paths = this.configResource.getValue(MSG_PKG, Conversions::toString, DFLT_MSG_PKG);
     for (String path : paths.split(MSG_QUE_SPT)) {
       getClassPathPackageClassNames(path).forEach(clz -> {
         Class<?> cls = tryToLoadClassForName(clz);

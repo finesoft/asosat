@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import org.asosat.kernel.normalization.conversion.Conversions;
 
 /**
  * @author bingo 下午10:20:44
@@ -185,19 +186,19 @@ public interface WrappedMap<K, V> extends Map<K, V> {
   }
 
   default Short getShort(K key) {
-    return getMapValue(unwrap(), key, ConvertUtils::toShort);
+    return getMapValue(unwrap(), key, Conversions::toShort);
   }
 
   default Short getShort(K key, Short dflt) {
-    return getMapValue(unwrap(), key, ConvertUtils::toShort, dflt);
+    return getMapValue(unwrap(), key, Conversions::toShort, dflt);
   }
 
   default String getString(K key) {
-    return getMapValue(unwrap(), key, ConvertUtils::toString);
+    return getMapValue(unwrap(), key, Conversions::toString);
   }
 
   default String getString(K key, String dflt) {
-    String att = getMapValue(unwrap(), key, ConvertUtils::toString);
+    String att = getMapValue(unwrap(), key, Conversions::toString);
     return att == null ? dflt : att;
   }
 

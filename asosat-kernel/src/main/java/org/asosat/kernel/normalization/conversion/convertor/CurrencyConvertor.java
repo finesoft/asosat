@@ -11,48 +11,50 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.normalization.conversion;
+package org.asosat.kernel.normalization.conversion.convertor;
 
-import java.time.Instant;
-import java.time.temporal.Temporal;
+import java.util.Currency;
 import org.apache.commons.beanutils.converters.AbstractConverter;
+import org.asosat.kernel.normalization.conversion.Convertor;
 
 /**
  * asosat-kernel
  *
- * @author bingo 上午12:56:12
+ * @author bingo 上午12:47:19
  *
  */
-public class InstantConvertor extends AbstractConverter implements Convertor {
+public class CurrencyConvertor extends AbstractConverter implements Convertor {
 
 
-  public static Instant toInstant(Object obj, Instant dfltVal) {
-    if (obj instanceof Instant) {
-      return (Instant) obj;
-    } else if (obj instanceof Long) {
-      return Instant.ofEpochMilli((Long) obj);
-    } else if (obj instanceof Temporal) {
-      return Instant.from((Temporal) obj);
-    } else if (obj instanceof java.util.Date) {
-      return Instant.ofEpochMilli(((java.util.Date) obj).getTime());
-    } else if (obj != null) {
-      return Instant.parse(obj.toString());
-    } else {
-      return dfltVal;
-    }
+  /**
+   *
+   */
+  public CurrencyConvertor() {
+    super();
+  }
+
+  /**
+   * @param defaultValue
+   */
+  public CurrencyConvertor(Currency defaultValue) {
+    super(defaultValue);
   }
 
   @Override
   protected <T> T convertToType(Class<T> type, Object value) throws Throwable {
-    if (type != null && type.equals(Instant.class)) {
-      return type.cast(toInstant(value, null));
+    if (type != null && type.equals(Currency.class)) {
+      if (value instanceof Currency) {
+        return type.cast(value);
+      } else {
+        return type.cast(Currency.getInstance(value.toString()));
+      }
     }
     throw this.conversionException(type, value);
   }
 
   @Override
   protected Class<?> getDefaultType() {
-    return Instant.class;
+    return Currency.class;
   }
 
 }

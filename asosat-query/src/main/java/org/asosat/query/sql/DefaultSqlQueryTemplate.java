@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import org.asosat.kernel.normalization.conversion.ConversionService;
 import org.asosat.query.QueryRuntimeException;
 import org.asosat.query.dynamic.FreemarkerQueryTemplate;
 import org.asosat.query.dynamic.QueryTemplateMethodModelEx;
@@ -35,8 +36,8 @@ public class DefaultSqlQueryTemplate
   /**
    * @param query
    */
-  public DefaultSqlQueryTemplate(Query query) {
-    super(query);
+  public DefaultSqlQueryTemplate(Query query, ConversionService conversionService) {
+    super(query, conversionService);
   }
 
   @Override

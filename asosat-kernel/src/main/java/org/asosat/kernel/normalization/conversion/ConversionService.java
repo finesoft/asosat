@@ -13,33 +13,24 @@
  */
 package org.asosat.kernel.normalization.conversion;
 
-import java.util.Currency;
-import org.apache.commons.beanutils.converters.AbstractConverter;
+import org.apache.commons.beanutils.Converter;
 
 /**
  * asosat-kernel
  *
- * @author bingo 上午12:47:19
+ * @author bingo 上午12:16:42
  *
  */
-public class CurrencyConvertor extends AbstractConverter implements Convertor {
+public interface ConversionService {
 
+  Object convert(final Object value, final Class<?> clazz);
 
-  @Override
-  protected <T> T convertToType(Class<T> type, Object value) throws Throwable {
-    if (type != null && type.equals(Currency.class)) {
-      if (value instanceof Currency) {
-        return type.cast(value);
-      } else {
-        return type.cast(Currency.getInstance(value.toString()));
-      }
-    }
-    throw this.conversionException(type, value);
-  }
+  void deregister(Class<?> clazz);
 
-  @Override
-  protected Class<?> getDefaultType() {
-    return Currency.class;
-  }
+  Convertor getConvertor(Class<?> targetType);
+
+  Converter getConvertor(final Class<?> sourceType, final Class<?> targetType);
+
+  <T> void register(Convertor convertor, Class<T> clazz);
 
 }

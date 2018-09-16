@@ -18,9 +18,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.transaction.Transactional;
+import org.asosat.kernel.normalization.conversion.Conversions;
 import org.asosat.kernel.pattern.command.Command;
 import org.asosat.kernel.pattern.command.CommandHandler;
-import org.asosat.kernel.util.ConvertUtils;
 import org.asosat.zest.throntail.domain.Order;
 
 /**
@@ -85,9 +85,9 @@ public class SaveOrder {
     public Long handle(SaveOrderCmd command) {
       Order order = new Order(command.getNumber(), command.getSeller(), command.getBuyer());
       command.getItems().forEach(i -> {
-        order.addItem(getMapValue(i, "product", ConvertUtils::toString),
-            getMapValue(i, "qty", ConvertUtils::toBigDecimal),
-            getMapValue(i, "unitPrice", ConvertUtils::toBigDecimal));
+        order.addItem(getMapValue(i, "product", Conversions::toString),
+            getMapValue(i, "qty", Conversions::toBigDecimal),
+            getMapValue(i, "unitPrice", Conversions::toBigDecimal));
       });
       return order.enable(null, (p, o) -> System.out.println("We will save the order!")).getId();
     }

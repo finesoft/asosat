@@ -21,4 +21,8 @@ package org.asosat.kernel.normalization.conversion;
  */
 public interface Convertor extends org.apache.commons.beanutils.Converter {
 
+  @Override
+  <T> T convert(Class<T> type, Object value);
+
+
 }

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.asosat.kernel.normalization.conversion.ConversionService;
 import org.asosat.query.QueryRuntimeException;
 import org.asosat.query.mapping.FetchQuery;
 import org.asosat.query.mapping.Query;
@@ -42,12 +43,14 @@ public abstract class FreemarkerQueryTemplate<T, P> implements QueryTemplate<T> 
   final long cachedTimestemp;
   final Class<?> resultClass;
   final List<FetchQuery> fetchQueries;
+  final ConversionService conversionService;
 
-  public FreemarkerQueryTemplate(Query query) {
-    if (query == null) {
+  public FreemarkerQueryTemplate(Query query, ConversionService conversionService) {
+    if (query == null || conversionService == null) {
       throw new QueryRuntimeException(
           "Can not initialize freemarker query template from null query param!");
     }
+    this.conversionService = conversionService;
     this.fetchQueries = Collections.unmodifiableList(query.getFetchQueries());
     this.queryName = query.getName();
     this.resultClass = query.getResultClass() == null ? Map.class : query.getResultClass();
@@ -113,7 +116,7 @@ public abstract class FreemarkerQueryTemplate<T, P> implements QueryTemplate<T> 
   protected void preProcess(Map<String, Object> param, QueryTemplateMethodModelEx<P> qtmm) {
     this.getParamConvertSchema().forEach((pn, pc) -> {
       if (param.containsKey(pn)) {
-        // param.put(pn, ParameterConvertors.convert(param.get(pn), pc));
+        param.put(pn, this.conversionService.convert(param.get(pn), pc));
       }
     });
     param.put(qtmm.getType().name(), qtmm);

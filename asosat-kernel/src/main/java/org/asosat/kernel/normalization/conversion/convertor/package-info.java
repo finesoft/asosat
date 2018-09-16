@@ -11,26 +11,10 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.normalization.conversion;
-
-import org.apache.commons.beanutils.Converter;
-
 /**
  * asosat-kernel
- *
- * @author bingo 上午12:16:42
+ * 
+ * @author bingo 上午8:34:06
  *
  */
-public interface Convertors {
-
-  Object convert(final Object value, final Class<?> clazz);
-
-  void deregister(Class<?> clazz);
-
-  Convertor getConvertor(Class<?> targetType);
-
-  Converter getConvertor(final Class<?> sourceType, final Class<?> targetType);
-
-  <T> void register(Convertor convertor, Class<T> clazz);
-
-}
+package org.asosat.kernel.normalization.conversion.convertor;

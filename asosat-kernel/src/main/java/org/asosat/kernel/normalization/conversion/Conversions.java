@@ -11,26 +11,20 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.util;
+package org.asosat.kernel.normalization.conversion;
 
-import static org.asosat.kernel.util.MyBagUtils.asSet;
 import static org.asosat.kernel.util.MyClsUtils.isSimpleClass;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Currency;
 import java.util.Deque;
 import java.util.HashMap;
@@ -50,43 +44,82 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConvertUtilsBean;
+import org.apache.commons.beanutils.converters.BigDecimalConverter;
+import org.apache.commons.beanutils.converters.BigIntegerConverter;
+import org.apache.commons.beanutils.converters.BooleanConverter;
+import org.apache.commons.beanutils.converters.ByteConverter;
+import org.apache.commons.beanutils.converters.CharacterConverter;
+import org.apache.commons.beanutils.converters.DoubleConverter;
+import org.apache.commons.beanutils.converters.FloatConverter;
+import org.apache.commons.beanutils.converters.IntegerConverter;
+import org.apache.commons.beanutils.converters.LongConverter;
+import org.apache.commons.beanutils.converters.ShortConverter;
+import org.apache.commons.beanutils.converters.StringConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.asosat.kernel.exception.KernelRuntimeException;
-import org.asosat.kernel.normalization.setting.DefaultSetting;
+import org.asosat.kernel.normalization.conversion.convertor.CurrencyConvertor;
+import org.asosat.kernel.normalization.conversion.convertor.EnumConvertor;
+import org.asosat.kernel.normalization.conversion.convertor.InstantConvertor;
+import org.asosat.kernel.normalization.conversion.convertor.LocalDateConvertor;
+import org.asosat.kernel.normalization.conversion.convertor.TimeZoneConvertor;
+import org.asosat.kernel.normalization.conversion.convertor.ZonedDateTimeConvertor;
+import org.asosat.kernel.util.MyBagUtils;
+import org.asosat.kernel.util.MyObjUtils;
 
 /**
  * @author bingo 上午12:29:05
  *
  */
-public class ConvertUtils {
+public class Conversions {
 
-  protected static final Set<String> BOOLEAN_TRUE_STRS =
-      Collections.unmodifiableSet(asSet("1", "t", "true", "y", "yes", "是", "对"));
+  static ConvertUtilsBean provider = new ConvertUtilsBean();
 
-  protected ConvertUtils() {}
+  static Convertor enumConvertor = new EnumConvertor();
+
+  static {
+    synchronized (provider) {
+      provider.register(true, false, 0);
+      provider.register(new BooleanConverter(new String[] {"true", "yes", "y", "on", "1", "是"},
+          new String[] {"false", "no", "n", "off", "0", "否"}, false), Boolean.class);
+      provider.register(new ByteConverter(null), Byte.class);
+      provider.register(new CharacterConverter(null), Character.class);
+      provider.register(new DoubleConverter(null), Double.class);
+      provider.register(new FloatConverter(null), Float.class);
+      provider.register(new IntegerConverter(null), Integer.class);
+      provider.register(new LongConverter(null), Long.class);
+      provider.register(new ShortConverter(null), Short.class);
+      provider.register(new StringConverter(null), String.class);
+      provider.register(new BigDecimalConverter(null), BigDecimal.class);
+      provider.register(new BigIntegerConverter(null), BigInteger.class);
+      provider.register(new InstantConvertor(), Instant.class);
+      provider.register(new LocalDateConvertor(), LocalDate.class);
+      provider.register(new CurrencyConvertor(), Currency.class);
+      provider.register(new TimeZoneConvertor(), TimeZone.class);
+      provider.register(new ZonedDateTimeConvertor(), ZonedDateTime.class);
+    }
+  }
+
+  protected Conversions() {}
+
+
+  public static void main(String... dfltVal) {
+    System.out.println(Conversions.toBigDecimal("123.45"));
+    System.out.println(Conversions.toBigInteger("12312"));
+    System.out.println(Conversions.toBoolean("否"));
+  }
 
   public static BigDecimal toBigDecimal(Object obj) {
     return toBigDecimal(obj, null);
   }
 
   public static BigDecimal toBigDecimal(Object obj, BigDecimal dfltVal) {
-    if (obj instanceof BigDecimal) {
-      return (BigDecimal) obj;
-    } else {
-      BigDecimal casted = dfltVal;
-      if (obj != null) {
-        try {
-          casted = new BigDecimal(obj.toString());
-        } catch (NumberFormatException e) {
-          throw new KernelRuntimeException(e);
-        }
-      }
-      return casted;
-    }
+    Object val = provider.convert(obj, BigDecimal.class);
+    return val != null ? BigDecimal.class.cast(val) : dfltVal;
   }
 
   public static List<BigDecimal> toBigDecimalList(Object obj) {
-    return toList(obj, ConvertUtils::toBigDecimal);
+    return toList(obj, Conversions::toBigDecimal);
   }
 
   public static BigInteger toBigInteger(Object obj) {
@@ -94,48 +127,21 @@ public class ConvertUtils {
   }
 
   public static BigInteger toBigInteger(Object obj, BigInteger dfltVal) {
-    if (obj instanceof BigInteger) {
-      return (BigInteger) obj;
-    } else {
-      BigInteger casted = dfltVal;
-      if (obj != null) {
-        try {
-          casted = new BigInteger(obj.toString());
-        } catch (NumberFormatException e) {
-          throw new KernelRuntimeException(e);
-        }
-      }
-      return casted;
-    }
+    Object val = provider.convert(obj, BigInteger.class);
+    return val != null ? BigInteger.class.cast(val) : dfltVal;
   }
 
   public static List<BigInteger> toBigIntegerList(Object obj) {
-    return toList(obj, ConvertUtils::toBigInteger);
+    return toList(obj, Conversions::toBigInteger);
   }
 
   public static Boolean toBoolean(Object obj) {
-    if (obj instanceof Boolean) {
-      return (Boolean) obj;
-    } else if (obj instanceof Number) {
-      return ((Number) obj).intValue() > 0 ? Boolean.TRUE : Boolean.FALSE;
-    } else if (obj != null) {
-      return BOOLEAN_TRUE_STRS.contains(obj.toString().trim().toLowerCase(DefaultSetting.LOCALE))
-          ? Boolean.TRUE
-          : Boolean.FALSE;
-    } else {
-      return Boolean.FALSE;
-    }
+    Object val = provider.convert(obj, Boolean.class);
+    return val == null ? Boolean.FALSE : Boolean.class.cast(val);
   }
 
-
   public static Character toCharacter(Object obj) {
-    if (obj == null) {
-      return null;
-    } else if (obj instanceof Character) {
-      return (Character) obj;
-    } else {
-      return Character.valueOf(obj.toString().charAt(0));
-    }
+    return Character.class.cast(provider.convert(obj, Character.class));
   }
 
   public static Currency toCurrency(Object obj) {
@@ -143,13 +149,8 @@ public class ConvertUtils {
   }
 
   public static Currency toCurrency(Object obj, Currency dfltVal) {
-    if (obj == null) {
-      return dfltVal;
-    } else if (obj instanceof Currency) {
-      return (Currency) obj;
-    } else {
-      return Currency.getInstance(obj.toString());
-    }
+    Object val = provider.convert(obj, Currency.class);
+    return val != null ? Currency.class.cast(val) : dfltVal;
   }
 
   public static Double toDouble(Object obj) {
@@ -157,40 +158,23 @@ public class ConvertUtils {
   }
 
   public static Double toDouble(Object obj, Double dfltVal) {
-    if (obj instanceof byte[]) {
-      return EncryptUtils.toDouble((byte[]) obj);
-    } else {
-      Number num = toNumber(obj);
-      if (num == null) {
-        return dfltVal;
-      } else if (num instanceof Double) {
-        return (Double) num;
-      }
-      return Double.valueOf(num.doubleValue());
-    }
+    Object val = provider.convert(obj, Double.class);
+    return val != null ? Double.class.cast(val) : dfltVal;
   }
 
   public static List<Double> toDoubleList(Object obj) {
-    return toList(obj, ConvertUtils::toDouble);
+    return toList(obj, Conversions::toDouble);
   }
 
   @SuppressWarnings("unchecked")
   public static <T extends Enum<T>> T toEnum(Object obj, Class<T> enumClazz) {
-    if (obj instanceof Enum<?> && obj.getClass().isAssignableFrom(enumClazz)) {
-      return (T) obj;
-    } else if (obj != null) {
-      String str = obj.toString();
-      if (str.chars().allMatch(Character::isDigit)) {
-        return enumClazz.getEnumConstants()[Integer.parseInt(str)];
-      } else {
-        return Enum.valueOf(enumClazz, str);
-      }
-    }
-    return null;
+    autoRegisterEnumConvertor(enumClazz);
+    Object val = provider.convert(obj, enumClazz);
+    return val != null ? (T) val : null;
   }
 
   public static <T extends Enum<T>> List<T> toEnumList(Object obj, Class<T> enumClazz) {
-    List<T> list = toList(obj, e -> ConvertUtils.toEnum(e, enumClazz));
+    List<T> list = toList(obj, e -> Conversions.toEnum(e, enumClazz));
     if (list.isEmpty() && obj != null) {
       final Deque<StringBuilder> tpl = new LinkedList<>();
       tpl.add(new StringBuilder());
@@ -221,21 +205,12 @@ public class ConvertUtils {
   }
 
   public static Float toFloat(Object obj, Float dfltVal) {
-    if (obj instanceof byte[]) {
-      return EncryptUtils.toFloat((byte[]) obj);
-    } else {
-      Number num = toNumber(obj);
-      if (num == null) {
-        return dfltVal;
-      } else if (num instanceof Float) {
-        return (Float) num;
-      }
-      return Float.valueOf(num.floatValue());
-    }
+    Object val = provider.convert(obj, Float.class);
+    return val != null ? Float.class.cast(val) : dfltVal;
   }
 
   public static List<Float> toFloatList(Object obj) {
-    return toList(obj, ConvertUtils::toFloat);
+    return toList(obj, Conversions::toFloat);
   }
 
   public static Instant toInstant(Object obj) {
@@ -243,23 +218,12 @@ public class ConvertUtils {
   }
 
   public static Instant toInstant(Object obj, Instant dfltVal) {
-    if (obj instanceof Instant) {
-      return (Instant) obj;
-    } else if (obj instanceof Long) {
-      return Instant.ofEpochMilli((Long) obj);
-    } else if (obj instanceof Temporal) {
-      return Instant.from((Temporal) obj);
-    } else if (obj instanceof java.util.Date) {
-      return Instant.ofEpochMilli(((java.util.Date) obj).getTime());
-    } else if (obj != null) {
-      return Instant.parse(obj.toString());
-    } else {
-      return dfltVal;
-    }
+    Object val = provider.convert(obj, Instant.class);
+    return val != null ? Instant.class.cast(val) : dfltVal;
   }
 
   public static List<Instant> toInstantList(Object obj) {
-    return toList(obj, ConvertUtils::toInstant);
+    return toList(obj, Conversions::toInstant);
   }
 
   public static Integer toInteger(Object obj) {
@@ -267,21 +231,12 @@ public class ConvertUtils {
   }
 
   public static Integer toInteger(Object obj, Integer dfltVal) {
-    if (obj instanceof byte[]) {
-      return EncryptUtils.toInt((byte[]) obj);
-    } else {
-      Number num = toNumber(obj);
-      if (num == null) {
-        return dfltVal;
-      } else if (num instanceof Integer) {
-        return (Integer) num;
-      }
-      return Integer.valueOf(num.intValue());
-    }
+    Object val = provider.convert(obj, Integer.class);
+    return val != null ? Integer.class.cast(val) : dfltVal;
   }
 
   public static List<Integer> toIntegerList(Object obj) {
-    return toList(obj, ConvertUtils::toInteger);
+    return toList(obj, Conversions::toInteger);
   }
 
   public static <T> List<T> toList(Object obj, Function<Object, T> convert) {
@@ -299,38 +254,17 @@ public class ConvertUtils {
   }
 
   public static LocalDate toLocalDate(Object obj, LocalDate dfltVal) {
-    if (obj instanceof LocalDate) {
-      return (LocalDate) obj;
-    } else if (obj instanceof List || obj instanceof Object[]) {
-      if (MyBagUtils.getSize(obj) >= 3) {
-        return LocalDate.of(toInteger(MyBagUtils.get(obj, 0)), toInteger(MyBagUtils.get(obj, 1)),
-            toInteger(MyBagUtils.get(obj, 2)));
-      } else {
-        throw new IllegalArgumentException();
-      }
-    } else if (obj instanceof java.sql.Date) {
-      return ((java.sql.Date) obj).toLocalDate();
-    } else if (obj instanceof Long || obj instanceof java.util.Date || obj instanceof Temporal) {
-      return toInstant(obj).atZone(ZoneId.systemDefault()).toLocalDate();
-    } else if (obj != null) {
-      return LocalDate.parse(obj.toString());
-    } else {
-      return dfltVal;
-    }
+    Object val = provider.convert(obj, LocalDate.class);
+    return val != null ? LocalDate.class.cast(val) : dfltVal;
   }
 
   public static List<LocalDate> toLocalDateList(Object obj) {
-    return toList(obj, ConvertUtils::toLocalDate);
+    return toList(obj, Conversions::toLocalDate);
   }
 
   public static Locale toLocale(Object obj) {
-    if (obj == null) {
-      return null;
-    } else if (obj instanceof Locale) {
-      return (Locale) obj;
-    } else {
-      return Locale.forLanguageTag(obj.toString());
-    }
+    Object val = provider.convert(obj, Locale.class);
+    return val != null ? Locale.class.cast(val) : null;
   }
 
   public static Locale toLocale(Object obj, Locale elseVal) {
@@ -343,40 +277,16 @@ public class ConvertUtils {
   }
 
   public static Long toLong(Object obj, Long dfltVal) {
-    if (obj instanceof byte[]) {
-      return EncryptUtils.toLong((byte[]) obj);
-    } else {
-      Number num = toNumber(obj);
-      if (num == null) {
-        return dfltVal;
-      } else if (num instanceof Long) {
-        return (Long) num;
-      }
-      return Long.valueOf(num.longValue());
-    }
+    Object val = provider.convert(obj, Long.class);
+    return val != null ? Long.class.cast(val) : dfltVal;
   }
 
   public static List<Long> toLongList(Object obj) {
-    return toList(obj, ConvertUtils::toLong);
+    return toList(obj, Conversions::toLong);
   }
 
   public static Map<String, Object> toMap(Object obj, String... unLoadProperties) {
     return MapConvertor.beanToMap(obj, unLoadProperties);
-  }
-
-  public static Number toNumber(Object obj) {
-    if (obj == null) {
-      return null;
-    } else if (obj instanceof Number) {
-      return (Number) obj;
-    } else {
-      try {
-        String text = obj.toString();
-        return text == null ? null : NumberFormat.getInstance().parse(text);
-      } catch (ParseException e) {
-        throw new KernelRuntimeException(e);
-      }
-    }
   }
 
   @SuppressWarnings("unchecked")
@@ -389,21 +299,12 @@ public class ConvertUtils {
   }
 
   public static Short toShort(Object obj, Short dfltVal) {
-    if (obj instanceof byte[]) {
-      return EncryptUtils.toShort((byte[]) obj);
-    } else {
-      Number num = toNumber(obj);
-      if (num == null) {
-        return dfltVal;
-      } else if (num instanceof Short) {
-        return (Short) num;
-      }
-      return Short.valueOf(num.shortValue());
-    }
+    Object val = provider.convert(obj, Short.class);
+    return val != null ? Short.class.cast(val) : dfltVal;
   }
 
   public static List<Short> toShortList(Object obj) {
-    return toList(obj, ConvertUtils::toShort);
+    return toList(obj, Conversions::toShort);
   }
 
   public static String toString(Object obj) {
@@ -425,22 +326,24 @@ public class ConvertUtils {
   }
 
   public static ZonedDateTime toZonedDateTime(Object obj, ZonedDateTime dfltVal) {
-    if (obj instanceof ZonedDateTime) {
-      return (ZonedDateTime) obj;
-    } else if (obj instanceof java.sql.Date) {
-      return ((java.sql.Date) obj).toLocalDate().atStartOfDay(ZoneId.systemDefault());
-    } else if (obj instanceof Long || obj instanceof Temporal || obj instanceof java.util.Date) {
-      return toInstant(obj).atZone(ZoneId.systemDefault());
-    } else if (obj != null) {
-      return ZonedDateTime.parse(obj.toString());
-    } else {
-      return dfltVal;
-    }
+    Object val = provider.convert(obj, ZonedDateTime.class);
+    return val != null ? ZonedDateTime.class.cast(val) : dfltVal;
   }
 
   public static List<ZonedDateTime> toZonedDateTimeList(Object obj) {
-    return toList(obj, ConvertUtils::toZonedDateTime);
+    return toList(obj, Conversions::toZonedDateTime);
   }
+
+  static void autoRegisterEnumConvertor(Class<?> clazz) {
+    if (clazz != null && clazz.isEnum() && Conversions.provider.lookup(clazz) == null) {
+      synchronized (provider) {
+        if (provider.lookup(clazz) == null) {
+          provider.register(enumConvertor, clazz);
+        }
+      }
+    }
+  }
+
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   public static class MapConvertor {

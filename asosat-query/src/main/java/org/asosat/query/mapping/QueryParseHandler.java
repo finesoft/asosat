@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
-import org.asosat.kernel.util.ConvertUtils;
+import org.asosat.kernel.normalization.conversion.Conversions;
 import org.asosat.query.QueryRuntimeException;
 import org.asosat.query.mapping.FetchQuery.FetchQueryParameter;
 import org.asosat.query.mapping.FetchQuery.FetchQueryParameterSource;
@@ -142,7 +142,7 @@ public class QueryParseHandler extends DefaultHandler {
         if (aqn.equals(SchemaNames.FQE_ATT_NAME)) {
           fq.setReferenceQuery(atv);
         } else if (aqn.equalsIgnoreCase(SchemaNames.FQE_ATT_MAX_SIZE)) {
-          fq.setMaxSize(ConvertUtils.toInteger(atv));
+          fq.setMaxSize(Conversions.toInteger(atv));
         } else if (aqn.equalsIgnoreCase(SchemaNames.FQE_ATT_PRO_NAME)) {
           fq.setInjectPropertyName(atv);
         } else if (aqn.equalsIgnoreCase(SchemaNames.FQE_ATT_VER)) {
@@ -173,7 +173,7 @@ public class QueryParseHandler extends DefaultHandler {
         if (aqn.equals(SchemaNames.FQE_ELE_PARAM_ATT_NME)) {
           fqp.setName(atv);
         } else if (aqn.equalsIgnoreCase(SchemaNames.FQE_ELE_PARAM_ATT_SRC)) {
-          fqp.setSource(ConvertUtils.toEnum(atv, FetchQueryParameterSource.class));
+          fqp.setSource(Conversions.toEnum(atv, FetchQueryParameterSource.class));
         }
       }
       this.valueStack.push(fqp);
@@ -218,9 +218,9 @@ public class QueryParseHandler extends DefaultHandler {
         if (aqn.equals(SchemaNames.QUE_ATT_NAME)) {
           q.setName(atv);
         } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_ATT_CACHE)) {
-          q.setCache(ConvertUtils.toBoolean(atv));
+          q.setCache(Conversions.toBoolean(atv));
         } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_ATT_CACHE_RS_MD)) {
-          q.setCacheResultSetMetadata(ConvertUtils.toBoolean(atv));
+          q.setCacheResultSetMetadata(Conversions.toBoolean(atv));
         } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_ATT_RST_CLS)) {
           q.setResultClass(isBlank(atv) ? java.util.Map.class : tryToLoadClassForName(atv));
         } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_ATT_RST_SET_CLS)) {

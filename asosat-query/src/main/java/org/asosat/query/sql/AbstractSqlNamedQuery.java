@@ -91,7 +91,7 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
       List<T> list = this.getExecutor().select(limitSql, rcls, queryParam);
       PagedList<T> result = PagedList.inst();
       int count = list.size();
-      if (count > (limit - offset + 1)) {
+      if (count > (limit + 1)) {
         result.withTotal(offset + count);
       } else {
         String totalSql = this.getDialect().getCountSql(sql);

@@ -23,7 +23,7 @@ import org.asosat.query.mapping.FetchQuery;
  * @author bingo 下午3:51:20
  *
  */
-public interface QueryTemplate<T> {
+public interface DynamicQueryTpl<T> {
 
   long getCachedTimestemp();
 

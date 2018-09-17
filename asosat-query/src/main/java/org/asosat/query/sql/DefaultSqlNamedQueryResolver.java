@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import org.asosat.kernel.normalization.conversion.ConversionService;
-import org.asosat.query.ParameterResolver;
+import org.asosat.query.NamedQueryResolver;
 import org.asosat.query.QueryRuntimeException;
 import org.asosat.query.mapping.FetchQuery;
 import org.asosat.query.mapping.Query;
@@ -31,10 +31,10 @@ import org.asosat.query.mapping.QueryMappingService;
  *
  */
 @Dependent
-public class DefaultSqlQueryParameterResolver
-    implements ParameterResolver<String, Map<String, Object>, String, Object[], FetchQuery> {
+public class DefaultSqlNamedQueryResolver
+    implements NamedQueryResolver<String, Map<String, Object>, String, Object[], FetchQuery> {
 
-  final Map<String, DefaultSqlQueryTemplate> cachedQueTpls = new ConcurrentHashMap<>();
+  final Map<String, DefaultSqlNamedQueryTpl> cachedQueTpls = new ConcurrentHashMap<>();
 
   @Inject
   QueryMappingService mappingService;
@@ -43,16 +43,16 @@ public class DefaultSqlQueryParameterResolver
   ConversionService conversionService;
 
   @Override
-  public DefaultSqlQueryParameter resolve(String key, Map<String, Object> param) {
+  public DefaultSqlNamedQuerier resolve(String key, Map<String, Object> param) {
     return this.cachedQueTpls.computeIfAbsent(key, this::buildQueryTemplate).process(param);
   }
 
-  protected DefaultSqlQueryTemplate buildQueryTemplate(String key) {
+  protected DefaultSqlNamedQueryTpl buildQueryTemplate(String key) {
     Query query = this.mappingService.getQuery(key);
     if (query == null) {
       throw new QueryRuntimeException("Can not found Query for key " + key);
     }
-    return new DefaultSqlQueryTemplate(query, this.conversionService);
+    return new DefaultSqlNamedQueryTpl(query, this.conversionService);
   }
 
 }

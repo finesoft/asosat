@@ -15,18 +15,21 @@ package org.asosat.query.sql;
 
 import static org.asosat.kernel.util.MyBagUtils.isEmpty;
 import static org.asosat.kernel.util.MyMapUtils.getMapInteger;
+import static org.asosat.query.sql.SqlHelper.getLimit;
+import static org.asosat.query.sql.SqlHelper.getOffset;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.apache.commons.beanutils.BeanUtils;
-import org.asosat.kernel.abstraction.Query;
-import org.asosat.query.ParameterResolver;
-import org.asosat.query.ParameterResolver.Parameter;
+import org.asosat.query.NamedQuery;
+import org.asosat.query.NamedQueryResolver;
+import org.asosat.query.NamedQueryResolver.Querier;
 import org.asosat.query.QueryRuntimeException;
 import org.asosat.query.mapping.FetchQuery;
 import org.asosat.query.mapping.FetchQuery.FetchQueryParameterSource;
@@ -39,24 +42,71 @@ import org.asosat.query.sql.paging.dialect.Dialect;
  *
  */
 @ApplicationScoped
-public abstract class AbstractSqlQuery implements Query<String, Map<String, Object>> {
+public abstract class AbstractSqlNamedQuery implements NamedQuery {
 
   protected SqlQueryExecutor executor;
 
   @Inject
-  ParameterResolver<String, Map<String, Object>, String, Object[], FetchQuery> paramResolver;
+  Logger logger;
+
+  @Inject
+  NamedQueryResolver<String, Map<String, Object>, String, Object[], FetchQuery> resolver;
 
   @Override
-  public <T> ContinuousList<T> continuing(String q, Map<String, Object> param) {
-    int start = getMapInteger(param, "start", 1), limit = getMapInteger(param, "limit", 16);
-    Parameter<String, Object[], FetchQuery> paramToUse = this.paramResolver.resolve(q, param);
-    Class<T> rcls = paramToUse.getResultClass();
-    Object[] queryParam = paramToUse.getConvertedParameters();
-    List<FetchQuery> fetchQueries = paramToUse.getFetchQueries();
-    String sql = paramToUse.getScript();
-    String limitSql = this.getDialect().getLimitSql(sql, start, limit + 1);
+  public <T> T get(String q, Map<String, Object> param) {
+    Querier<String, Object[], FetchQuery> querier = this.resolver.resolve(q, param);
+    Class<T> rcls = querier.getResultClass();
+    Object[] queryParam = querier.getConvertedParameters();
+    List<FetchQuery> fetchQueries = querier.getFetchQueries();
+    String sql = querier.getScript();
     try {
-      ContinuousList<T> result = ContinuousList.inst();
+      T result = this.executor.get(sql, rcls, queryParam);
+      this.fetch(result, fetchQueries, param);
+      return result;
+    } catch (SQLException e) {
+      throw new QueryRuntimeException(e);
+    }
+  }
+
+  @Override
+  public <T> PagedList<T> page(String q, Map<String, Object> param) {
+    int offset = getOffset(param), limit = getLimit(param);
+    Querier<String, Object[], FetchQuery> querier = this.resolver.resolve(q, param);
+    Class<T> rcls = querier.getResultClass();
+    Object[] queryParam = querier.getConvertedParameters();
+    List<FetchQuery> fetchQueries = querier.getFetchQueries();
+    String sql = querier.getScript();
+    String limitSql = this.getDialect().getLimitSql(sql, offset, limit);
+    try {
+      List<T> list = this.executor.select(limitSql, rcls, queryParam);
+      PagedList<T> result = PagedList.inst();
+      int count = list.size();
+      if (count > (limit - offset + 1)) {
+        result.withTotal(offset + count);
+      } else {
+        result.withTotal(getMapInteger(
+            this.executor.get(this.getDialect().getCountSql(sql), Map.class, queryParam),
+            Dialect.COUNT_FIELD_NAME));
+      }
+      this.fetch(list, fetchQueries, param);
+      result.withData(list);
+      return result;
+    } catch (SQLException e) {
+      throw new QueryRuntimeException(e);
+    }
+  }
+
+  @Override
+  public <T> ScrolledList<T> scroll(String q, Map<String, Object> param) {
+    int offset = getOffset(param), limit = getLimit(param);
+    Querier<String, Object[], FetchQuery> querier = this.resolver.resolve(q, param);
+    Class<T> rcls = querier.getResultClass();
+    Object[] queryParam = querier.getConvertedParameters();
+    List<FetchQuery> fetchQueries = querier.getFetchQueries();
+    String sql = querier.getScript();
+    String limitSql = this.getDialect().getLimitSql(sql, offset, limit + 1);
+    try {
+      ScrolledList<T> result = ScrolledList.inst();
       List<T> list = this.executor.select(limitSql, rcls, queryParam);
       this.fetch(list, fetchQueries, param);
       if (list.size() > limit) {
@@ -73,56 +123,12 @@ public abstract class AbstractSqlQuery implements Query<String, Map<String, Obje
   }
 
   @Override
-  public <T> T get(String q, Map<String, Object> param) {
-    Parameter<String, Object[], FetchQuery> paramToUse = this.paramResolver.resolve(q, param);
-    Class<T> rcls = paramToUse.getResultClass();
-    Object[] queryParam = paramToUse.getConvertedParameters();
-    List<FetchQuery> fetchQueries = paramToUse.getFetchQueries();
-    String sql = paramToUse.getScript();
-    try {
-      T result = this.executor.get(sql, rcls, queryParam);
-      this.fetch(result, fetchQueries, param);
-      return result;
-    } catch (SQLException e) {
-      throw new QueryRuntimeException(e);
-    }
-  }
-
-  @Override
-  public <T> PagedList<T> paging(String q, Map<String, Object> param) {
-    int start = getMapInteger(param, "start", 1), limit = getMapInteger(param, "limit", 16);
-    Parameter<String, Object[], FetchQuery> paramToUse = this.paramResolver.resolve(q, param);
-    Class<T> rcls = paramToUse.getResultClass();
-    Object[] queryParam = paramToUse.getConvertedParameters();
-    List<FetchQuery> fetchQueries = paramToUse.getFetchQueries();
-    String sql = paramToUse.getScript();
-    String limitSql = this.getDialect().getLimitSql(sql, start, limit);
-    try {
-      List<T> list = this.executor.select(limitSql, rcls, queryParam);
-      PagedList<T> result = PagedList.inst();
-      int count = list.size();
-      if (count > (limit - start + 1)) {
-        result.withTotal(start + count);
-      } else {
-        result.withTotal(getMapInteger(
-            this.executor.get(this.getDialect().getCountSql(sql), Map.class, queryParam),
-            Dialect.COUNT_FIELD_NAME));
-      }
-      this.fetch(list, fetchQueries, param);
-      result.withData(list);
-      return result;
-    } catch (SQLException e) {
-      throw new QueryRuntimeException(e);
-    }
-  }
-
-  @Override
   public <T> List<T> select(String q, Map<String, Object> param) {
-    Parameter<String, Object[], FetchQuery> paramToUse = this.paramResolver.resolve(q, param);
-    Class<T> rcls = paramToUse.getResultClass();
-    Object[] queryParam = paramToUse.getConvertedParameters();
-    List<FetchQuery> fetchQueries = paramToUse.getFetchQueries();
-    String sql = paramToUse.getScript();
+    Querier<String, Object[], FetchQuery> querier = this.resolver.resolve(q, param);
+    Class<T> rcls = querier.getResultClass();
+    Object[] queryParam = querier.getConvertedParameters();
+    List<FetchQuery> fetchQueries = querier.getFetchQueries();
+    String sql = querier.getScript();
     try {
       List<T> list = this.executor.select(sql, rcls, queryParam);
       this.fetch(list, fetchQueries, param);
@@ -156,13 +162,13 @@ public abstract class AbstractSqlQuery implements Query<String, Map<String, Obje
     int maxSize = fetchQuery.getMaxSize();
     String injectProName = fetchQuery.getInjectPropertyName(),
         refQueryName = fetchQuery.getVersionedReferenceQueryName();
-    Parameter<String, Object[], FetchQuery> paramToUse =
-        this.paramResolver.resolve(refQueryName, fetchParam);
-    Class<?> rcls = fetchQuery.getResultClass() == null ? paramToUse.getResultClass()
+    Querier<String, Object[], FetchQuery> querier =
+        this.resolver.resolve(refQueryName, fetchParam);
+    Class<?> rcls = fetchQuery.getResultClass() == null ? querier.getResultClass()
         : fetchQuery.getResultClass();
-    String sql = paramToUse.getScript();
-    Object[] params = paramToUse.getConvertedParameters();
-    List<FetchQuery> fetchQueries = paramToUse.getFetchQueries();
+    String sql = querier.getScript();
+    Object[] params = querier.getConvertedParameters();
+    List<FetchQuery> fetchQueries = querier.getFetchQueries();
     if (maxSize > 0) {
       sql = this.getDialect().getLimitSql(sql, 1, maxSize);
     }

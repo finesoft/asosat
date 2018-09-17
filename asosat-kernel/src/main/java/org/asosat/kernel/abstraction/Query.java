@@ -34,25 +34,10 @@ public interface Query<Q, P> {
     return func.apply(t, this);
   }
 
-  <T> ContinuousList<T> continuing(Q q, P param);
+  <T> PagedList<T> page(Q q, P param);
 
-  default <R, T> ContinuousList<T> continuing(Q q, P param, BiFunction<R, Query<Q, P>, T> func) {
-    ContinuousList<R> raw = continuing(q, param);
-    if (raw == null) {
-      return ContinuousList.inst();
-    } else {
-      ContinuousList<T> result = new ContinuousList<>();
-      return result
-          .withData(
-              raw.getData().stream().map(i -> func.apply(i, this)).collect(Collectors.toList()))
-          .withHasNext(raw.hasNext);
-    }
-  }
-
-  <T> PagedList<T> paging(Q q, P param);
-
-  default <R, T> PagedList<T> paging(Q q, P param, BiFunction<R, Query<Q, P>, T> func) {
-    PagedList<R> raw = paging(q, param);
+  default <R, T> PagedList<T> page(Q q, P param, BiFunction<R, Query<Q, P>, T> func) {
+    PagedList<R> raw = page(q, param);
     if (raw == null) {
       return PagedList.inst();
     } else {
@@ -61,6 +46,21 @@ public interface Query<Q, P> {
           .withData(
               raw.getData().stream().map(i -> func.apply(i, this)).collect(Collectors.toList()))
           .withTotal(raw.total);
+    }
+  }
+
+  <T> ScrolledList<T> scroll(Q q, P param);
+
+  default <R, T> ScrolledList<T> scroll(Q q, P param, BiFunction<R, Query<Q, P>, T> func) {
+    ScrolledList<R> raw = scroll(q, param);
+    if (raw == null) {
+      return ScrolledList.inst();
+    } else {
+      ScrolledList<T> result = new ScrolledList<>();
+      return result
+          .withData(
+              raw.getData().stream().map(i -> func.apply(i, this)).collect(Collectors.toList()))
+          .withHasNext(raw.hasNext);
     }
   }
 
@@ -76,51 +76,6 @@ public interface Query<Q, P> {
   }
 
   <T> Stream<T> stream(Q q, P param);
-
-  public static class ContinuousList<T> {
-
-    private boolean hasNext;
-    private final List<T> data = new ArrayList<>();
-
-    ContinuousList() {}
-
-    public static <T> ContinuousList<T> inst() {
-      return new ContinuousList<>();
-    }
-
-    public static <T> ContinuousList<T> of(List<T> data, boolean hasNext) {
-      ContinuousList<T> il = new ContinuousList<>();
-      return il.withHasNext(hasNext).withHasNext(hasNext);
-    }
-
-    /**
-     * @return the data
-     */
-    public List<T> getData() {
-      return data;
-    }
-
-    /**
-     * @return the hasNext
-     */
-    public boolean isHasNext() {
-      return hasNext;
-    }
-
-    public ContinuousList<T> withData(List<T> data) {
-      this.data.clear();
-      if (data != null) {
-        this.data.addAll(data);
-      }
-      return this;
-    }
-
-    public ContinuousList<T> withHasNext(boolean hasNext) {
-      this.hasNext = hasNext;
-      return this;
-    }
-
-  }
 
   public static class PagedList<T> {
 
@@ -186,6 +141,55 @@ public interface Query<Q, P> {
 
     public PagedList<T> withTotal(int total) {
       this.total = total;
+      return this;
+    }
+
+  }
+
+  public static class ScrolledList<T> {
+
+    private boolean hasNext;
+    private final List<T> data = new ArrayList<>();
+
+    ScrolledList() {}
+
+    public static <T> ScrolledList<T> inst() {
+      return new ScrolledList<>();
+    }
+
+    public static <T> ScrolledList<T> of(List<T> data, boolean hasNext) {
+      ScrolledList<T> il = new ScrolledList<>();
+      return il.withHasNext(hasNext).withHasNext(hasNext);
+    }
+
+    /**
+     * @return the data
+     */
+    public List<T> getData() {
+      return data;
+    }
+
+    public boolean hasNext() {
+      return false;
+    }
+
+    /**
+     * @return the hasNext
+     */
+    public boolean isHasNext() {
+      return hasNext;
+    }
+
+    public ScrolledList<T> withData(List<T> data) {
+      this.data.clear();
+      if (data != null) {
+        this.data.addAll(data);
+      }
+      return this;
+    }
+
+    public ScrolledList<T> withHasNext(boolean hasNext) {
+      this.hasNext = hasNext;
       return this;
     }
 

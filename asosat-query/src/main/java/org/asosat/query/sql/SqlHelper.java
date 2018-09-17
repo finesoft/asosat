@@ -13,8 +13,10 @@
  */
 package org.asosat.query.sql;
 
+import static org.asosat.kernel.util.MyMapUtils.getMapInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,6 +27,11 @@ import java.util.regex.Pattern;
  *
  */
 public class SqlHelper {
+
+  public static final String OFFSET_PARAM_NME = "offset";
+  public static final String LIMIT_PARAM_NME = "limit";
+  public static final int OFFSET_PARAM_VAL = 1;
+  public static final int LIMIT_PARAM_VAL = 16;
 
   public static final String SELECT = "select";
   public static final String FROM = "from";
@@ -69,6 +76,15 @@ public class SqlHelper {
   public static boolean containWhere(String sql) {
     return sql != null && shallowIndexOfPattern(sql, WHERE_PATTERN, 0) > 0;
   }
+
+  public static int getLimit(Map<String, Object> param) {
+    return getMapInteger(param, LIMIT_PARAM_NME, LIMIT_PARAM_VAL);
+  }
+
+  public static int getOffset(Map<String, Object> param) {
+    return getMapInteger(param, OFFSET_PARAM_NME, OFFSET_PARAM_VAL);
+  }
+
 
   public static String getOrderBy(String sql) {
     if (sql != null) {

@@ -16,7 +16,7 @@ package org.asosat.query.sql;
 import java.util.ArrayList;
 import java.util.List;
 import org.asosat.query.QueryRuntimeException;
-import org.asosat.query.dynamic.QueryTemplateMethodModelEx;
+import org.asosat.query.dynamic.DynamicQueryTplResolver;
 import freemarker.ext.util.WrapperTemplateModel;
 import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateBooleanModel;
@@ -32,7 +32,7 @@ import freemarker.template.TemplateSequenceModel;
  * @author bingo 下午7:56:57
  *
  */
-public class DefaultSqlTemplateMethodModelEx implements QueryTemplateMethodModelEx<Object[]> {
+public class DefaultSqlNamedQueryTplResolver implements DynamicQueryTplResolver<Object[]> {
 
   public static final SimpleScalar SQL_PLACE_HOLDER = new SimpleScalar("?");
 

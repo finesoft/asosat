@@ -11,17 +11,24 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.normalization.conversion;
+package org.asosat.query.dynamic;
+
+import freemarker.template.TemplateMethodModelEx;
 
 /**
- * asosat-kernel
+ * asosat-query
  *
- * @author bingo 上午12:21:51
+ * @author bingo 下午5:40:20
  *
  */
-public interface Convertor extends org.apache.commons.beanutils.Converter {
+public interface DynamicQueryTplResolver<CP> extends TemplateMethodModelEx {
 
-  @Override
-  <T> T convert(Class<T> type, Object value);
+  CP getParameters();
+
+  QueryTemplateMethodModelType getType();
+
+  public enum QueryTemplateMethodModelType {
+    SP, MP, EP
+  }
 
 }

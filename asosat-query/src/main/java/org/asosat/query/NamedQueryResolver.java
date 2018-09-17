@@ -11,24 +11,29 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.dynamic;
+package org.asosat.query;
 
-import freemarker.template.TemplateMethodModelEx;
+import java.util.List;
 
 /**
  * asosat-query
  *
- * @author bingo 下午5:40:20
+ * @author bingo 下午3:13:37
  *
  */
-public interface QueryTemplateMethodModelEx<CP> extends TemplateMethodModelEx {
+public interface NamedQueryResolver<K, P, S, CP, F> {
 
-  CP getParameters();
+  Querier<S, CP, F> resolve(K key, P param);
 
-  QueryTemplateMethodModelType getType();
+  static interface Querier<S, CP, F> {
 
-  public enum QueryTemplateMethodModelType {
-    SP, MP, EP
+    CP getConvertedParameters();
+
+    List<F> getFetchQueries();
+
+    <T> Class<T> getResultClass();
+
+    S getScript();
   }
 
 }

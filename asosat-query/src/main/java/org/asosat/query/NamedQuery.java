@@ -13,27 +13,15 @@
  */
 package org.asosat.query;
 
-import java.util.List;
+import java.util.Map;
+import org.asosat.kernel.abstraction.Query;
 
 /**
  * asosat-query
  *
- * @author bingo 下午3:13:37
+ * @author bingo 上午9:54:08
  *
  */
-public interface ParameterResolver<K, P, S, CP, F> {
-
-  Parameter<S, CP, F> resolve(K key, P param);
-
-  static interface Parameter<S, CP, F> {
-
-    CP getConvertedParameters();
-
-    List<F> getFetchQueries();
-
-    <T> Class<T> getResultClass();
-
-    S getScript();
-  }
+public interface NamedQuery extends Query<String, Map<String, Object>> {
 
 }

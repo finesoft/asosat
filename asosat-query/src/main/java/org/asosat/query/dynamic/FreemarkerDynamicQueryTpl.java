@@ -33,7 +33,7 @@ import freemarker.template.Template;
  * @author bingo 下午3:50:40
  *
  */
-public abstract class FreemarkerQueryTemplate<T, P> implements QueryTemplate<T> {
+public abstract class FreemarkerDynamicQueryTpl<T, P> implements DynamicQueryTpl<T> {
 
   static final Configuration FM_CFG = new Configuration(Configuration.VERSION_2_3_28);
 
@@ -45,7 +45,7 @@ public abstract class FreemarkerQueryTemplate<T, P> implements QueryTemplate<T> 
   final List<FetchQuery> fetchQueries;
   final ConversionService conversionService;
 
-  public FreemarkerQueryTemplate(Query query, ConversionService conversionService) {
+  public FreemarkerDynamicQueryTpl(Query query, ConversionService conversionService) {
     if (query == null || conversionService == null) {
       throw new QueryRuntimeException(
           "Can not initialize freemarker query template from null query param!");
@@ -100,7 +100,7 @@ public abstract class FreemarkerQueryTemplate<T, P> implements QueryTemplate<T> 
     if (param != null) {
       clonedParam.putAll(param);
     }
-    QueryTemplateMethodModelEx<P> qtmm = this.getTemplateMethodModel();
+    DynamicQueryTplResolver<P> qtmm = this.getTemplateMethodModel();
     this.preProcess(clonedParam, qtmm);
     T result = this.doProcess(clonedParam);
     this.postProcess(result, qtmm);
@@ -109,11 +109,11 @@ public abstract class FreemarkerQueryTemplate<T, P> implements QueryTemplate<T> 
 
   protected abstract T doProcess(Map<String, Object> param);
 
-  protected abstract QueryTemplateMethodModelEx<P> getTemplateMethodModel();
+  protected abstract DynamicQueryTplResolver<P> getTemplateMethodModel();
 
-  protected void postProcess(T result, QueryTemplateMethodModelEx<P> qtmm) {}
+  protected void postProcess(T result, DynamicQueryTplResolver<P> qtmm) {}
 
-  protected void preProcess(Map<String, Object> param, QueryTemplateMethodModelEx<P> qtmm) {
+  protected void preProcess(Map<String, Object> param, DynamicQueryTplResolver<P> qtmm) {
     this.getParamConvertSchema().forEach((pn, pc) -> {
       if (param.containsKey(pn)) {
         param.put(pn, this.conversionService.convert(param.get(pn), pc));

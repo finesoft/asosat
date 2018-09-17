@@ -15,7 +15,7 @@ package org.asosat.query.sql;
 
 import java.util.Arrays;
 import java.util.List;
-import org.asosat.query.ParameterResolver.Parameter;
+import org.asosat.query.NamedQueryResolver.Querier;
 import org.asosat.query.mapping.FetchQuery;
 
 /**
@@ -24,7 +24,7 @@ import org.asosat.query.mapping.FetchQuery;
  * @author bingo 下午4:35:55
  *
  */
-public class DefaultSqlQueryParameter implements Parameter<String, Object[], FetchQuery> {
+public class DefaultSqlNamedQuerier implements Querier<String, Object[], FetchQuery> {
 
   final String script;
   Object[] convertedParams;
@@ -37,7 +37,7 @@ public class DefaultSqlQueryParameter implements Parameter<String, Object[], Fet
    * @param resultClass
    * @param fetchQueries
    */
-  public DefaultSqlQueryParameter(String script, Class<?> resultClass,
+  public DefaultSqlNamedQuerier(String script, Class<?> resultClass,
       List<FetchQuery> fetchQueries) {
     super();
     this.script = script;
@@ -52,7 +52,7 @@ public class DefaultSqlQueryParameter implements Parameter<String, Object[], Fet
    * @param resultClass
    * @param fetchQueries
    */
-  public DefaultSqlQueryParameter(String script, Object[] convertedParams, Class<?> resultClass,
+  public DefaultSqlNamedQuerier(String script, Object[] convertedParams, Class<?> resultClass,
       List<FetchQuery> fetchQueries) {
     this(script, resultClass, fetchQueries);
     this.setConvertedParams(convertedParams);
@@ -87,7 +87,7 @@ public class DefaultSqlQueryParameter implements Parameter<String, Object[], Fet
     this.convertedParams = param == null ? new Object[0] : Arrays.copyOf(param, param.length);
   }
 
-  DefaultSqlQueryParameter withParam(Object[] convertedParams) {
+  DefaultSqlNamedQuerier withParam(Object[] convertedParams) {
     this.setConvertedParams(convertedParams);
     return this;
   }

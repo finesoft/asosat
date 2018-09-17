@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.StatementConfiguration;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -79,6 +80,12 @@ public class DefaultSqlQueryExecutor implements SqlQueryExecutor {
               : this.getRunner().query(sql, new BeanListHandler<>(resultClass));
       return tmp == null ? new ArrayList<>() : tmp;
     }
+  }
+
+  @Override
+  public <T> Stream<T> stream(String sql, Map<String, Object> param) {
+    // TODO
+    return null;
   }
 
   protected QueryRunner getRunner() {

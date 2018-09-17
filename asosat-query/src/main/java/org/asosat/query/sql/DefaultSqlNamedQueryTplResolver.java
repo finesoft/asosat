@@ -34,7 +34,8 @@ import freemarker.template.TemplateSequenceModel;
  */
 public class DefaultSqlNamedQueryTplResolver implements DynamicQueryTplResolver<Object[]> {
 
-  public static final SimpleScalar SQL_PLACE_HOLDER = new SimpleScalar("?");
+  public static final String SQL_PS_PLACE_HOLDER = "?";
+  public static final SimpleScalar SQL_SS_PLACE_HOLDER = new SimpleScalar(SQL_PS_PLACE_HOLDER);
 
   private List<Object> parameters = new ArrayList<>();
 
@@ -48,12 +49,12 @@ public class DefaultSqlNamedQueryTplResolver implements DynamicQueryTplResolver<
         List<String> sphs = new ArrayList<>(ss.size());
         for (int i = 0; i < ss.size(); i++) {
           this.parameters.add(ss.get(i));
-          sphs.add(SQL_PLACE_HOLDER.getAsString());
+          sphs.add(SQL_PS_PLACE_HOLDER);
         }
         return new SimpleScalar(String.join(",", sphs.toArray(new String[0])));
       } else {
         this.parameters.add(arg);
-        return SQL_PLACE_HOLDER;
+        return SQL_SS_PLACE_HOLDER;
       }
     }
     return arguments;

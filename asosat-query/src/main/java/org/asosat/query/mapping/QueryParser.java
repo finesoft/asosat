@@ -41,7 +41,7 @@ import org.xml.sax.XMLReader;
  */
 public class QueryParser {
 
-  public static final String SCHEMA_URL = "org/asosat/query/mapping/qm_1_0.xsd";
+  public static final String SCHEMA_URL = "org/asosat/query/mapping/nqms_1_0.xsd";
   public static final String DFLT_QUERY_FILES_REGEX = ".*Query.*\\.xml";
 
   public static void main(String... strings) {

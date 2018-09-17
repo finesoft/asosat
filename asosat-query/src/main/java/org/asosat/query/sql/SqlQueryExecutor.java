@@ -16,6 +16,7 @@ package org.asosat.query.sql;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * asosat-script
@@ -32,5 +33,7 @@ public interface SqlQueryExecutor {
   List<Map<String, Object>> select(String sql) throws SQLException;
 
   <T> List<T> select(String sql, Class<T> resultClass, Object... args) throws SQLException;
+
+  <T> Stream<T> stream(String sql, Map<String, Object> param);
 
 }

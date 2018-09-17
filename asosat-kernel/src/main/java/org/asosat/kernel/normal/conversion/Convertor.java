@@ -11,18 +11,17 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.zest.throntail.domain;
-
-import org.asosat.kernel.pattern.repository.AbstractJpaRepository;
-import org.asosat.kernel.stereotype.InfrastructureServices;
+package org.asosat.kernel.normal.conversion;
 
 /**
- * asosat-thorntail-example
+ * asosat-kernel
  *
- * @author bingo 下午7:29:07
+ * @author bingo 上午12:21:51
  *
  */
-@InfrastructureServices
-public class Repository extends AbstractJpaRepository {
+public interface Convertor extends org.apache.commons.beanutils.Converter {
+
+  @Override
+  <T> T convert(Class<T> type, Object value);
 
 }

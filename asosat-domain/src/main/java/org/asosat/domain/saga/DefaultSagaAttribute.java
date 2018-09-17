@@ -20,7 +20,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.MappedSuperclass;
 import org.asosat.kernel.abstraction.DynamicAttributes.DynamicAttributeType;
-import org.asosat.kernel.normalization.conversion.Conversions;
+import org.asosat.kernel.normal.conversion.Conversions;
 import org.asosat.kernel.abstraction.Value;
 
 /**

@@ -46,7 +46,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import org.asosat.kernel.context.DefaultContext;
 import org.asosat.kernel.exception.NotSupportedException;
-import org.asosat.kernel.normalization.conversion.Conversions;
+import org.asosat.kernel.normal.conversion.Conversions;
 import org.asosat.kernel.resource.ConfigResource;
 
 /**

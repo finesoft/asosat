@@ -19,8 +19,8 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import org.asosat.kernel.abstraction.Message;
 import org.asosat.kernel.abstraction.Message.ExchangedMessage;
-import org.asosat.kernel.abstraction.MessageService;
 import org.asosat.kernel.abstraction.MessageService.MessageConvertor;
+import org.asosat.kernel.abstraction.MessageService.MessageStroage;
 import org.asosat.kernel.annotation.MessageQueue.MessageQueueLiteral;
 import org.asosat.kernel.context.DefaultContext;
 import org.asosat.kernel.stereotype.InfrastructureServices;
@@ -34,7 +34,7 @@ import org.asosat.kernel.stereotype.InfrastructureServices;
 public class DefaultExchangeMessageHandler implements ExchangedMessageHandler {
 
   @Inject
-  protected MessageService service;
+  protected MessageStroage stroage;
 
   @Inject
   protected MessageConvertor convertor;
@@ -50,7 +50,7 @@ public class DefaultExchangeMessageHandler implements ExchangedMessageHandler {
     MessageQueueLiteral qualifier = MessageQueueLiteral.of(message.queueName());
     Message persistMessage = this.convertor.from(message);
     if (persistMessage != null) {
-      this.service.persist(persistMessage);
+      this.stroage.store(persistMessage);
       DefaultContext.event().select(qualifier).fireAsync(persistMessage);
     } else {
       DefaultContext.event().select(qualifier).fireAsync(new DefaultTransientMessage(message));

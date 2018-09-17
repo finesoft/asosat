@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import org.asosat.kernel.normalization.conversion.ConversionService;
+import org.asosat.kernel.normal.conversion.ConversionService;
 import org.asosat.query.QueryRuntimeException;
 import org.asosat.query.dynamic.FreemarkerDynamicQueryTpl;
 import org.asosat.query.dynamic.DynamicQueryTplResolver;

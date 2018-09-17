@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.transaction.Transactional;
-import org.asosat.kernel.normalization.conversion.Conversions;
+import org.asosat.kernel.normal.conversion.Conversions;
 import org.asosat.kernel.pattern.command.Command;
 import org.asosat.kernel.pattern.command.CommandHandler;
 import org.asosat.zest.throntail.domain.Order;

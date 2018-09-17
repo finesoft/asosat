@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.asosat.kernel.normalization.conversion.ConversionService;
+import org.asosat.kernel.normal.conversion.ConversionService;
 import org.asosat.query.QueryRuntimeException;
 import org.asosat.query.mapping.FetchQuery;
 import org.asosat.query.mapping.Query;

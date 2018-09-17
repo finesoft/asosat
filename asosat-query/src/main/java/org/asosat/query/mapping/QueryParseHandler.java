@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
-import org.asosat.kernel.normalization.conversion.Conversions;
+import org.asosat.kernel.normal.conversion.Conversions;
 import org.asosat.query.QueryRuntimeException;
 import org.asosat.query.mapping.FetchQuery.FetchQueryParameter;
 import org.asosat.query.mapping.FetchQuery.FetchQueryParameterSource;

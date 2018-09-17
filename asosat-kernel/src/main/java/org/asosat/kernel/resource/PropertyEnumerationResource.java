@@ -28,7 +28,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.apache.commons.vfs2.PatternFileSelector;
 import org.asosat.kernel.context.DefaultContext;
-import org.asosat.kernel.normalization.conversion.Conversions;
+import org.asosat.kernel.normal.conversion.Conversions;
 
 /**
  * @author bingo 上午10:30:07

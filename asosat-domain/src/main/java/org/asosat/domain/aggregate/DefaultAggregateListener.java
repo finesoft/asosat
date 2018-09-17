@@ -22,15 +22,15 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 import org.asosat.kernel.abstraction.Lifecycle;
-import org.asosat.kernel.abstraction.UnitOfWorks;
-import org.asosat.kernel.abstraction.UnitOfWorksService;
 import org.asosat.kernel.context.DefaultContext;
+import org.asosat.kernel.pattern.unitwork.UnitOfWorks;
+import org.asosat.kernel.pattern.unitwork.UnitOfWorksService;
 
 /**
  * Global aggregate persistence listener use for unit of work
  *
  * @see TransactionUnitOfWorksManager
- * @see TransactionUnitOfWorks
+ * @see DefaultJtaJpaUnitOfWorks
  * @author bingo 下午12:06:07
  */
 public class DefaultAggregateListener {

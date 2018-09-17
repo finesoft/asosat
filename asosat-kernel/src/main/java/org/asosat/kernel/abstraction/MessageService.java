@@ -27,13 +27,13 @@ public interface MessageService {
 
   MessageConvertor getConvertor();
 
-  Message persist(Message message);
-
   @Asynchronous(fair = false)
   void receive(ExchangedMessage message);
 
   @Asynchronous(fair = false)
   void send(ExchangedMessage messages);
+
+  Message store(Message message);
 
   /**
    * @author bingo 下午12:27:57
@@ -45,6 +45,20 @@ public interface MessageService {
     Message from(ExchangedMessage message);
 
     ExchangedMessage to(Message message);
+
+  }
+
+  /**
+   * asosat-kernel
+   *
+   * @author bingo 下午10:26:09
+   *
+   */
+  @InfrastructureServices
+  @FunctionalInterface
+  public static interface MessageStroage {
+
+    void store(Message message);
 
   }
 

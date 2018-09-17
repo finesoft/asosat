@@ -13,21 +13,16 @@
  */
 package org.asosat.message;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 import org.asosat.kernel.abstraction.Message;
 import org.asosat.kernel.abstraction.Message.ExchangedMessage;
 import org.asosat.kernel.abstraction.MessageService;
-import org.asosat.kernel.abstraction.PersistenceService;
 import org.asosat.kernel.exception.GeneralRuntimeException;
 import org.asosat.kernel.pattern.interceptor.Asynchronous;
 import org.asosat.kernel.stereotype.InfrastructureServices;
-import org.asosat.kernel.util.JpaUtils;
 
 /**
  * @author bingo 上午10:51:18
@@ -41,10 +36,10 @@ public class DefaultMessageService implements MessageService {
   protected Logger logger;
 
   @Inject
-  protected PersistenceService persistenceService;
+  protected MessageConvertor convertor;
 
   @Inject
-  protected MessageConvertor convertor;
+  protected MessageStroage stroage;
 
   @Inject
   protected ExchangedMessageHandler exchangeMessageHandler;
@@ -52,24 +47,11 @@ public class DefaultMessageService implements MessageService {
   @Inject
   protected MessageSender sender;
 
-  protected final Map<Class<?>, Boolean> persistMessageClasses =
-      new ConcurrentHashMap<>(256, 0.75f, 256);
-
   public DefaultMessageService() {}
 
   @Override
   public MessageConvertor getConvertor() {
     return this.convertor;
-  }
-
-  @Transactional
-  @Override
-  public Message persist(Message message) {
-    if (this.persistMessageClasses.computeIfAbsent(message.getClass(),
-        JpaUtils::isPersistenceEntityClass)) {
-      this.persistenceService.persist(message, true);
-    }
-    return message;
   }
 
   @Asynchronous(fair = false)
@@ -94,5 +76,11 @@ public class DefaultMessageService implements MessageService {
     } else {
       this.logger.log(Level.WARNING, "Can not find message channel!");
     }
+  }
+
+  @Override
+  public Message store(Message message) {
+    this.stroage.store(message);
+    return message;
   }
 }

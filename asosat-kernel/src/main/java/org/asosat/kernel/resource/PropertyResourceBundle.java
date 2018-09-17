@@ -29,7 +29,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSelector;
-import org.asosat.kernel.normalization.setting.DefaultSetting;
+import org.asosat.kernel.normal.setting.DefaultSetting;
 
 /**
  * @author bingo 上午12:25:48

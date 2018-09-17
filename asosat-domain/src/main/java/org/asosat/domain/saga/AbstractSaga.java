@@ -22,7 +22,7 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import org.asosat.domain.aggregate.AbstractEntity;
 import org.asosat.kernel.abstraction.Aggregate.AggregateIdentifier;
-import org.asosat.kernel.abstraction.Saga;
+import org.asosat.kernel.pattern.saga.Saga;
 
 /**
  * @author bingo 下午4:22:53

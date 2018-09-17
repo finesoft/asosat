@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
-import org.asosat.kernel.normalization.conversion.ConversionService;
+import org.asosat.kernel.normal.conversion.ConversionService;
 import org.asosat.query.NamedQueryResolver;
 import org.asosat.query.QueryRuntimeException;
 import org.asosat.query.mapping.FetchQuery;

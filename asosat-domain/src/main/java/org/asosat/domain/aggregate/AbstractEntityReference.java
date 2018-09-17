@@ -22,11 +22,11 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.MappedSuperclass;
-import org.asosat.domain.repository.JpaRepository;
 import org.asosat.kernel.abstraction.Entity;
 import org.asosat.kernel.abstraction.EntityReference;
 import org.asosat.kernel.context.DefaultContext;
 import org.asosat.kernel.exception.GeneralRuntimeException;
+import org.asosat.kernel.pattern.repository.JpaRepository;
 
 /**
  * @author bingo 下午8:23:02

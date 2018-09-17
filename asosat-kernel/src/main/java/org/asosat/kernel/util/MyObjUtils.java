@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 /**
  * @author bingo 下午2:51:32
@@ -92,5 +93,25 @@ public class MyObjUtils {
 
   public static String toString(Object o, String nullDefault) {
     return Objects.toString(o, nullDefault);
+  }
+
+  public static String[] toStrings(Object... objs) {
+    return toStrings(null, objs);
+  }
+
+  public static String[] toStrings(UnaryOperator<String> uo, Object... objs) {
+    int len = objs.length;
+    if (len > 0) {
+      String[] array = new String[len];
+      for (int i = 0; i < len; i++) {
+        array[i] = toString(objs[i], "null");
+        if (uo != null) {
+          array[i] = uo.apply(array[i]);
+        }
+      }
+      return array;
+    } else {
+      return new String[0];
+    }
   }
 }

@@ -15,6 +15,7 @@ package org.asosat.query.sql;
 
 import static org.asosat.kernel.util.MyBagUtils.isEmpty;
 import static org.asosat.kernel.util.MyMapUtils.getMapInteger;
+import static org.asosat.kernel.util.MyObjUtils.toStrings;
 import static org.asosat.query.sql.SqlHelper.getLimit;
 import static org.asosat.query.sql.SqlHelper.getOffset;
 import java.lang.reflect.InvocationTargetException;
@@ -60,6 +61,7 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
     List<FetchQuery> fetchQueries = querier.getFetchQueries();
     String sql = querier.getScript();
     try {
+      this.log(q, queryParam, sql);
       T result = this.getExecutor().get(sql, rcls, queryParam);
       this.fetch(result, fetchQueries, param);
       return result;
@@ -85,14 +87,16 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
     int offset = getOffset(param), limit = getLimit(param);
     String limitSql = this.getDialect().getLimitSql(sql, offset, limit);
     try {
+      this.log(q, queryParam, sql, "Limit: " + limitSql);
       List<T> list = this.getExecutor().select(limitSql, rcls, queryParam);
       PagedList<T> result = PagedList.inst();
       int count = list.size();
       if (count > (limit - offset + 1)) {
         result.withTotal(offset + count);
       } else {
-        result.withTotal(getMapInteger(
-            this.getExecutor().get(this.getDialect().getCountSql(sql), Map.class, queryParam),
+        String totalSql = this.getDialect().getCountSql(sql);
+        this.log("total-> " + q, queryParam, totalSql);
+        result.withTotal(getMapInteger(this.getExecutor().get(totalSql, Map.class, queryParam),
             Dialect.COUNT_FIELD_NAME));
       }
       this.fetch(list, fetchQueries, param);
@@ -113,6 +117,7 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
     int offset = getOffset(param), limit = getLimit(param);
     String limitSql = this.getDialect().getLimitSql(sql, offset, limit + 1);
     try {
+      this.log(q, queryParam, sql, "Limit: " + limitSql);
       ScrolledList<T> result = ScrolledList.inst();
       List<T> list = this.getExecutor().select(limitSql, rcls, queryParam);
       this.fetch(list, fetchQueries, param);
@@ -137,6 +142,7 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
     List<FetchQuery> fetchQueries = querier.getFetchQueries();
     String sql = querier.getScript();
     try {
+      this.log(q, queryParam, sql);
       List<T> list = this.getExecutor().select(sql, rcls, queryParam);
       this.fetch(list, fetchQueries, param);
       return list;
@@ -176,6 +182,7 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
       sql = this.getDialect().getLimitSql(sql, SqlHelper.OFFSET_PARAM_VAL, maxSize);
     }
     try {
+      this.log("fetch-> " + refQueryName, params, sql);
       List<?> list = this.getExecutor().select(sql, rcls, params);
       if (obj instanceof Map) {
         Map.class.cast(obj).put(injectProName, list);
@@ -200,11 +207,15 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
     return this.getConfiguration().getDialect();
   }
 
-  /**
-   * @return the resolver
-   */
   protected NamedQueryResolver<String, Map<String, Object>, String, Object[], FetchQuery> getResolver() {
     return this.resolver;
+  }
+
+  protected void log(String name, Object[] param, String... sql) {
+    this.logger
+        .info(() -> String.format("\n[Query name]: %s;\n[Query parameters]: [%s];\n[Query sql]: %s",
+            name, String.join(",", toStrings(param)),
+            String.join("; ", toStrings(s -> s.replaceAll("[\\t\\n\\r]", " "), sql))));
   }
 
   protected Map<String, Object> resolveFetchParam(Object obj, FetchQuery fetchQuery,

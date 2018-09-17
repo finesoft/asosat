@@ -14,6 +14,9 @@
 package org.asosat.zest.throntail.controller;
 
 import static org.asosat.kernel.util.MyMapUtils.asMap;
+import java.util.List;
+import java.util.Map;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -23,6 +26,7 @@ import org.asosat.kernel.context.DefaultContext;
 import org.asosat.zest.throntail.command.ConfirmOrder.ConfirmOrderCmd;
 import org.asosat.zest.throntail.command.RemoveOrder.RemoveOrderCmd;
 import org.asosat.zest.throntail.command.SaveOrder.SaveOrderCmd;
+import org.asosat.zest.throntail.provider.QueryService;
 
 /**
  * asosat-thorntail-example
@@ -33,12 +37,24 @@ import org.asosat.zest.throntail.command.SaveOrder.SaveOrderCmd;
 @Path("/order")
 public class OrderCtrl {
 
+
+  @Inject
+  QueryService queryService;
+
   @POST
   @Path("/confirm/")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response confirm(ConfirmOrderCmd cmd) {
     DefaultContext.commander().issue(cmd);
     return Response.ok(asMap("success", true)).type(MediaType.APPLICATION_JSON).build();
+  }
+
+  @POST
+  @Path("/query/")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response query(Map<String, Object> cmd) {
+    List<Map<String, Object>> resultList = this.queryService.select("Order.select", cmd);
+    return Response.ok(resultList).type(MediaType.APPLICATION_JSON).build();
   }
 
   @POST

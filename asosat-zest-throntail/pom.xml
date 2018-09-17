@@ -48,6 +48,11 @@
 				<artifactId>asosat-unitwork</artifactId>
 				<version>${xversion.asosat}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.asosat</groupId>
+				<artifactId>asosat-query</artifactId>
+				<version>${xversion.asosat}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -112,6 +117,10 @@
 		<dependency>
 			<groupId>org.asosat</groupId>
 			<artifactId>asosat-message</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.asosat</groupId>
+			<artifactId>asosat-query</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.jms</groupId>

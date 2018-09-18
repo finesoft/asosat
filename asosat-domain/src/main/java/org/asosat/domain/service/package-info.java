@@ -12,15 +12,9 @@
  * the License.
  */
 /**
- * asosat-domain <br/>
+ * asosat-domain
+ * 
+ * @author bingo 上午10:56:02
  *
- * @author bingo 2018年3月28日
- * @since
  */
-package org.asosat.domain.repository;
-
-import org.asosat.kernel.resource.GlobalMessageCodes;
-
-class PkgMsgCds implements GlobalMessageCodes {
-
-}
+package org.asosat.domain.service;

@@ -12,8 +12,8 @@
  * the License.
  */
 /**
- * asosat-script
- * 
+ * asosat-query
+ *
  * @author bingo 上午11:12:17
  *
  */

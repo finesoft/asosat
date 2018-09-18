@@ -16,7 +16,7 @@ package org.asosat.query;
 import org.asosat.kernel.exception.KernelRuntimeException;
 
 /**
- * asosat-script
+ * asosat-query
  *
  * @author bingo 下午5:47:42
  *

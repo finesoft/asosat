@@ -18,7 +18,7 @@ import java.util.Locale;
 import org.asosat.query.sql.SqlHelper;
 
 /**
- * asosat-script
+ * asosat-query
  *
  * @author bingo 上午11:03:33
  *
@@ -41,8 +41,8 @@ public class SQLServer2005Dialect extends SQLServerDialect {
    * The LIMIT SQL will look like:
    * <p/>
    * WITH script AS (SELECT TOP 100 percent ROW_NUMBER() OVER (ORDER BY CURRENT_TIMESTAMP) as
-   * __row_number__, * from table_name) SELECT * FROM script WHERE __row_number__ BETWEEN :offset and
-   * :lastRows ORDER BY __row_number__
+   * __row_number__, * from table_name) SELECT * FROM script WHERE __row_number__ BETWEEN :offset
+   * and :lastRows ORDER BY __row_number__
    *
    * @param sql The SQL statement to base the limit script off of.
    * @param offset Offset of the first row to be returned by the script (zero-based)

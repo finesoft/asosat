@@ -21,7 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * asosat-script
+ * asosat-query
  *
  * @author bingo 上午11:04:34
  *

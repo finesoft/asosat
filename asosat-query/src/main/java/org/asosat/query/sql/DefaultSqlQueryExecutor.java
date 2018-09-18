@@ -26,7 +26,7 @@ import org.apache.commons.dbutils.handlers.MapHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 
 /**
- * asosat-script
+ * asosat-query
  *
  * @author bingo 下午5:31:55
  *

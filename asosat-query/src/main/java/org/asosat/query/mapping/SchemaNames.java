@@ -14,7 +14,7 @@
 package org.asosat.query.mapping;
 
 /**
- * asosat-script
+ * asosat-query
  *
  * @author bingo 下午6:24:18
  *

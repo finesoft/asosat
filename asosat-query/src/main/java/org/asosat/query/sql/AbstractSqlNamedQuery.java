@@ -37,7 +37,7 @@ import org.asosat.query.mapping.FetchQuery.FetchQueryParameterSource;
 import org.asosat.query.sql.paging.dialect.Dialect;
 
 /**
- * asosat-script
+ * asosat-query
  *
  * @author bingo 下午5:33:21
  *

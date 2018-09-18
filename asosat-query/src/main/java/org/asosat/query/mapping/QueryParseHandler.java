@@ -29,7 +29,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * asosat-script
+ * asosat-query
  *
  * @author bingo 下午4:24:51
  *

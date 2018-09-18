@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * asosat-script
+ * asosat-query
  *
  * @author bingo 下午5:20:01
  *

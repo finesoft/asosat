@@ -34,7 +34,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 /**
- * asosat-script
+ * asosat-query
  *
  * @author bingo 上午10:56:43
  *

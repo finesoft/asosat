@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.domain.repository;
+package org.asosat.domain.service;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -25,7 +25,7 @@ import org.asosat.kernel.stereotype.InfrastructureServices;
 
 @ApplicationScoped
 @InfrastructureServices
-public class RepositoryService {
+public class LifecycleService {
 
   @Inject
   protected JpaRepository repo;

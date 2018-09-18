@@ -40,7 +40,7 @@ public class DefaultSqlNamedQuerier implements Querier<String, Object[], FetchQu
   public DefaultSqlNamedQuerier(String script, Class<?> resultClass,
       List<FetchQuery> fetchQueries) {
     super();
-    this.script = script;
+    this.script = script.replaceAll("[\\t\\n\\r]", " ");
     this.resultClass = resultClass;
     this.fetchQueries = fetchQueries;
   }

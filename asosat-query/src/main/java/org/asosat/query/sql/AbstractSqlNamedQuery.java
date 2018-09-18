@@ -120,9 +120,10 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
       this.log(q, queryParam, sql, "Limit: " + limitSql);
       ScrolledList<T> result = ScrolledList.inst();
       List<T> list = this.getExecutor().select(limitSql, rcls, queryParam);
+      int size = list.size();
       this.fetch(list, fetchQueries, param);
-      if (list.size() > limit) {
-        list.remove(list.size() - 1);
+      if (size > limit) {
+        list.remove(size - 1);
         result.withData(list);
         result.withHasNext(true);
       } else {

@@ -70,13 +70,6 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
     }
   }
 
-  /**
-   * @return the executor
-   */
-  public SqlQueryExecutor getExecutor() {
-    return this.executor;
-  }
-
   @Override
   public <T> PagedList<T> page(String q, Map<String, Object> param) {
     Querier<String, Object[], FetchQuery> querier = this.getResolver().resolve(q, param);
@@ -152,6 +145,18 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
     }
   }
 
+  public Object selectx(String q, Map<String, Object> param) {
+    if (param.containsKey(SqlHelper.OFFSET_PARAM_NME)) {
+      if (param.containsKey(SqlHelper.LIMIT_PARAM_NME)) {
+        return this.page(q, param);
+      } else {
+        return this.scroll(q, param);
+      }
+    } else {
+      return this.select(q, param);
+    }
+  }
+
   @Override
   public <T> Stream<T> stream(String q, Map<String, Object> param) {
     return null;
@@ -206,6 +211,10 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
 
   protected Dialect getDialect() {
     return this.getConfiguration().getDialect();
+  }
+
+  protected SqlQueryExecutor getExecutor() {
+    return this.executor;
   }
 
   protected NamedQueryResolver<String, Map<String, Object>, String, Object[], FetchQuery> getResolver() {

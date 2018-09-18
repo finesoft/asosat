@@ -43,8 +43,8 @@ public interface Query<Q, P> {
     } else {
       PagedList<T> result = new PagedList<>();
       return result
-          .withData(
-              raw.getData().stream().map(i -> func.apply(i, this)).collect(Collectors.toList()))
+          .withResults(
+              raw.getResults().stream().map(i -> func.apply(i, this)).collect(Collectors.toList()))
           .withTotal(raw.total);
     }
   }
@@ -58,8 +58,8 @@ public interface Query<Q, P> {
     } else {
       ScrolledList<T> result = new ScrolledList<>();
       return result
-          .withData(
-              raw.getData().stream().map(i -> func.apply(i, this)).collect(Collectors.toList()))
+          .withResults(
+              raw.getResults().stream().map(i -> func.apply(i, this)).collect(Collectors.toList()))
           .withHasNext(raw.hasNext);
     }
   }
@@ -82,15 +82,17 @@ public interface Query<Q, P> {
     private int total;
     private int pageSize;
     private int currentPage;
-    private List<T> data = new ArrayList<>();
+    private int totalPages;
+    private int offset;
+    private List<T> results = new ArrayList<>();
 
     public static <T> PagedList<T> inst() {
       return new PagedList<>();
     }
 
-    public static <T> PagedList<T> of(int total, List<T> data) {
+    public static <T> PagedList<T> of(int total, List<T> results, int offset, int pageSize) {
       PagedList<T> pl = new PagedList<>();
-      return pl.withData(data).withTotal(total);
+      return pl.withResults(results).withTotal(total).withOffset(offset).withPageSize(pageSize);
     }
 
     /**
@@ -100,11 +102,8 @@ public interface Query<Q, P> {
       return currentPage;
     }
 
-    /**
-     * @return the data
-     */
-    public List<T> getData() {
-      return data;
+    public int getOffset() {
+      return offset;
     }
 
     /**
@@ -115,33 +114,57 @@ public interface Query<Q, P> {
     }
 
     /**
+     * @return the data
+     */
+    public List<T> getResults() {
+      return results;
+    }
+
+    /**
      * @return the total
      */
     public int getTotal() {
       return total;
     }
 
-    public PagedList<T> withCurrentPage(int currentPage) {
-      this.currentPage = currentPage;
-      return this;
+    public int getTotalPages() {
+      return totalPages;
     }
 
-    public PagedList<T> withData(List<T> data) {
-      this.data.clear();
-      if (data != null) {
-        this.data.addAll(data);
-      }
+    public PagedList<T> withOffset(int offset) {
+      this.offset = offset;
+      calPages();
       return this;
     }
 
     public PagedList<T> withPageSize(int pageSize) {
       this.pageSize = pageSize;
+      calPages();
+      return this;
+    }
+
+    public PagedList<T> withResults(List<T> results) {
+      this.results.clear();
+      if (results != null) {
+        this.results.addAll(results);
+      }
       return this;
     }
 
     public PagedList<T> withTotal(int total) {
       this.total = total;
+      calPages();
       return this;
+    }
+
+    void calPages() {
+      if (pageSize > 0 && offset >= 0) {
+        if (total > 0) {
+          totalPages = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;
+        }
+        int i = offset + 1;
+        currentPage = i % pageSize == 0 ? i / pageSize : i / pageSize + 1;
+      }
     }
 
   }
@@ -149,7 +172,7 @@ public interface Query<Q, P> {
   public static class ScrolledList<T> {
 
     private boolean hasNext;
-    private final List<T> data = new ArrayList<>();
+    private final List<T> results = new ArrayList<>();
 
     ScrolledList() {}
 
@@ -157,16 +180,16 @@ public interface Query<Q, P> {
       return new ScrolledList<>();
     }
 
-    public static <T> ScrolledList<T> of(List<T> data, boolean hasNext) {
+    public static <T> ScrolledList<T> of(List<T> results, boolean hasNext) {
       ScrolledList<T> il = new ScrolledList<>();
-      return il.withHasNext(hasNext).withHasNext(hasNext);
+      return il.withResults(results).withHasNext(hasNext);
     }
 
     /**
      * @return the data
      */
-    public List<T> getData() {
-      return data;
+    public List<T> getResults() {
+      return results;
     }
 
     public boolean hasNext() {
@@ -180,16 +203,16 @@ public interface Query<Q, P> {
       return hasNext;
     }
 
-    public ScrolledList<T> withData(List<T> data) {
-      this.data.clear();
-      if (data != null) {
-        this.data.addAll(data);
-      }
+    public ScrolledList<T> withHasNext(boolean hasNext) {
+      this.hasNext = hasNext;
       return this;
     }
 
-    public ScrolledList<T> withHasNext(boolean hasNext) {
-      this.hasNext = hasNext;
+    public ScrolledList<T> withResults(List<T> results) {
+      this.results.clear();
+      if (results != null) {
+        this.results.addAll(results);
+      }
       return this;
     }
 

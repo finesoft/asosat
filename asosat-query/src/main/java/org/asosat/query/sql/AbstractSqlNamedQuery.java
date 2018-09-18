@@ -83,6 +83,7 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
       this.log(q, queryParam, sql, "Limit: " + limitSql);
       List<T> list = this.getExecutor().select(limitSql, rcls, queryParam);
       PagedList<T> result = PagedList.inst();
+      result.withOffset(offset).withPageSize(limit);
       int count = list.size();
       if (count > (limit + 1)) {
         result.withTotal(offset + count);
@@ -93,7 +94,7 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
             Dialect.COUNT_FIELD_NAME));
       }
       this.fetch(list, fetchQueries, param);
-      result.withData(list);
+      result.withResults(list);
       return result;
     } catch (SQLException e) {
       throw new QueryRuntimeException(e);
@@ -117,10 +118,10 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
       this.fetch(list, fetchQueries, param);
       if (size > limit) {
         list.remove(size - 1);
-        result.withData(list);
+        result.withResults(list);
         result.withHasNext(true);
       } else {
-        result.withData(list);
+        result.withResults(list);
       }
       return result;
     } catch (SQLException e) {
@@ -146,7 +147,7 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
   }
 
   public Object selectx(String q, Map<String, Object> param) {
-    if (param.containsKey(SqlHelper.OFFSET_PARAM_NME)) {
+    if (param != null && param.containsKey(SqlHelper.OFFSET_PARAM_NME)) {
       if (param.containsKey(SqlHelper.LIMIT_PARAM_NME)) {
         return this.page(q, param);
       } else {

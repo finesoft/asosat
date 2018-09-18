@@ -225,8 +225,7 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
   protected void log(String name, Object[] param, String... sql) {
     this.logger
         .info(() -> String.format("\n[Query name]: %s;\n[Query parameters]: [%s];\n[Query sql]: %s",
-            name, String.join(",", toStrings(param)),
-            String.join("; ", toStrings(s -> s.replaceAll("[\\t\\n\\r]", " "), sql))));
+            name, String.join(",", toStrings(param)), String.join("; ", toStrings(sql))));
   }
 
   protected Map<String, Object> resolveFetchParam(Object obj, FetchQuery fetchQuery,

@@ -46,7 +46,7 @@ public class DefaultJtaJpaUnitOfWorks extends AbstractUnitOfWorks implements Syn
   final transient EntityManager entityManager;
   final Map<Lifecycle, Set<AggregateIdentifier>> registration = new EnumMap<>(Lifecycle.class);
 
-  protected DefaultJtaJpaUnitOfWorks(DefaultJtaJpaOfWorksService manager, Transaction transaction) {
+  protected DefaultJtaJpaUnitOfWorks(AbstractJtaJpaUnitOfWorksService manager, Transaction transaction) {
     super(manager);
     this.transaction = transaction;
     this.entityManager =
@@ -165,8 +165,8 @@ public class DefaultJtaJpaUnitOfWorks extends AbstractUnitOfWorks implements Syn
   }
 
   @Override
-  protected DefaultJtaJpaOfWorksService getManager() {
-    return (DefaultJtaJpaOfWorksService) this.manager;
+  protected AbstractJtaJpaUnitOfWorksService getManager() {
+    return (AbstractJtaJpaUnitOfWorksService) this.manager;
   }
 
   protected void handleMessage() {

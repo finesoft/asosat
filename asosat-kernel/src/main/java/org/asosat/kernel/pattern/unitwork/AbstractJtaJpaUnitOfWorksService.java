@@ -33,14 +33,14 @@ import org.asosat.kernel.stereotype.InfrastructureServices;
  */
 @ApplicationScoped
 @InfrastructureServices
-public abstract class DefaultJtaJpaOfWorksService extends AbstractUnitOfWorksService {
+public abstract class AbstractJtaJpaUnitOfWorksService extends AbstractUnitOfWorksService {
 
   final Map<Transaction, DefaultJtaJpaUnitOfWorks> UOWS = new ConcurrentHashMap<>(512, 0.75f, 512);
 
-  public DefaultJtaJpaOfWorksService() {}
+  public AbstractJtaJpaUnitOfWorksService() {}
 
   public static DefaultJtaJpaUnitOfWorks currentUnitOfWorks() {
-    return DefaultContext.bean(DefaultJtaJpaOfWorksService.class).getCurrentUnitOfWorks();
+    return DefaultContext.bean(AbstractJtaJpaUnitOfWorksService.class).getCurrentUnitOfWorks();
   }
 
   @Override

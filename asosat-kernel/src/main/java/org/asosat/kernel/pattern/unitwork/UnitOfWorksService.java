@@ -42,18 +42,14 @@ public interface UnitOfWorksService {
   @ApplicationScoped
   @InfrastructureServices
   public static interface UnitOfWorksHandler {
-
     void onPreComplete(UnitOfWorks uow);
-
   }
 
   @FunctionalInterface
   @ApplicationScoped
   @InfrastructureServices
   public static interface UnitOfWorksListener {
-
     void onCompleted(Object registration, boolean success);
-
   }
 
 }

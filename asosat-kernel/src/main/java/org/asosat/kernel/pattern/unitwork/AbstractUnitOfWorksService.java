@@ -68,4 +68,6 @@ public abstract class AbstractUnitOfWorksService
   }
 
 
+  abstract void clearCurrentUnitOfWorks(Object key);
+
 }

@@ -72,21 +72,21 @@ public class QueryParseHandler extends DefaultHandler {
 
   @Override
   public void endElement(String uri, String localName, String qName) throws SAXException {
-    if (qName.equalsIgnoreCase(SchemaNames.PARAM_ENTRY_ELE)) {
+    if (SchemaNames.PARAM_ENTRY_ELE.equalsIgnoreCase(qName)) {
       this.handleParamEntry(false, qName, null);
-    } else if (qName.equalsIgnoreCase(SchemaNames.QUE_ELE)) {
+    } else if (SchemaNames.QUE_ELE.equalsIgnoreCase(qName)) {
       this.handleQuery(false, qName, null);
-    } else if (qName.equalsIgnoreCase(SchemaNames.QUE_FQE_ELE)) {
+    } else if (SchemaNames.QUE_FQE_ELE.equalsIgnoreCase(qName)) {
       this.handleFetchQuery(false, qName, null);
-    } else if (qName.equalsIgnoreCase(SchemaNames.FQE_ELE_PARAM)) {
+    } else if (SchemaNames.FQE_ELE_PARAM.equalsIgnoreCase(qName)) {
       this.handleFetchQueryParameter(false, qName, null);
-    } else if (qName.equalsIgnoreCase(SchemaNames.QUE_HIT_ELE)) {
+    } else if (SchemaNames.QUE_HIT_ELE.equalsIgnoreCase(qName)) {
       this.handleQueryHint(false, qName, null);
-    } else if (qName.equalsIgnoreCase(SchemaNames.COMMON_SGEMENT)) {
+    } else if (SchemaNames.COMMON_SGEMENT.equalsIgnoreCase(qName)) {
       this.handleCommonSegment(false, qName, null);
-    } else if (qName.equalsIgnoreCase(SchemaNames.QUE_DESC_ELE)) {
+    } else if (SchemaNames.QUE_DESC_ELE.equalsIgnoreCase(qName)) {
       this.handleQueryDesc(false, qName, null);
-    } else if (qName.equalsIgnoreCase(SchemaNames.QUE_SCPT_ELE)) {
+    } else if (SchemaNames.QUE_SCPT_ELE.equalsIgnoreCase(qName)) {
       this.handleQueryScript(false, qName, null);
     }
   }
@@ -104,21 +104,21 @@ public class QueryParseHandler extends DefaultHandler {
   @Override
   public void startElement(String uri, String localName, String qName, Attributes attributes)
       throws SAXException {
-    if (qName.equalsIgnoreCase(SchemaNames.PARAM_ENTRY_ELE)) {
+    if (SchemaNames.PARAM_ENTRY_ELE.equalsIgnoreCase(qName)) {
       this.handleParamEntry(true, qName, attributes);
-    } else if (qName.equalsIgnoreCase(SchemaNames.QUE_ELE)) {
+    } else if (SchemaNames.QUE_ELE.equalsIgnoreCase(qName)) {
       this.handleQuery(true, qName, attributes);
-    } else if (qName.equalsIgnoreCase(SchemaNames.QUE_FQE_ELE)) {
+    } else if (SchemaNames.QUE_FQE_ELE.equalsIgnoreCase(qName)) {
       this.handleFetchQuery(true, qName, attributes);
-    } else if (qName.equalsIgnoreCase(SchemaNames.FQE_ELE_PARAM)) {
+    } else if (SchemaNames.FQE_ELE_PARAM.equalsIgnoreCase(qName)) {
       this.handleFetchQueryParameter(true, qName, attributes);
-    } else if (qName.equalsIgnoreCase(SchemaNames.QUE_HIT_ELE)) {
+    } else if (SchemaNames.QUE_HIT_ELE.equalsIgnoreCase(qName)) {
       this.handleQueryHint(true, qName, attributes);
-    } else if (qName.equalsIgnoreCase(SchemaNames.COMMON_SGEMENT)) {
+    } else if (SchemaNames.COMMON_SGEMENT.equalsIgnoreCase(qName)) {
       this.handleCommonSegment(true, qName, attributes);
-    } else if (qName.equalsIgnoreCase(SchemaNames.QUE_DESC_ELE)) {
+    } else if (SchemaNames.QUE_DESC_ELE.equalsIgnoreCase(qName)) {
       this.handleQueryDesc(true, qName, attributes);
-    } else if (qName.equalsIgnoreCase(SchemaNames.QUE_SCPT_ELE)) {
+    } else if (SchemaNames.QUE_SCPT_ELE.equalsIgnoreCase(qName)) {
       this.handleQueryScript(true, qName, attributes);
     }
   }
@@ -139,15 +139,15 @@ public class QueryParseHandler extends DefaultHandler {
       FetchQuery fq = new FetchQuery();
       for (int i = 0; i < attributes.getLength(); i++) {
         String aqn = attributes.getQName(i), atv = attributes.getValue(i);
-        if (aqn.equals(SchemaNames.FQE_ATT_NAME)) {
+        if (SchemaNames.FQE_ATT_NAME.equalsIgnoreCase(aqn)) {
           fq.setReferenceQuery(atv);
-        } else if (aqn.equalsIgnoreCase(SchemaNames.FQE_ATT_MAX_SIZE)) {
+        } else if (SchemaNames.FQE_ATT_MAX_SIZE.equalsIgnoreCase(aqn)) {
           fq.setMaxSize(Conversions.toInteger(atv));
-        } else if (aqn.equalsIgnoreCase(SchemaNames.FQE_ATT_PRO_NAME)) {
+        } else if (SchemaNames.FQE_ATT_PRO_NAME.equalsIgnoreCase(aqn)) {
           fq.setInjectPropertyName(atv);
-        } else if (aqn.equalsIgnoreCase(SchemaNames.FQE_ATT_VER)) {
+        } else if (SchemaNames.FQE_ATT_VER.equalsIgnoreCase(aqn)) {
           fq.setReferenceQueryversion(defaultString(atv));
-        } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_ATT_RST_CLS)) {
+        } else if (SchemaNames.QUE_ATT_RST_CLS.equalsIgnoreCase(aqn)) {
           fq.setResultClass(isBlank(atv) ? java.util.Map.class : tryToLoadClassForName(atv));
         }
       }
@@ -170,11 +170,11 @@ public class QueryParseHandler extends DefaultHandler {
       FetchQueryParameter fqp = new FetchQueryParameter();
       for (int i = 0; i < attributes.getLength(); i++) {
         String aqn = attributes.getQName(i), atv = attributes.getValue(i);
-        if (aqn.equals(SchemaNames.FQE_ELE_PARAM_ATT_NME)) {
+        if (SchemaNames.FQE_ELE_PARAM_ATT_NME.equalsIgnoreCase(aqn)) {
           fqp.setName(atv);
-        } else if (aqn.equalsIgnoreCase(SchemaNames.FQE_ELE_PARAM_ATT_SRC)) {
+        } else if (SchemaNames.FQE_ELE_PARAM_ATT_SRC.equalsIgnoreCase(aqn)) {
           fqp.setSource(Conversions.toEnum(atv, FetchQueryParameterSource.class));
-        } else if (aqn.equalsIgnoreCase(SchemaNames.FQE_ELE_PARAM_ATT_SRC_NME)) {
+        } else if (SchemaNames.FQE_ELE_PARAM_ATT_SRC_NME.equalsIgnoreCase(aqn)) {
           fqp.setSourceName(atv);
         }
       }
@@ -197,9 +197,9 @@ public class QueryParseHandler extends DefaultHandler {
       ParameterMapping pm = new ParameterMapping();
       for (int i = 0; i < attributes.getLength(); i++) {
         String aqn = attributes.getQName(i), atv = attributes.getValue(i);
-        if (aqn.equals(SchemaNames.PARAM_ENTRY_ATT_NME)) {
+        if (SchemaNames.PARAM_ENTRY_ATT_NME.equalsIgnoreCase(aqn)) {
           pm.setName(atv);
-        } else if (aqn.equalsIgnoreCase(SchemaNames.PARAM_ENTRY_ATT_TYP)) {
+        } else if (SchemaNames.PARAM_ENTRY_ATT_TYP.equalsIgnoreCase(aqn)) {
           pm.setType(tryToLoadClassForName(atv));
         }
       }
@@ -217,17 +217,17 @@ public class QueryParseHandler extends DefaultHandler {
       Query q = new Query();
       for (int i = 0; i < attributes.getLength(); i++) {
         String aqn = attributes.getQName(i), atv = attributes.getValue(i);
-        if (aqn.equals(SchemaNames.QUE_ATT_NAME)) {
+        if (SchemaNames.QUE_ATT_NAME.equalsIgnoreCase(aqn)) {
           q.setName(atv);
-        } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_ATT_CACHE)) {
+        } else if (SchemaNames.QUE_ATT_CACHE.equalsIgnoreCase(aqn)) {
           q.setCache(Conversions.toBoolean(atv));
-        } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_ATT_CACHE_RS_MD)) {
+        } else if (SchemaNames.QUE_ATT_CACHE_RS_MD.equalsIgnoreCase(aqn)) {
           q.setCacheResultSetMetadata(Conversions.toBoolean(atv));
-        } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_ATT_RST_CLS)) {
+        } else if (SchemaNames.QUE_ATT_RST_CLS.equalsIgnoreCase(aqn)) {
           q.setResultClass(isBlank(atv) ? java.util.Map.class : tryToLoadClassForName(atv));
-        } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_ATT_RST_SET_CLS)) {
+        } else if (SchemaNames.QUE_ATT_RST_SET_CLS.equalsIgnoreCase(aqn)) {
           q.setResultSetMapping(isBlank(atv) ? null : tryToLoadClassForName(atv));
-        } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_ATT_VER)) {
+        } else if (SchemaNames.QUE_ATT_VER.equalsIgnoreCase(aqn)) {
           q.setVersion(defaultString(atv));
         }
       }
@@ -261,9 +261,9 @@ public class QueryParseHandler extends DefaultHandler {
       QueryHint hit = new QueryHint();
       for (int i = 0; i < attributes.getLength(); i++) {
         String aqn = attributes.getQName(i), atv = attributes.getValue(i);
-        if (aqn.equals(SchemaNames.QUE_HIT_ATT_KEY)) {
+        if (SchemaNames.QUE_HIT_ATT_KEY.equalsIgnoreCase(aqn)) {
           hit.setKey(atv);
-        } else if (aqn.equalsIgnoreCase(SchemaNames.QUE_HIT_ATT_KEY)) {
+        } else if (SchemaNames.QUE_HIT_ATT_KEY.equalsIgnoreCase(aqn)) {
           hit.setValue(atv);
         }
       }

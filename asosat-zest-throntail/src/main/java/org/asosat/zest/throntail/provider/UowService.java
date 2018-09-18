@@ -19,7 +19,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
-import org.asosat.kernel.pattern.unitwork.AbstractJtaJpaUnitOfWorksService;
+import org.asosat.kernel.pattern.unitwork.AbstractTxJpaUnitOfWorksxService;
 import org.asosat.kernel.stereotype.InfrastructureServices;
 
 /**
@@ -28,7 +28,7 @@ import org.asosat.kernel.stereotype.InfrastructureServices;
  */
 @InfrastructureServices
 @ApplicationScoped
-public class UowService extends AbstractJtaJpaUnitOfWorksService {
+public class UowService extends AbstractTxJpaUnitOfWorksxService {
 
   @Inject
   TransactionManager transactionManager;

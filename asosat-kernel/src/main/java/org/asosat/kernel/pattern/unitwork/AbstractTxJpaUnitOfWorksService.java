@@ -14,13 +14,13 @@
 package org.asosat.kernel.pattern.unitwork;
 
 import static org.asosat.kernel.pattern.unitwork.PkgMsgCds.ERR_UOW_CREATE;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.SynchronizationType;
+import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
@@ -29,32 +29,26 @@ import org.asosat.kernel.exception.GeneralRuntimeException;
 import org.asosat.kernel.stereotype.InfrastructureServices;
 
 /**
- * @author bingo 下午3:45:08
+ * asosat-kernel
+ *
+ * @author bingo 上午9:35:01
+ *
  */
 @ApplicationScoped
 @InfrastructureServices
-public abstract class AbstractJtaJpaUnitOfWorksService extends AbstractUnitOfWorksService {
+public abstract class AbstractTxJpaUnitOfWorksService extends AbstractUnitOfWorksService {
 
-  final Map<Transaction, DefaultJtaJpaUnitOfWorks> UOWS = new ConcurrentHashMap<>(512, 0.75f, 512);
+  ThreadLocal<DefaultTxJpaUnitOfWorks> UOWS;
 
-  public AbstractJtaJpaUnitOfWorksService() {}
+  public AbstractTxJpaUnitOfWorksService() {}
 
-  public static DefaultJtaJpaUnitOfWorks currentUnitOfWorks() {
-    return DefaultContext.bean(AbstractJtaJpaUnitOfWorksService.class).getCurrentUnitOfWorks();
+  public static DefaultTxJpaUnitOfWorks currentUnitOfWorks() {
+    return DefaultContext.bean(AbstractTxJpaUnitOfWorksxService.class).getCurrentUnitOfWorks();
   }
 
   @Override
-  public DefaultJtaJpaUnitOfWorks getCurrentUnitOfWorks() {
-    try {
-      final Transaction curTrans = this.getTransactionManager().getTransaction();
-      return this.register(curTrans, (tx) -> {
-        DefaultJtaJpaUnitOfWorks curUow = new DefaultJtaJpaUnitOfWorks(this, tx);
-        this.getTransactionSynchronizationRegistry().registerInterposedSynchronization(curUow);
-        return curUow;
-      });
-    } catch (Exception e) {
-      throw new GeneralRuntimeException(e, ERR_UOW_CREATE);
-    }
+  public DefaultTxJpaUnitOfWorks getCurrentUnitOfWorks() {
+    return this.UOWS.get();
   }
 
   @Override
@@ -68,22 +62,31 @@ public abstract class AbstractJtaJpaUnitOfWorksService extends AbstractUnitOfWor
 
   public abstract TransactionSynchronizationRegistry getTransactionSynchronizationRegistry();
 
-  public DefaultJtaJpaUnitOfWorks getUnitOfWorks(Transaction key) {
-    return this.UOWS.get(key);
-  }
-
-  public DefaultJtaJpaUnitOfWorks register(Transaction key,
-      Function<Transaction, DefaultJtaJpaUnitOfWorks> func) {
-    return this.UOWS.computeIfAbsent(key, func);
-  }
-
-  public DefaultJtaJpaUnitOfWorks unregister(Transaction key) {
-    return this.UOWS.remove(key);
+  @Override
+  void clearCurrentUnitOfWorks(Object key) {
+    this.UOWS.remove();
   }
 
   @PreDestroy
   void destroy() {
-    this.UOWS.clear();
+    this.clearCurrentUnitOfWorks(null);
+  }
+
+  @PostConstruct
+  void init() {
+    this.UOWS = ThreadLocal.withInitial(() -> {
+      try {
+        final Transaction tx = this.getTransactionManager().getTransaction();
+        final EntityManager em =
+            this.getEntityManagerFactory().createEntityManager(SynchronizationType.SYNCHRONIZED);
+        DefaultTxJpaUnitOfWorks uow =
+            new DefaultTxJpaUnitOfWorks(AbstractTxJpaUnitOfWorksService.this, em, tx);
+        this.getTransactionSynchronizationRegistry().registerInterposedSynchronization(uow);
+        return uow;
+      } catch (SystemException e) {
+        throw new GeneralRuntimeException(e, ERR_UOW_CREATE);
+      }
+    });
   }
 
 }

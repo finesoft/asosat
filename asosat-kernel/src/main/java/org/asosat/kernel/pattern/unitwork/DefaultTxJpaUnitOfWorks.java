@@ -24,7 +24,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import javax.persistence.EntityManager;
-import javax.persistence.SynchronizationType;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
@@ -39,18 +38,18 @@ import org.asosat.kernel.exception.GeneralRuntimeException;
 /**
  * @author bingo 上午9:34:06
  */
-public class DefaultJtaJpaUnitOfWorks extends AbstractUnitOfWorks implements Synchronization {
+public class DefaultTxJpaUnitOfWorks extends AbstractUnitOfWorks implements Synchronization {
   static final String BGN_LOG = "Begin unit of work [%s]";
-  static final String END_LOG = "End unit of work [%s], remain [%d] unit of works.";
+  static final String END_LOG = "End unit of work [%s].";
   final transient Transaction transaction;
   final transient EntityManager entityManager;
   final Map<Lifecycle, Set<AggregateIdentifier>> registration = new EnumMap<>(Lifecycle.class);
 
-  protected DefaultJtaJpaUnitOfWorks(AbstractJtaJpaUnitOfWorksService manager, Transaction transaction) {
+  protected DefaultTxJpaUnitOfWorks(AbstractUnitOfWorksService manager, EntityManager entityManager,
+      Transaction transaction) {
     super(manager);
     this.transaction = transaction;
-    this.entityManager =
-        manager.getEntityManagerFactory().createEntityManager(SynchronizationType.SYNCHRONIZED);
+    this.entityManager = entityManager;
     Arrays.stream(Lifecycle.values()).forEach(e -> this.registration.put(e, new LinkedHashSet<>()));
     this.logger.log(Level.FINE, String.format(BGN_LOG, transaction.toString()));
   }
@@ -63,9 +62,7 @@ public class DefaultJtaJpaUnitOfWorks extends AbstractUnitOfWorks implements Syn
     } finally {
       final Map<Lifecycle, Set<AggregateIdentifier>> cloneRegistration = this.getRegistration();
       this.clear();
-      this.getManager().unregister(this.transaction);
-      this.logger.log(Level.FINE,
-          String.format(END_LOG, this.transaction.toString(), this.getManager().UOWS.size()));
+      this.logger.log(Level.FINE, String.format(END_LOG, this.transaction.toString()));
       this.handlePostCompleted(cloneRegistration, success);
     }
   }
@@ -74,6 +71,7 @@ public class DefaultJtaJpaUnitOfWorks extends AbstractUnitOfWorks implements Syn
   public void beforeCompletion() {
     this.handlePreComplete();
     this.handleMessage();
+    this.entityManager.flush();// FIXME
   }
 
   public EntityManager getEntityManager() {
@@ -161,12 +159,13 @@ public class DefaultJtaJpaUnitOfWorks extends AbstractUnitOfWorks implements Syn
       this.entityManager.close();
     }
     this.registration.clear();
+    this.getManager().clearCurrentUnitOfWorks(this.transaction);
     super.clear();
   }
 
   @Override
-  protected AbstractJtaJpaUnitOfWorksService getManager() {
-    return (AbstractJtaJpaUnitOfWorksService) this.manager;
+  protected AbstractUnitOfWorksService getManager() {
+    return (AbstractUnitOfWorksService) super.getManager();
   }
 
   protected void handleMessage() {

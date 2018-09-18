@@ -30,7 +30,7 @@ import org.asosat.kernel.pattern.unitwork.UnitOfWorksService;
  * Global aggregate persistence listener use for unit of work
  *
  * @see TransactionUnitOfWorksManager
- * @see DefaultJtaJpaUnitOfWorks
+ * @see DefaultTxJpaUnitOfWorks
  * @author bingo 下午12:06:07
  */
 public class DefaultAggregateListener {

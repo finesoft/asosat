@@ -19,6 +19,6 @@ package org.asosat.query.dynamic.asql.ast;
  * @author bingo 上午11:41:39
  *
  */
-public interface IterableNode extends Iterable<Node> {
+public interface IterableNode extends Iterable<Node>, Node {
 
 }

@@ -13,27 +13,23 @@
  */
 package org.asosat.query.dynamic.asql.ast;
 
+import java.util.List;
+import org.asosat.query.dynamic.asql.ast.Operator.LogicalOperator;
+
 /**
  * asosat-query
  *
- * @author bingo 上午11:47:38
+ * @author bingo 下午2:01:50
  *
  */
-public enum LogicalOperator implements Operator {
+public class OrNode extends LogicalNode {
 
-  AND("&"), OR("|");
-
-  private final String symbol;
-
-  private LogicalOperator(String symbol) {
-    this.symbol = symbol;
+  /**
+   * @param childs
+   */
+  OrNode(List<Node> childs) {
+    super(childs, LogicalOperator.OR);
   }
 
-
-
-  @Override
-  public String symbol() {
-    return this.symbol;
-  }
 
 }

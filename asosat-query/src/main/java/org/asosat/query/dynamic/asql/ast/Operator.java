@@ -27,7 +27,7 @@ public interface Operator {
 
   public enum ComparisonOperator implements Operator {
 
-    GT(">"), EQ("="), LT("<"), GE(">="), LE("<="), NE("!="), IN("~"), NN("!~");
+    GT(">"), EQ("=="), LT("<"), GE(">="), LE("<="), NE("!=");
 
     private final String symbol;
 
@@ -46,6 +46,20 @@ public interface Operator {
     private final String symbol;
 
     private LogicalOperator(String symbol) {
+      this.symbol = symbol;
+    }
+
+    @Override
+    public String symbol() {
+      return this.symbol;
+    }
+  }
+
+  public enum XComparisonOperator implements Operator {
+    IN("^"), NN("!^");
+    private final String symbol;
+
+    private XComparisonOperator(String symbol) {
       this.symbol = symbol;
     }
 

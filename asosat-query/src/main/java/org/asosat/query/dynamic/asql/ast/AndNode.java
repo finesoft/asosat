@@ -11,15 +11,24 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+package org.asosat.query.dynamic.asql.ast;
+
+import java.util.List;
+import org.asosat.query.dynamic.asql.ast.Operator.LogicalOperator;
+
 /**
  * asosat-query
  *
- * <pre>
- * This package support a structured query language abstract syntax tree(AST).
- * The AST can be use for nosql dynamic query, like mongo.
- * </pre>
- *
- * @author bingo 上午11:22:33
+ * @author bingo 下午2:07:28
  *
  */
-package org.asosat.query.dynamic.asql.ast;
+public class AndNode extends LogicalNode {
+
+  /**
+   * @param childs
+   */
+  AndNode(List<Node> childs) {
+    super(childs, LogicalOperator.AND);
+  }
+
+}

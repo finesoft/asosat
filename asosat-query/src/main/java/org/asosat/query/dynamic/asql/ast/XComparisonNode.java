@@ -13,30 +13,33 @@
  */
 package org.asosat.query.dynamic.asql.ast;
 
-import java.util.Iterator;
 import java.util.List;
-import org.asosat.query.dynamic.asql.ast.Operator.LogicalOperator;
+import org.asosat.query.dynamic.asql.ast.Operator.ComparisonOperator;
 
 /**
  * asosat-query
  *
- * @author bingo 上午11:42:26
+ * @author bingo 下午2:39:59
  *
  */
-public abstract class LogicalNode implements IterableNode {
+public class XComparisonNode implements Node {
 
-  private final List<Node> childs;
+  private final ComparisonOperator operator;
 
-  private final LogicalOperator operator;
+  private final String comparable;
+
+  private final List<Object> candidates;
 
   /**
-   * @param childs
    * @param operator
+   * @param comparable
+   * @param candidate
    */
-  LogicalNode(List<Node> childs, LogicalOperator operator) {
+  public XComparisonNode(ComparisonOperator operator, String comparable, List<Object> candidates) {
     super();
-    this.childs = childs;
     this.operator = operator;
+    this.comparable = comparable;
+    this.candidates = candidates;
   }
 
   @Override
@@ -45,22 +48,24 @@ public abstract class LogicalNode implements IterableNode {
   }
 
   /**
-   * @return the childs
+   * @return the candidates
    */
-  public List<Node> getChilds() {
-    return this.childs;
+  public List<Object> getCandidates() {
+    return this.candidates;
+  }
+
+  /**
+   * @return the comparable
+   */
+  public String getComparable() {
+    return this.comparable;
   }
 
   /**
    * @return the operator
    */
-  public LogicalOperator getOperator() {
+  public ComparisonOperator getOperator() {
     return this.operator;
-  }
-
-  @Override
-  public Iterator<Node> iterator() {
-    return this.childs.iterator();
   }
 
 }

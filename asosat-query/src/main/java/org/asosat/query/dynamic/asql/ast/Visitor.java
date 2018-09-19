@@ -21,4 +21,6 @@ package org.asosat.query.dynamic.asql.ast;
  */
 public interface Visitor<R, P> {
 
+  R visit(Node node, P param);
+
 }

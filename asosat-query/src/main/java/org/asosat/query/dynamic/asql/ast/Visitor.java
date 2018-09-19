@@ -11,32 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.dynamic;
-
-import java.util.List;
-import java.util.Map;
-import org.asosat.query.mapping.FetchQuery;
+package org.asosat.query.dynamic.asql.ast;
 
 /**
  * asosat-query
  *
- * @author bingo 下午3:51:20
+ * @author bingo 上午11:39:46
  *
  */
-public interface DynamicQueryTpl<T> {
-
-  long getCachedTimestemp();
-
-  List<FetchQuery> getFetchQueries();
-
-  Map<String, Class<?>> getParamConvertSchema();
-
-  String getQueryName();
-
-  Class<?> getResultClass();
-
-  Object getTemplate();
-
-  T process(Map<String, Object> param);
+public interface Visitor<R, P> {
 
 }

@@ -16,7 +16,7 @@ package org.asosat.query.sql;
 import java.util.ArrayList;
 import java.util.List;
 import org.asosat.query.QueryRuntimeException;
-import org.asosat.query.dynamic.DynamicQueryTplResolver;
+import org.asosat.query.dynamic.template.DynamicQueryTplResolver;
 import freemarker.ext.util.WrapperTemplateModel;
 import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateBooleanModel;

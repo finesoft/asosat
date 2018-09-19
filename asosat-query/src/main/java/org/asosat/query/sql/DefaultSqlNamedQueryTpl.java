@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.asosat.kernel.normal.conversion.ConversionService;
 import org.asosat.query.QueryRuntimeException;
-import org.asosat.query.dynamic.FreemarkerDynamicQueryTpl;
-import org.asosat.query.dynamic.DynamicQueryTplResolver;
+import org.asosat.query.dynamic.template.DynamicQueryTplResolver;
+import org.asosat.query.dynamic.template.FreemarkerDynamicQueryTpl;
 import org.asosat.query.mapping.Query;
 import freemarker.template.TemplateException;
 

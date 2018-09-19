@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.dynamic;
+package org.asosat.query.dynamic.template;
 
 import java.io.IOException;
 import java.time.Instant;

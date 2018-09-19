@@ -28,10 +28,10 @@
 		<xversion.junit.platform.version>1.1.1</xversion.junit.platform.version>
 
 		<!-- Open source integration -->
-		<xversion.commons-lang3>3.7</xversion.commons-lang3>
+		<xversion.commons-lang3>3.8</xversion.commons-lang3>
 		<xversion.commons-io>2.6</xversion.commons-io>
 		<xversion.commons-beanutils>1.9.3</xversion.commons-beanutils>
-		<xversion.commons-collections4>4.1</xversion.commons-collections4>
+		<xversion.commons-collections4>4.2</xversion.commons-collections4>
 		<xversion.commons-codec>1.11</xversion.commons-codec>
 		<xversion.commons-vfs2>2.2</xversion.commons-vfs2>
 

@@ -11,24 +11,18 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.dynamic;
+package org.asosat.query.mongo;
 
-import freemarker.template.TemplateMethodModelEx;
+import com.mongodb.client.MongoDatabase;
 
 /**
  * asosat-query
  *
- * @author bingo 下午5:40:20
+ * @author bingo 上午10:00:49
  *
  */
-public interface DynamicQueryTplResolver<CP> extends TemplateMethodModelEx {
+public interface MongoQueryConfiguration {
 
-  CP getParameters();
-
-  QueryTemplateMethodModelType getType();
-
-  public enum QueryTemplateMethodModelType {
-    SP, MP, EP
-  }
+  MongoDatabase getDatabase();
 
 }

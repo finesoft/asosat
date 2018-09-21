@@ -13,6 +13,7 @@
  */
 package org.asosat.kernel.abstraction;
 
+import static org.asosat.kernel.util.MyClsUtils.tryToLoadClassForName;
 import static org.asosat.kernel.util.Preconditions.requireNotNull;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -65,21 +66,23 @@ public interface Aggregate extends Entity, Being, Readable<Aggregate> {
     @Override
     public String getType();
 
+    default Class<?> getTypeCls() {
+      return tryToLoadClassForName(getType());
+    }
+
   }
 
   public static class DefaultAggregateIdentifier implements AggregateIdentifier {
 
     private static final long serialVersionUID = 416267416396865273L;
 
-    private Serializable id;
+    private final Serializable id;
 
-    private String type;
-
-    public DefaultAggregateIdentifier() {}
+    private final Class<?> typeCls;
 
     public DefaultAggregateIdentifier(Aggregate aggregate) {
       this.id = requireNotNull(requireNotNull(aggregate, "").getId(), "");
-      this.type = requireNotNull(aggregate.getClass().getName(), "");// FIXME MSG
+      this.typeCls = requireNotNull(aggregate.getClass(), "");// FIXME MSG
     }
 
     @Override
@@ -90,22 +93,22 @@ public interface Aggregate extends Entity, Being, Readable<Aggregate> {
       if (obj == null) {
         return false;
       }
-      if (this.getClass() != obj.getClass()) {
+      if (getClass() != obj.getClass()) {
         return false;
       }
       DefaultAggregateIdentifier other = (DefaultAggregateIdentifier) obj;
-      if (this.id == null) {
+      if (id == null) {
         if (other.id != null) {
           return false;
         }
-      } else if (!this.id.equals(other.id)) {
+      } else if (!id.equals(other.id)) {
         return false;
       }
-      if (this.type == null) {
-        if (other.type != null) {
+      if (typeCls == null) {
+        if (other.typeCls != null) {
           return false;
         }
-      } else if (!this.type.equals(other.type)) {
+      } else if (!typeCls.equals(other.typeCls)) {
         return false;
       }
       return true;
@@ -118,18 +121,22 @@ public interface Aggregate extends Entity, Being, Readable<Aggregate> {
 
     @Override
     public String getType() {
-      return this.type;
+      return this.typeCls == null ? null : this.typeCls.getName();
+    }
+
+    @Override
+    public Class<?> getTypeCls() {
+      return typeCls;
     }
 
     @Override
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-      result = prime * result + ((this.type == null) ? 0 : this.type.hashCode());
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((typeCls == null) ? 0 : typeCls.hashCode());
       return result;
     }
-
 
   }
 

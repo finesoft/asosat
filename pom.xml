@@ -118,9 +118,8 @@
 		<module>asosat-domain</module>
 		<module>asosat-interact</module>
 		<module>asosat-message</module>
+		<module>asosat-indices</module>
 		<module>asosat-query</module>
-		<module>asosat-search</module>
 		<module>asosat-thorntail</module>
-    <module>asosat-indices</module>
   </modules>
 </project>

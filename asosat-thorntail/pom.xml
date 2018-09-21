@@ -60,7 +60,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.asosat</groupId>
-				<artifactId>asosat-search</artifactId>
+				<artifactId>asosat-indices</artifactId>
 				<version>${xversion.asosat}</version>
 			</dependency>
 		</dependencies>

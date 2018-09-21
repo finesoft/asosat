@@ -13,8 +13,10 @@
  */
 package org.asosat.kernel.pattern.command;
 
+import java.util.ArrayList;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import org.asosat.kernel.exception.KernelRuntimeException;
 
 /**
  * @author bingo 下午2:07:00
@@ -25,6 +27,8 @@ public class DefaultCommander implements Commander {
 
   final CommandRegistry registry;
 
+  final ThreadLocal<ArrayList<Command>> commandStacks = ThreadLocal.withInitial(ArrayList::new);
+
   @Inject
   public DefaultCommander(CommandRegistry registry) {
     this.registry = registry;
@@ -33,9 +37,23 @@ public class DefaultCommander implements Commander {
   @SuppressWarnings("unchecked")
   @Override
   public <R, C extends Command> R issue(C command) {
-    CommandHandler<C, R> commandHandler =
-        (CommandHandler<C, R>) this.registry.get(command.getClass());
-    return commandHandler.handle(command);
+    try {
+      this.commandStacks.get().add(command);
+      CommandHandler<C, R> commandHandler =
+          (CommandHandler<C, R>) this.registry.get(command.getClass());
+      return commandHandler.handle(command);
+    } catch (Exception ex) {
+      throw new KernelRuntimeException(ex);
+    } finally {
+      ArrayList<Command> stack = this.commandStacks.get();
+      int size = stack.size();
+      if (size > 0) {
+        stack.remove(size - 1);
+      }
+      if (stack.isEmpty()) {
+        CommandContext.clear();
+      }
+    }
   }
 
 }

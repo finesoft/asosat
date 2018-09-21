@@ -23,7 +23,7 @@ import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 import org.asosat.kernel.abstraction.Lifecycle;
 import org.asosat.kernel.context.DefaultContext;
-import org.asosat.kernel.pattern.unitwork.UnitOfWorks;
+import org.asosat.kernel.pattern.unitwork.DefaultTxJpaUnitOfWorks;
 import org.asosat.kernel.pattern.unitwork.UnitOfWorksService;
 
 /**
@@ -119,9 +119,11 @@ public class DefaultAggregateListener {
   }
 
   void registerToUnitOfWork(AbstractAggregate o) {
-    UnitOfWorks curUow = DefaultContext.bean(UnitOfWorksService.class).getCurrentUnitOfWorks();
-    if (curUow != null) {
-      curUow.register(o);
+    UnitOfWorksService uows = DefaultContext.bean(UnitOfWorksService.class);
+    if (uows != null) {
+      uows.getCurrentUnitOfWorks().register(o);
+    } else {
+      this.logger.warning(() -> "UnitOfWorksService not found! please check the implements!");
     }
   }
 

@@ -19,6 +19,7 @@ import javax.enterprise.event.TransactionPhase;
 import javax.inject.Inject;
 import org.asosat.domain.aggregate.LifcyclePhase;
 import org.asosat.domain.event.LifecycleEvent;
+import org.asosat.kernel.abstraction.Entity;
 import org.asosat.kernel.pattern.repository.JpaRepository;
 import org.asosat.kernel.stereotype.InfrastructureServices;
 
@@ -39,14 +40,15 @@ public class LifecycleService {
 
   public void onLifecycle(@Observes(during = TransactionPhase.IN_PROGRESS) LifecycleEvent event) {
     if (event.getSource() != null) {
+      Entity entity = event.getSource();
       if (event.getPhase() == LifcyclePhase.ENABLE) {
-        if (event.getSource().getId() == null) {
-          this.persist(event.getSource(), event.isEffectImmediately());
+        if (entity.getId() == null) {
+          this.persist(entity, event.isEffectImmediately());
         } else {
-          this.merge(event.getSource(), event.isEffectImmediately());
+          this.merge(entity, event.isEffectImmediately());
         }
-      } else if (event.getPhase() == LifcyclePhase.DESTROY && event.getSource().getId() != null) {
-        this.remove(event.getSource(), event.isEffectImmediately());
+      } else if (event.getPhase() == LifcyclePhase.DESTROY && entity.getId() != null) {
+        this.remove(entity, event.isEffectImmediately());
       }
     }
   }

@@ -14,6 +14,7 @@
 package org.asosat.query.sql;
 
 import javax.sql.DataSource;
+import org.asosat.query.QueryRuntimeException;
 import org.asosat.query.sql.paging.dialect.Dialect;
 
 /**
@@ -24,28 +25,143 @@ import org.asosat.query.sql.paging.dialect.Dialect;
  */
 public interface SqlQueryConfiguration {
 
+  static final Integer DFLT_FETCH_SIZE = 16;
+
+  static Builder defaultBuilder() {
+    return new Builder();
+  }
+
   DataSource getDataSource();
 
   Dialect getDialect();
 
+  /**
+   * @see java.sql.ResultSet#getFetchDirection()
+   * @return the fetchDirection
+   */
   default Integer getFetchDirection() {
     return null;
   }
 
+  /**
+   * @see java.sql.ResultSet#getFetchSize()
+   * @return the fetchSize
+   */
   default Integer getFetchSize() {
-    return 16;
+    return DFLT_FETCH_SIZE;
   }
 
+  /**
+   * @see java.sql.Statement#getMaxRows()
+   * @return the maxFieldSize
+   */
   default Integer getMaxFieldSize() {
     return 0;
   }
 
+  /**
+   * @see java.sql.Statement#getMaxFieldSize()
+   * @return the maxFieldSize
+   */
   default Integer getMaxRows() {
     return 0;
   }
 
+  /**
+   * @see java.sql.Statement#getQueryTimeout()
+   * @return the maxFieldSize
+   */
   default Integer getQueryTimeout() {
     return 0;
   }
 
+  static class Builder {
+
+    final DefaultSqlQueryConfiguration cfg = new DefaultSqlQueryConfiguration();
+
+    public SqlQueryConfiguration build() {
+      if (cfg.dataSource == null || cfg.dialect == null) {
+        throw new QueryRuntimeException();
+      }
+      return cfg;
+    }
+
+    public Builder dataSource(DataSource dataSource) {
+      cfg.dataSource = dataSource;
+      return this;
+    }
+
+    public Builder dialect(Dialect dialect) {
+      cfg.dialect = dialect;
+      return this;
+    }
+
+    public Builder fetchDirection(Integer fetchDirection) {
+      cfg.fetchDirection = fetchDirection;
+      return this;
+    }
+
+    public Builder fetchSize(Integer fetchSize) {
+      cfg.fetchSize = fetchSize;
+      return this;
+    }
+
+    public Builder maxFieldSize(Integer maxFieldSize) {
+      cfg.maxFieldSize = maxFieldSize;
+      return this;
+    }
+
+    public Builder queryTimeout(Integer queryTimeout) {
+      cfg.queryTimeout = queryTimeout;
+      return this;
+    }
+  }
+
+  static class DefaultSqlQueryConfiguration implements SqlQueryConfiguration {
+
+    protected DataSource dataSource;
+    protected Dialect dialect;
+    protected Integer fetchDirection;
+    protected Integer fetchSize = DFLT_FETCH_SIZE;
+    protected Integer maxFieldSize = 0;
+    protected Integer queryTimeout = 0;
+
+    protected Integer maxRows;
+
+    @Override
+    public DataSource getDataSource() {
+      return dataSource;
+    }
+
+    @Override
+    public Dialect getDialect() {
+      return dialect;
+    }
+
+    @Override
+    public Integer getFetchDirection() {
+      return fetchDirection;
+    }
+
+    @Override
+    public Integer getFetchSize() {
+      return fetchSize;
+    }
+
+    @Override
+    public Integer getMaxFieldSize() {
+      return maxFieldSize;
+    }
+
+    @Override
+    public Integer getMaxRows() {
+      return maxRows;
+    }
+
+    @Override
+    public Integer getQueryTimeout() {
+      return queryTimeout;
+    }
+
+  }
 }

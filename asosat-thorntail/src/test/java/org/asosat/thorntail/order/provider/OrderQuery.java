@@ -22,7 +22,6 @@ import org.asosat.kernel.exception.KernelRuntimeException;
 import org.asosat.query.sql.AbstractSqlNamedQuery;
 import org.asosat.query.sql.DefaultSqlQueryExecutor;
 import org.asosat.query.sql.SqlQueryConfiguration;
-import org.asosat.query.sql.paging.dialect.Dialect;
 import org.asosat.query.sql.paging.dialect.SQLServer2012Dialect;
 
 /**
@@ -44,33 +43,13 @@ public class OrderQuery extends AbstractSqlNamedQuery {
   protected void init() {
     try {
       InitialContext ctx = new InitialContext();
-      this.configuration = new DmmsSqlQueryConfiguration(
-          (DataSource) ctx.lookup("java:jboss/datasources/exampleRoDs"),
-          new SQLServer2012Dialect());
+      this.configuration = SqlQueryConfiguration.defaultBuilder()
+          .dataSource((DataSource) ctx.lookup("java:jboss/datasources/exampleRoDs"))
+          .dialect(new SQLServer2012Dialect()).build();
       this.executor = new DefaultSqlQueryExecutor(this.configuration);
     } catch (NamingException e) {
       throw new KernelRuntimeException(e);
     }
   }
 
-  static class DmmsSqlQueryConfiguration implements SqlQueryConfiguration {
-
-    final DataSource ds;
-    final Dialect da;
-
-    DmmsSqlQueryConfiguration(DataSource ds, Dialect da) {
-      this.ds = ds;
-      this.da = da;
-    }
-
-    @Override
-    public DataSource getDataSource() {
-      return this.ds;
-    }
-
-    @Override
-    public Dialect getDialect() {
-      return this.da;
-    }
-  }
 }

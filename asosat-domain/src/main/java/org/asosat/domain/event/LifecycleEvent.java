@@ -47,11 +47,6 @@ public class LifecycleEvent extends AbstractEvent {
     return this.phase;
   }
 
-  @Override
-  public Aggregate getSource() {
-    return super.getSource() == null ? null : (Aggregate) super.getSource();
-  }
-
   public boolean isEffectImmediately() {
     return this.effectImmediately;
   }

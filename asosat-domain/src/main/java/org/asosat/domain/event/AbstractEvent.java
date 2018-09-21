@@ -40,9 +40,10 @@ public abstract class AbstractEvent implements Event {
     return this.occurredTime;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public Object getSource() {
-    return this.source;
+  public <T> T getSource() {
+    return this.source == null ? null : (T) this.source;
   }
 
   @Override

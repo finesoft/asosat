@@ -28,6 +28,7 @@ import org.asosat.kernel.stereotype.DomainServices;
 public class OrderListener {
 
   public void onConfirmed(@Observes OrderConfirmedEvent e) {
-    System.out.println(e.getSource().getNumber() + " was confirmed!");
+    Order order = e.getSource();
+    System.out.println(order.getNumber() + " was confirmed!");
   }
 }

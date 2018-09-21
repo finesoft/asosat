@@ -32,10 +32,4 @@ public class OrderConfirmedEvent extends AbstractEvent {
     super(source);
   }
 
-  @Override
-  public Order getSource() {
-    return (Order) super.getSource();
-  }
-
-
 }

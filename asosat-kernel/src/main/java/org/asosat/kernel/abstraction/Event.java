@@ -25,7 +25,7 @@ public interface Event extends Serializable, Cloneable {
   Instant getOccurredTime();
 
   @Transient
-  default Object getSource() {
+  default <T> T getSource() {
     return null;
   }
 }

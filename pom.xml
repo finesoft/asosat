@@ -121,5 +121,6 @@
 		<module>asosat-query</module>
 		<module>asosat-search</module>
 		<module>asosat-thorntail</module>
+    <module>asosat-indices</module>
   </modules>
 </project>

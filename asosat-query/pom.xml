@@ -14,6 +14,7 @@
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<xversion.calcite>1.17.0</xversion.calcite>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -28,13 +29,23 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.calcite</groupId>
+			<artifactId>calcite-core</artifactId>
+			<version>${xversion.calcite}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.calcite</groupId>
+			<artifactId>calcite-linq4j</artifactId>
+			<version>${xversion.calcite}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.calcite</groupId>
 			<artifactId>calcite-mongodb</artifactId>
-			<version>1.17.0</version>
+			<version>${xversion.calcite}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.calcite</groupId>
 			<artifactId>calcite-elasticsearch</artifactId>
-			<version>1.17.0</version>
+			<version>${xversion.calcite}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.freemarker</groupId>

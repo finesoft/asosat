@@ -13,9 +13,9 @@
  */
 package org.asosat.kernel.pattern.command;
 
-import java.util.ArrayList;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.asosat.kernel.exception.KernelRuntimeException;
 
 /**
@@ -27,7 +27,7 @@ public class DefaultCommander implements Commander {
 
   final CommandRegistry registry;
 
-  final ThreadLocal<ArrayList<Command>> commandStacks = ThreadLocal.withInitial(ArrayList::new);
+  final ThreadLocal<MutableInt> commandStacks = ThreadLocal.withInitial(MutableInt::new);
 
   @Inject
   public DefaultCommander(CommandRegistry registry) {
@@ -38,19 +38,15 @@ public class DefaultCommander implements Commander {
   @Override
   public <R, C extends Command> R issue(C command) {
     try {
-      this.commandStacks.get().add(command);
+      this.commandStacks.get().increment();
       CommandHandler<C, R> commandHandler =
           (CommandHandler<C, R>) this.registry.get(command.getClass());
       return commandHandler.handle(command);
     } catch (Exception ex) {
       throw new KernelRuntimeException(ex);
     } finally {
-      ArrayList<Command> stack = this.commandStacks.get();
-      int size = stack.size();
-      if (size > 0) {
-        stack.remove(size - 1);
-      }
-      if (stack.isEmpty()) {
+      this.commandStacks.get().decrement();
+      if (this.commandStacks.get().intValue() == 0) {
         CommandContext.clear();
       }
     }

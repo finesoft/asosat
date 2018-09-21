@@ -11,33 +11,35 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.dynamic.asql.ast;
+package org.asosat.kernel.lang.adslscript.define;
 
-import org.asosat.query.dynamic.asql.ast.Operator.ComparisonOperator;
+import java.util.List;
+import org.asosat.kernel.lang.adslscript.define.Operator.ComparisonOperator;
 
 /**
  * asosat-query
  *
- * @author bingo 下午2:39:22
+ * @author bingo 下午2:39:59
  *
  */
-public class ComparisonNode implements Node {
+public class XComparisonNode implements Node {
 
   private final ComparisonOperator operator;
 
   private final String comparable;
 
-  private final Object candidate;
+  private final List<Object> candidates;
 
   /**
    * @param operator
    * @param comparable
+   * @param candidate
    */
-  public ComparisonNode(ComparisonOperator operator, String comparable, Object candidate) {
+  public XComparisonNode(ComparisonOperator operator, String comparable, List<Object> candidates) {
     super();
     this.operator = operator;
     this.comparable = comparable;
-    this.candidate = candidate;
+    this.candidates = candidates;
   }
 
   @Override
@@ -46,10 +48,10 @@ public class ComparisonNode implements Node {
   }
 
   /**
-   * @return the candidate
+   * @return the candidates
    */
-  public Object getCandidate() {
-    return this.candidate;
+  public List<Object> getCandidates() {
+    return this.candidates;
   }
 
   /**

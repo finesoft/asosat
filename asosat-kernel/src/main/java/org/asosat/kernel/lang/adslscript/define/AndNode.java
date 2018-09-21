@@ -11,16 +11,24 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.dynamic.asql.ast;
+package org.asosat.kernel.lang.adslscript.define;
+
+import java.util.List;
+import org.asosat.kernel.lang.adslscript.define.Operator.LogicalOperator;
 
 /**
  * asosat-query
  *
- * @author bingo 上午11:39:46
+ * @author bingo 下午2:07:28
  *
  */
-public interface Visitor<R, P> {
+public class AndNode extends LogicalNode {
 
-  R visit(Node node, P param);
+  /**
+   * @param childs
+   */
+  AndNode(List<Node> childs) {
+    super(childs, LogicalOperator.AND);
+  }
 
 }

@@ -11,14 +11,10 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.dynamic.asql.ast;
-
 /**
- * asosat-query
- *
- * @author bingo 上午11:41:39
+ * asosat-kernel
+ * 
+ * @author bingo 下午2:10:50
  *
  */
-public interface IterableNode extends Iterable<Node>, Node {
-
-}
+package org.asosat.kernel.lang.javascript;

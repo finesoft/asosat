@@ -11,25 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.dynamic.asql.ast;
-
-import java.util.List;
-import org.asosat.query.dynamic.asql.ast.Operator.LogicalOperator;
+package org.asosat.kernel.lang.adslscript.define;
 
 /**
  * asosat-query
  *
- * @author bingo 下午2:01:50
+ * @author bingo 上午11:41:39
  *
  */
-public class OrNode extends LogicalNode {
-
-  /**
-   * @param childs
-   */
-  OrNode(List<Node> childs) {
-    super(childs, LogicalOperator.OR);
-  }
-
+public interface IterableNode extends Iterable<Node>, Node {
 
 }

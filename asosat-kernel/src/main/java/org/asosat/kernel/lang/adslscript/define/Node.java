@@ -11,10 +11,20 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+package org.asosat.kernel.lang.adslscript.define;
+
 /**
  * asosat-query
- * 
- * @author bingo 上午9:50:30
+ *
+ * @author bingo 上午11:39:24
  *
  */
-package org.asosat.query.mongo;
+public interface Node {
+
+  default <R, P> R apply(Visitor<R, P> visitor) {
+    return apply(visitor, null);
+  }
+
+  <R, P> R apply(Visitor<R, P> visitor, P param);
+
+}

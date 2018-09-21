@@ -11,8 +11,25 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+package org.asosat.kernel.lang.adslscript.define;
+
+import java.util.List;
+import org.asosat.kernel.lang.adslscript.define.Operator.LogicalOperator;
+
 /**
- * @author bingo 上午9:59:21
+ * asosat-query
+ *
+ * @author bingo 下午2:01:50
  *
  */
-package org.asosat.kernel.pattern.script;
+public class OrNode extends LogicalNode {
+
+  /**
+   * @param childs
+   */
+  OrNode(List<Node> childs) {
+    super(childs, LogicalOperator.OR);
+  }
+
+
+}

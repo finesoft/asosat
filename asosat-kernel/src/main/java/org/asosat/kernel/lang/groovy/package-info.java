@@ -11,24 +11,10 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.dynamic.asql.ast;
-
-import java.util.List;
-import org.asosat.query.dynamic.asql.ast.Operator.LogicalOperator;
-
 /**
- * asosat-query
- *
- * @author bingo 下午2:07:28
+ * asosat-kernel
+ * 
+ * @author bingo 下午2:14:23
  *
  */
-public class AndNode extends LogicalNode {
-
-  /**
-   * @param childs
-   */
-  AndNode(List<Node> childs) {
-    super(childs, LogicalOperator.AND);
-  }
-
-}
+package org.asosat.kernel.lang.groovy;

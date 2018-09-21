@@ -11,20 +11,10 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.dynamic.asql.ast;
-
 /**
- * asosat-query
- *
- * @author bingo 上午11:39:24
+ * asosat-kernel
+ * 
+ * @author bingo 下午2:06:33
  *
  */
-public interface Node {
-
-  default <R, P> R apply(Visitor<R, P> visitor) {
-    return apply(visitor, null);
-  }
-
-  <R, P> R apply(Visitor<R, P> visitor, P param);
-
-}
+package org.asosat.kernel.lang;

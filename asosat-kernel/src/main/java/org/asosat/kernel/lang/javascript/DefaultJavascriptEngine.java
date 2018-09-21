@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.pattern.script;
+package org.asosat.kernel.lang.javascript;
 
 import java.io.Reader;
 import javax.annotation.PostConstruct;

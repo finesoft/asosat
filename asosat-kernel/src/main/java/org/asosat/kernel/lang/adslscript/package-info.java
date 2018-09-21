@@ -12,14 +12,9 @@
  * the License.
  */
 /**
- * asosat-query
- *
- * <pre>
- * This package support a structured query language abstract syntax tree(AST).
- * The AST can be use for nosql dynamic query, like mongo.
- * </pre>
- *
- * @author bingo 上午11:22:33
+ * asosat-kernel
+ * 
+ * @author bingo 下午2:11:55
  *
  */
-package org.asosat.query.dynamic.asql.ast;
+package org.asosat.kernel.lang.adslscript;

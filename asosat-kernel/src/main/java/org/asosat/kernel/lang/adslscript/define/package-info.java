@@ -12,9 +12,9 @@
  * the License.
  */
 /**
- * asosat-query
+ * asosat-kernel
  * 
- * @author bingo 上午11:22:19
+ * @author bingo 下午2:12:08
  *
  */
-package org.asosat.query.dynamic.asql;
+package org.asosat.kernel.lang.adslscript.define;

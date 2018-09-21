@@ -11,18 +11,16 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.mongo;
-
-import com.mongodb.client.MongoDatabase;
+package org.asosat.kernel.lang.adslscript.define;
 
 /**
  * asosat-query
  *
- * @author bingo 上午10:00:49
+ * @author bingo 上午11:39:46
  *
  */
-public interface MongoQueryConfiguration {
+public interface Visitor<R, P> {
 
-  MongoDatabase getDatabase();
+  R visit(Node node, P param);
 
 }

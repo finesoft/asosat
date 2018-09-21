@@ -11,14 +11,24 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.mongo;
+package org.asosat.query.sql.paging.dialect;
 
 /**
  * asosat-query
- * 
- * @author bingo 上午10:33:33
+ *
+ * @author bingo 下午1:59:06
  *
  */
-public class MongoQueryExecutor {
+public class CalciteDialect implements Dialect {
+
+  @Override
+  public String getLimitSql(String sql, int offset, int limit) {
+    return null;
+  }
+
+  @Override
+  public boolean supportsLimit() {
+    return true;
+  }
 
 }

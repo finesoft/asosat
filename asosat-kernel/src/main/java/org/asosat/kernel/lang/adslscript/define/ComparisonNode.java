@@ -11,32 +11,33 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.query.dynamic.asql.ast;
+package org.asosat.kernel.lang.adslscript.define;
 
-import java.util.Iterator;
-import java.util.List;
-import org.asosat.query.dynamic.asql.ast.Operator.LogicalOperator;
+import org.asosat.kernel.lang.adslscript.define.Operator.ComparisonOperator;
 
 /**
  * asosat-query
  *
- * @author bingo 上午11:42:26
+ * @author bingo 下午2:39:22
  *
  */
-public abstract class LogicalNode implements IterableNode {
+public class ComparisonNode implements Node {
 
-  private final List<Node> childs;
+  private final ComparisonOperator operator;
 
-  private final LogicalOperator operator;
+  private final String comparable;
+
+  private final Object candidate;
 
   /**
-   * @param childs
    * @param operator
+   * @param comparable
    */
-  LogicalNode(List<Node> childs, LogicalOperator operator) {
+  public ComparisonNode(ComparisonOperator operator, String comparable, Object candidate) {
     super();
-    this.childs = childs;
     this.operator = operator;
+    this.comparable = comparable;
+    this.candidate = candidate;
   }
 
   @Override
@@ -45,22 +46,24 @@ public abstract class LogicalNode implements IterableNode {
   }
 
   /**
-   * @return the childs
+   * @return the candidate
    */
-  public List<Node> getChilds() {
-    return this.childs;
+  public Object getCandidate() {
+    return this.candidate;
+  }
+
+  /**
+   * @return the comparable
+   */
+  public String getComparable() {
+    return this.comparable;
   }
 
   /**
    * @return the operator
    */
-  public LogicalOperator getOperator() {
+  public ComparisonOperator getOperator() {
     return this.operator;
-  }
-
-  @Override
-  public Iterator<Node> iterator() {
-    return this.childs.iterator();
   }
 
 }

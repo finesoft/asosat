@@ -4,13 +4,14 @@
   "schemas": [
     {
       "type": "custom",
-      "name": "mongo_raw",
+      "name": "mongo",
       "factory": "org.apache.calcite.adapter.mongodb.MongoSchemaFactory",
       "operand": {
-        "host": "192.168.100.200:27017",
-        "database": "GADB-APSCM",
-        "username":"sa",
-        "password":"com.gixon",
+        "host": "x",
+        "database": "x",
+        "authMechanism":"SCRAM-SHA-1",
+        "username":"x",
+        "password":"x",
         "authDatabase":"admin"
      }
     }]

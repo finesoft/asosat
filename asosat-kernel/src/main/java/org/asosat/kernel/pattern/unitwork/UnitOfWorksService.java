@@ -16,8 +16,8 @@ package org.asosat.kernel.pattern.unitwork;
 import java.util.stream.Stream;
 import javax.enterprise.context.ApplicationScoped;
 import org.asosat.kernel.abstraction.MessageService;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.pattern.saga.SagaService;
-import org.asosat.kernel.stereotype.InfrastructureServices;
 
 /**
  * asosat-domain <br/>

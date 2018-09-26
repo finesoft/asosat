@@ -19,10 +19,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.asosat.kernel.abstraction.Message;
 import org.asosat.kernel.abstraction.Message.ExchangedMessage;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.abstraction.MessageService;
 import org.asosat.kernel.exception.GeneralRuntimeException;
 import org.asosat.kernel.pattern.interceptor.Asynchronous;
-import org.asosat.kernel.stereotype.InfrastructureServices;
 
 /**
  * @author bingo 上午10:51:18

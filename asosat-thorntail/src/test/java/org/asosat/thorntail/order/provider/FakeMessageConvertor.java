@@ -17,7 +17,7 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import org.asosat.kernel.abstraction.Message;
 import org.asosat.kernel.abstraction.Message.ExchangedMessage;
-import org.asosat.kernel.stereotype.InfrastructureServices;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.message.AbstractGenericMessage;
 import org.asosat.message.AbstractGenericMessageConvertor;
 

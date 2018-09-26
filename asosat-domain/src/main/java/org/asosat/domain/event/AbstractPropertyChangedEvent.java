@@ -15,7 +15,7 @@ package org.asosat.domain.event;
 
 import java.time.Instant;
 import org.asosat.kernel.abstraction.Aggregate;
-import org.asosat.kernel.stereotype.Events;
+import org.asosat.kernel.annotation.stereotype.Events;
 
 /**
  * @author bingo 上午10:09:59

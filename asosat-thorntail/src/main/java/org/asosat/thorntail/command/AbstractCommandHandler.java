@@ -17,12 +17,12 @@ import java.util.Map;
 import javax.inject.Qualifier;
 import org.asosat.kernel.abstraction.Event;
 import org.asosat.kernel.abstraction.Message;
+import org.asosat.kernel.annotation.stereotype.ApplicationServices;
 import org.asosat.kernel.context.DefaultContext;
 import org.asosat.kernel.pattern.command.Command;
 import org.asosat.kernel.pattern.command.CommandHandler;
 import org.asosat.kernel.pattern.unitwork.AbstractTxJpaUnitOfWorksxService;
 import org.asosat.kernel.pattern.unitwork.DefaultTxJpaUnitOfWorks;
-import org.asosat.kernel.stereotype.ApplicationServices;
 
 /**
  * @author bingo 下午5:40:30

@@ -20,8 +20,8 @@ import javax.inject.Inject;
 import org.asosat.domain.aggregate.LifcyclePhase;
 import org.asosat.domain.event.LifecycleEvent;
 import org.asosat.kernel.abstraction.Entity;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.pattern.repository.JpaRepository;
-import org.asosat.kernel.stereotype.InfrastructureServices;
 
 
 @ApplicationScoped

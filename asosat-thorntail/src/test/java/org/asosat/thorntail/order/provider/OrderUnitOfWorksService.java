@@ -19,8 +19,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.pattern.unitwork.AbstractTxJpaUnitOfWorksService;
-import org.asosat.kernel.stereotype.InfrastructureServices;
 
 /**
  * @author bingo 上午11:27:31

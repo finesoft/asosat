@@ -17,8 +17,8 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.stream.Stream;
 import org.asosat.kernel.abstraction.Aggregate.AggregateIdentifier;
+import org.asosat.kernel.annotation.stereotype.DomainServices;
 import org.asosat.kernel.abstraction.Message;
-import org.asosat.kernel.stereotype.DomainServices;
 
 /**
  * asosat-kernel

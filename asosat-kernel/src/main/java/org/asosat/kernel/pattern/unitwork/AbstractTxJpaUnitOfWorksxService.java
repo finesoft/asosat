@@ -25,9 +25,9 @@ import javax.persistence.SynchronizationType;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.context.DefaultContext;
 import org.asosat.kernel.exception.GeneralRuntimeException;
-import org.asosat.kernel.stereotype.InfrastructureServices;
 
 /**
  * @author bingo 下午3:45:08

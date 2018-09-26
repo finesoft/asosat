@@ -14,8 +14,8 @@
 package org.asosat.kernel.abstraction;
 
 import org.asosat.kernel.abstraction.Message.ExchangedMessage;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.pattern.interceptor.Asynchronous;
-import org.asosat.kernel.stereotype.InfrastructureServices;
 
 /**
  * asosat-kernel

@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.stereotype;
+package org.asosat.kernel.annotation.stereotype;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -24,16 +24,19 @@ import java.lang.annotation.Target;
 import javax.enterprise.inject.Stereotype;
 import javax.enterprise.util.AnnotationLiteral;
 
+/**
+ * @author bingo 下午6:29:53
+ *
+ */
 @Documented
 @Retention(RUNTIME)
 @Target({TYPE, FIELD, METHOD})
 @Inherited
 @Stereotype
-public @interface Entities {
+public @interface DomainServices {
+  final static DomainServicesLiteral INST = new DomainServicesLiteral();
 
-  final static EntitiesLiteral INST = new EntitiesLiteral();
-
-  public static class EntitiesLiteral extends AnnotationLiteral<Entities> {
-    private static final long serialVersionUID = -7622269300418055785L;
+  public static class DomainServicesLiteral extends AnnotationLiteral<DomainServices> {
+    private static final long serialVersionUID = -2219684886733335276L;
   }
 }

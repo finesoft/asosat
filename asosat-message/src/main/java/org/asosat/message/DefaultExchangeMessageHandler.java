@@ -22,8 +22,8 @@ import org.asosat.kernel.abstraction.Message.ExchangedMessage;
 import org.asosat.kernel.abstraction.MessageService.MessageConvertor;
 import org.asosat.kernel.abstraction.MessageService.MessageStroage;
 import org.asosat.kernel.annotation.MessageQueue.MessageQueueLiteral;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.context.DefaultContext;
-import org.asosat.kernel.stereotype.InfrastructureServices;
 
 /**
  * @author bingo 上午11:38:09

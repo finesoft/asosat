@@ -16,7 +16,7 @@ package org.asosat.message;
 import javax.persistence.MappedSuperclass;
 import org.asosat.kernel.abstraction.Entity;
 import org.asosat.kernel.abstraction.Message;
-import org.asosat.kernel.stereotype.Messages;
+import org.asosat.kernel.annotation.stereotype.Messages;
 
 /**
  * @author bingo 下午3:24:12

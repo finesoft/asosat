@@ -21,8 +21,8 @@ import javax.jms.JMSContext;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import org.asosat.kernel.abstraction.Message.ExchangedMessage;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.abstraction.MessageService;
-import org.asosat.kernel.stereotype.InfrastructureServices;
 
 /**
  * @author bingo 下午2:32:37

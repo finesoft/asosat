@@ -33,7 +33,7 @@ import org.asosat.kernel.abstraction.Aggregate.AggregateIdentifier;
 import org.asosat.kernel.abstraction.Being;
 import org.asosat.kernel.abstraction.Entity;
 import org.asosat.kernel.abstraction.Entity.EntityManagerProvider;
-import org.asosat.kernel.stereotype.Repositories;
+import org.asosat.kernel.annotation.stereotype.Repositories;
 import org.asosat.kernel.util.JpaUtils;
 
 /**

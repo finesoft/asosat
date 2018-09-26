@@ -15,4 +15,4 @@
  * @author bingo 下午6:26:33
  *
  */
-package org.asosat.kernel.stereotype;
+package org.asosat.kernel.annotation.stereotype;

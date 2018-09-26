@@ -28,10 +28,10 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.asosat.kernel.abstraction.Message.ExchangedMessage;
 import org.asosat.kernel.abstraction.MessageService.MessageConvertor;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.exception.GeneralRuntimeException;
 import org.asosat.kernel.normal.conversion.Conversions;
 import org.asosat.kernel.resource.ConfigResource;
-import org.asosat.kernel.stereotype.InfrastructureServices;
 import org.asosat.kernel.util.JpaUtils;
 
 /**

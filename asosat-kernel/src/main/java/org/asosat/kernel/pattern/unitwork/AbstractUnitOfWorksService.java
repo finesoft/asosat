@@ -18,9 +18,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import org.asosat.kernel.abstraction.Entity.EntityManagerProvider;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.abstraction.MessageService;
 import org.asosat.kernel.pattern.saga.SagaService;
-import org.asosat.kernel.stereotype.InfrastructureServices;
 
 /**
  * @author bingo 下午7:19:46

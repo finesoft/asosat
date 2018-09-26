@@ -14,7 +14,7 @@
 package org.asosat.message;
 
 import org.asosat.kernel.abstraction.Message;
-import org.asosat.kernel.stereotype.InfrastructureServices;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 
 /**
  * @author bingo 上午10:13:53

@@ -23,7 +23,7 @@ import javax.jms.JMSContext;
 import javax.jms.JMSProducer;
 import javax.jms.Queue;
 import org.asosat.kernel.abstraction.Message.ExchangedMessage;
-import org.asosat.kernel.stereotype.InfrastructureServices;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 
 /**
  * @author bingo 上午11:58:38

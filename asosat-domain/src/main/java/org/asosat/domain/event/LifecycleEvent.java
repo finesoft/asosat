@@ -15,7 +15,7 @@ package org.asosat.domain.event;
 
 import org.asosat.domain.aggregate.LifcyclePhase;
 import org.asosat.kernel.abstraction.Aggregate;
-import org.asosat.kernel.stereotype.Events;
+import org.asosat.kernel.annotation.stereotype.Events;
 
 /**
  * Every aggregate that extends AbstractAggregate when life cycle change then will fire

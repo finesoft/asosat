@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.asosat.kernel.annotation.MessageQueue;
-import org.asosat.kernel.stereotype.Messages;
+import org.asosat.kernel.annotation.stereotype.Messages;
 
 /**
  * @author bingo 下午1:50:27

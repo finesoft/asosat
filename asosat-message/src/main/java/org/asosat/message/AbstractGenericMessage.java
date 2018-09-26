@@ -13,7 +13,7 @@
  */
 package org.asosat.message;
 
-import org.asosat.kernel.stereotype.Messages;
+import org.asosat.kernel.annotation.stereotype.Messages;
 
 /**
  * @author bingo 下午2:54:57

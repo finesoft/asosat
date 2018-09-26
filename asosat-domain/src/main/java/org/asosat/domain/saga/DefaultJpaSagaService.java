@@ -18,10 +18,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.exception.NotSupportedException;
 import org.asosat.kernel.pattern.repository.JpaRepository;
 import org.asosat.kernel.pattern.saga.Saga;
-import org.asosat.kernel.stereotype.InfrastructureServices;
 import org.asosat.kernel.util.JpaUtils;
 
 /**

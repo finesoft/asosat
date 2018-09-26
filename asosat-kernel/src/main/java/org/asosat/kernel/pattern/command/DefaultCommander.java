@@ -13,6 +13,9 @@
  */
 package org.asosat.kernel.pattern.command;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -25,6 +28,10 @@ import org.asosat.kernel.exception.KernelRuntimeException;
 @ApplicationScoped
 public class DefaultCommander implements Commander {
 
+  @SuppressWarnings("rawtypes")
+  static final ThreadLocal<Map<Class<?>, Map>> registration =
+      ThreadLocal.withInitial(() -> new HashMap<>());
+
   final CommandRegistry registry;
 
   final ThreadLocal<MutableInt> commandStacks = ThreadLocal.withInitial(MutableInt::new);
@@ -32,6 +39,21 @@ public class DefaultCommander implements Commander {
   @Inject
   public DefaultCommander(CommandRegistry registry) {
     this.registry = registry;
+  }
+
+  @SuppressWarnings("rawtypes")
+  public static void clearRegisterContext() {
+    Map<Class<?>, Map> map = registration.get();
+    if (map != null) {
+      map.forEach((k, v) -> v.clear());
+      map.clear();
+    }
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T, K> T registerContext(Class<T> cls, K key, Function<K, T> function) {
+    Map<Class<?>, Map> map = registration.get();
+    return (T) map.computeIfAbsent(cls, (c) -> new HashMap<>()).computeIfAbsent(key, function);
   }
 
   @SuppressWarnings("unchecked")
@@ -47,9 +69,8 @@ public class DefaultCommander implements Commander {
     } finally {
       this.commandStacks.get().decrement();
       if (this.commandStacks.get().intValue() == 0) {
-        CommandContext.clear();
+        clearRegisterContext();
       }
     }
   }
-
 }

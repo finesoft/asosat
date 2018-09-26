@@ -7,11 +7,11 @@
       "name": "mongo_raw",
       "factory": "org.apache.calcite.adapter.mongodb.MongoSchemaFactory",
       "operand": {
-        "host": "x",
-        "database": "x",
-        "username":"x",
-        "password":"x",
-        "authDatabase":"x"
+        "host": "192.168.100.200:27017",
+        "database": "GADB-APSCM",
+        "username":"sa",
+        "password":"com.gixon",
+        "authDatabase":"admin"
      }
     }]
 }

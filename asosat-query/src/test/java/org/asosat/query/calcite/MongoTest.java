@@ -13,12 +13,8 @@
  */
 package org.asosat.query.calcite;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import org.apache.calcite.adapter.mongodb.MongoSchema;
 import org.apache.calcite.adapter.mongodb.MongoSchemaFactory;
-import org.apache.calcite.jdbc.CalciteConnection;
-import org.apache.calcite.schema.SchemaPlus;
 import org.junit.BeforeClass;
 
 /**
@@ -36,10 +32,10 @@ public class MongoTest {
 
   @BeforeClass
   public static void setUp() throws Exception {
-    Class.forName("org.apache.calcite.jdbc.Driver");
-    Connection connection = DriverManager.getConnection("jdbc:calcite:");
-    CalciteConnection calciteConnection = connection.unwrap(CalciteConnection.class);
-    SchemaPlus rootSchema = calciteConnection.getRootSchema();
+    // Class.forName("org.apache.calcite.jdbc.Driver");
+    // Connection connection = DriverManager.getConnection("jdbc:calcite:");
+    // CalciteConnection calciteConnection = connection.unwrap(CalciteConnection.class);
+    // SchemaPlus rootSchema = calciteConnection.getRootSchema();
   }
 
 

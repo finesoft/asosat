@@ -18,6 +18,8 @@
 		<xversion.commons-dbutils>1.7</xversion.commons-dbutils>
 		<xversion.commons-dbcp2>2.0.1</xversion.commons-dbcp2>
 		<xversion.freemarker>2.3.28</xversion.freemarker>
+		<xversion.jaxb>2.2.8</xversion.jaxb>
+		<xversion.javax.activation>1.1.1</xversion.javax.activation>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -59,6 +61,11 @@
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 			<version>${xversion.freemarker}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>${xversion.jaxb}</version>
 		</dependency>
 	</dependencies>
 	<description>For Sql or NoSql querying.</description>

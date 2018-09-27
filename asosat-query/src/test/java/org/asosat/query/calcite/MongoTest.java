@@ -25,6 +25,7 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 import org.asosat.query.QueryRuntimeException;
 import org.asosat.query.dynamic.calcite.CalciteConnectionPools;
+import org.asosat.query.dynamic.calcite.CalciteConnectionPools.CalciteConnectionPoolSetting;
 import org.junit.Test;
 import com.google.common.io.Resources;
 
@@ -54,10 +55,11 @@ public class MongoTest {
         for (int i = 0; i < 1000; i++) {
           List<Map<String, Object>> list;
           try {
-            list = new QueryRunner(CalciteConnectionPools.getDataSource("mongo", () -> asProperties(
-                CalciteConnectionProperty.MODEL.camelName(), getInlineModelJson()))).query(
-                    "select cast(_MAP['genArtName'] AS varchar(255)) AS gan, cast(_MAP['artNumber'] AS varchar(255)) AS artNum, cast(_MAP['_id'] AS varchar(255)) AS id from \"mongo\".\"articlePublishPool\"",
-                    new MapListHandler());
+            list = new QueryRunner(CalciteConnectionPools.getDataSource("mongo",
+                () -> new CalciteConnectionPoolSetting(asProperties(
+                    CalciteConnectionProperty.MODEL.camelName(), getInlineModelJson())))).query(
+                        "select cast(_MAP['genArtName'] AS varchar(255)) AS gan, cast(_MAP['artNumber'] AS varchar(255)) AS artNum, cast(_MAP['_id'] AS varchar(255)) AS id from \"mongo\".\"articlePublishPool\"",
+                        new MapListHandler());
           } catch (SQLException e) {
             throw new QueryRuntimeException(e);
           }

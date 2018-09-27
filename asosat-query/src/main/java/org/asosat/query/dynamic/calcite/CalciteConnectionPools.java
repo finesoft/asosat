@@ -20,6 +20,9 @@ import java.util.function.Supplier;
 import javax.sql.DataSource;
 import org.apache.calcite.jdbc.Driver;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.commons.pool2.impl.BaseObjectPoolConfig;
+import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 /**
  * asosat-query
@@ -31,20 +34,210 @@ public class CalciteConnectionPools {
 
   static final Map<String, BasicDataSource> CPS = new ConcurrentHashMap<>();
 
-  public static DataSource getDataSource(String name, Supplier<Properties> supplier) {
+  public static DataSource getDataSource(String name,
+      Supplier<CalciteConnectionPoolSetting> supplier) {
     return CPS.computeIfAbsent(name, (k) -> {
       BasicDataSource bds = new BasicDataSource();
-      bds.setDefaultReadOnly(true);
       bds.setRollbackOnReturn(false);
       bds.setUrl(Driver.CONNECT_STRING_PREFIX);
       bds.setDriver(new Driver());
-      bds.setInitialSize(4);
-      Properties pops = supplier.get();
+      bds.setInitialSize(1);
+      bds.setJmxName("asosat-calcite-ds-" + name);
+      configPooledDataSource(bds, supplier.get());
+      return bds;
+    });
+  }
+
+  static void configPooledDataSource(BasicDataSource bds, CalciteConnectionPoolSetting setting) {
+    if (setting != null) {
+      Properties pops = setting.getProperties();
       if (pops != null) {
         pops.forEach((pk, pv) -> bds.addConnectionProperty(pk.toString(),
             pv == null ? null : pv.toString()));
       }
-      return bds;
-    });
+      bds.setMaxConnLifetimeMillis(setting.getMaxConnLifetimeMillis());
+      bds.setMaxIdle(setting.getMaxIdle());
+      bds.setMaxOpenPreparedStatements(setting.getMaxOpenPreparedStatements());
+      bds.setMaxTotal(setting.getMaxTotal());
+      bds.setMaxWaitMillis(setting.getMaxWaitMillis());
+      bds.setMinEvictableIdleTimeMillis(setting.getMinEvictableIdleTimeMillis());
+      bds.setMinIdle(setting.getMinIdle());
+      bds.setNumTestsPerEvictionRun(setting.getNumTestsPerEvictionRun());
+      bds.setSoftMinEvictableIdleTimeMillis(setting.getSoftMinEvictableIdleTimeMillis());
+      bds.setTestOnBorrow(setting.isTestOnBorrow());
+      bds.setTestOnCreate(setting.isTestOnCreate());
+      bds.setTestOnReturn(setting.isTestOnReturn());
+      bds.setTestWhileIdle(setting.isTestWhileIdle());
+      bds.setTimeBetweenEvictionRunsMillis(setting.getTimeBetweenEvictionRunsMillis());
+      bds.setValidationQueryTimeout(setting.getValidationQueryTimeout());
+      if (setting.getDefaultQueryTimeout() != null) {
+        bds.setDefaultQueryTimeout(setting.getDefaultQueryTimeout());
+      }
+    }
+  }
+
+  public static class CalciteConnectionPoolSetting {
+    long maxConnLifetimeMillis = -1;
+    int maxIdle = GenericObjectPoolConfig.DEFAULT_MAX_IDLE;
+    int maxOpenPreparedStatements = GenericKeyedObjectPoolConfig.DEFAULT_MAX_TOTAL;
+    int maxTotal = GenericObjectPoolConfig.DEFAULT_MAX_TOTAL;
+    long maxWaitMillis = BaseObjectPoolConfig.DEFAULT_MAX_WAIT_MILLIS;
+    long minEvictableIdleTimeMillis = BaseObjectPoolConfig.DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS;
+    int minIdle = GenericObjectPoolConfig.DEFAULT_MIN_IDLE;
+    int numTestsPerEvictionRun = BaseObjectPoolConfig.DEFAULT_NUM_TESTS_PER_EVICTION_RUN;
+    long softMinEvictableIdleTimeMillis =
+        BaseObjectPoolConfig.DEFAULT_SOFT_MIN_EVICTABLE_IDLE_TIME_MILLIS;
+    long timeBetweenEvictionRunsMillis =
+        BaseObjectPoolConfig.DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS;
+    int validationQueryTimeout = -1;
+    boolean testOnBorrow = true;
+    boolean testOnCreate = false;
+    boolean testOnReturn = false;
+    boolean testWhileIdle = false;
+    Properties properties;
+    Integer defaultQueryTimeout = null;
+
+    public CalciteConnectionPoolSetting() {}
+
+    public CalciteConnectionPoolSetting(Properties properties) {
+      this.setProperties(properties);
+    }
+
+    public Integer getDefaultQueryTimeout() {
+      return this.defaultQueryTimeout;
+    }
+
+    public long getMaxConnLifetimeMillis() {
+      return this.maxConnLifetimeMillis;
+    }
+
+    public int getMaxIdle() {
+      return this.maxIdle;
+    }
+
+    public int getMaxOpenPreparedStatements() {
+      return this.maxOpenPreparedStatements;
+    }
+
+    public int getMaxTotal() {
+      return this.maxTotal;
+    }
+
+    public long getMaxWaitMillis() {
+      return this.maxWaitMillis;
+    }
+
+    public long getMinEvictableIdleTimeMillis() {
+      return this.minEvictableIdleTimeMillis;
+    }
+
+    public int getMinIdle() {
+      return this.minIdle;
+    }
+
+    public int getNumTestsPerEvictionRun() {
+      return this.numTestsPerEvictionRun;
+    }
+
+    public Properties getProperties() {
+      return this.properties;
+    }
+
+    public long getSoftMinEvictableIdleTimeMillis() {
+      return this.softMinEvictableIdleTimeMillis;
+    }
+
+    public long getTimeBetweenEvictionRunsMillis() {
+      return this.timeBetweenEvictionRunsMillis;
+    }
+
+    public int getValidationQueryTimeout() {
+      return this.validationQueryTimeout;
+    }
+
+    public boolean isTestOnBorrow() {
+      return this.testOnBorrow;
+    }
+
+    public boolean isTestOnCreate() {
+      return this.testOnCreate;
+    }
+
+    public boolean isTestOnReturn() {
+      return this.testOnReturn;
+    }
+
+    public boolean isTestWhileIdle() {
+      return this.testWhileIdle;
+    }
+
+    public void setDefaultQueryTimeout(Integer defaultQueryTimeout) {
+      this.defaultQueryTimeout = defaultQueryTimeout;
+    }
+
+    public void setMaxConnLifetimeMillis(long maxConnLifetimeMillis) {
+      this.maxConnLifetimeMillis = maxConnLifetimeMillis;
+    }
+
+    public void setMaxIdle(int maxIdle) {
+      this.maxIdle = maxIdle;
+    }
+
+    public void setMaxOpenPreparedStatements(int maxOpenPreparedStatements) {
+      this.maxOpenPreparedStatements = maxOpenPreparedStatements;
+    }
+
+    public void setMaxTotal(int maxTotal) {
+      this.maxTotal = maxTotal;
+    }
+
+    public void setMaxWaitMillis(long maxWaitMillis) {
+      this.maxWaitMillis = maxWaitMillis;
+    }
+
+    public void setMinEvictableIdleTimeMillis(long minEvictableIdleTimeMillis) {
+      this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
+    }
+
+    public void setMinIdle(int minIdle) {
+      this.minIdle = minIdle;
+    }
+
+    public void setNumTestsPerEvictionRun(int numTestsPerEvictionRun) {
+      this.numTestsPerEvictionRun = numTestsPerEvictionRun;
+    }
+
+    public void setProperties(Properties properties) {
+      this.properties = properties;
+    }
+
+    public void setSoftMinEvictableIdleTimeMillis(long softMinEvictableIdleTimeMillis) {
+      this.softMinEvictableIdleTimeMillis = softMinEvictableIdleTimeMillis;
+    }
+
+    public void setTestOnBorrow(boolean testOnBorrow) {
+      this.testOnBorrow = testOnBorrow;
+    }
+
+    public void setTestOnCreate(boolean testOnCreate) {
+      this.testOnCreate = testOnCreate;
+    }
+
+    public void setTestOnReturn(boolean testOnReturn) {
+      this.testOnReturn = testOnReturn;
+    }
+
+    public void setTestWhileIdle(boolean testWhileIdle) {
+      this.testWhileIdle = testWhileIdle;
+    }
+
+    public void setTimeBetweenEvictionRunsMillis(long timeBetweenEvictionRunsMillis) {
+      this.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
+    }
+
+    public void setValidationQueryTimeout(int validationQueryTimeout) {
+      this.validationQueryTimeout = validationQueryTimeout;
+    }
+
   }
 }

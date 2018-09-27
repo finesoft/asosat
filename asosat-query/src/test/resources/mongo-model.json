@@ -6,8 +6,8 @@
       "name": "mongo",
       "factory": "org.apache.calcite.adapter.mongodb.MongoSchemaFactory",
       "operand": {
-        "host": "192.168.?.?:27017",
-        "database": "??",
+        "host": "192.168.?:27017",
+        "database": "?",
         "authMechanism":"SCRAM-SHA-1",
         "username":"?",
         "password":"?",

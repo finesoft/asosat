@@ -23,9 +23,9 @@ import org.asosat.kernel.resource.GlobalMessageCodes;
 
 class PkgMsgCds implements GlobalMessageCodes {
 
-  static final String ERR_UOW_TRANS = "transactionUnitOfWorks.transaction_error";
-  static final String ERR_UOW_NOT_ACT = "unitOfWorks_error_not_activated";
-  static final String ERR_UOW_CREATE = "transactionUnitOfWorks.create_error";
+  static final String ERR_UOW_TRANS = "defaultUnitOfWorks.transaction_error";
+  static final String ERR_UOW_NOT_ACT = "defaultUnitOfWorks_error_not_activated";
+  static final String ERR_UOW_CREATE = "defaultUnitOfWorks.create_error";
 
   private PkgMsgCds() {}
 }

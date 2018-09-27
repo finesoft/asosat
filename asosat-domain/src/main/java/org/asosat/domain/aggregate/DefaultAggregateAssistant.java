@@ -13,6 +13,8 @@
  */
 package org.asosat.domain.aggregate;
 
+import static org.asosat.domain.aggregate.PkgMsgCds.ERR_AGG_AST_INSTAL;
+import static org.asosat.domain.aggregate.PkgMsgCds.ERR_AGG_MSG_SEQ;
 import static org.asosat.kernel.util.Preconditions.requireGaet;
 import static org.asosat.kernel.util.Preconditions.requireNotNull;
 import java.lang.annotation.Annotation;
@@ -44,13 +46,13 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
   protected transient volatile long lastMessageSequenceNumber = -1L;
 
   public DefaultAggregateAssistant(Aggregate aggregate) {
-    this.aggregate = requireNotNull(aggregate, "");
+    this.aggregate = requireNotNull(aggregate, ERR_AGG_AST_INSTAL);
     this.lastMessageSequenceNumber = aggregate.getEvoVerNum();
   }
 
   public DefaultAggregateAssistant(Aggregate aggregate, long lastMessageSequenceNumber) {
     this(aggregate);
-    this.lastMessageSequenceNumber = requireGaet(lastMessageSequenceNumber, 0L, "",
+    this.lastMessageSequenceNumber = requireGaet(lastMessageSequenceNumber, 0L, ERR_AGG_MSG_SEQ,
         aggregate.toHumanReader(Locale.getDefault()));
   }
 

@@ -157,7 +157,7 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
     return this;
   }
 
-  protected synchronized AbstractAggregate initLifecycle(Lifecycle lifecycle) {
+  protected synchronized AbstractAggregate withLifecycle(Lifecycle lifecycle) {
     requireFalse(this.getLifecycle() == Lifecycle.DESTROYED, ERR_AGG_LC,
         this.toHumanReader(Locale.getDefault()));
     this.lifecycle = lifecycle;

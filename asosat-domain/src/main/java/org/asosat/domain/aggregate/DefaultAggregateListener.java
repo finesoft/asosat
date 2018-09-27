@@ -29,7 +29,7 @@ import org.asosat.kernel.pattern.unitwork.UnitOfWorksService;
 /**
  * Global aggregate persistence listener use for unit of work
  *
- * @see TransactionUnitOfWorksManager
+ * @see UnitOfWorksService
  * @see DefaultTxJpaUnitOfWorks
  * @author bingo 下午12:06:07
  */
@@ -40,33 +40,25 @@ public class DefaultAggregateListener {
   public DefaultAggregateListener() {}
 
   void handlePostLoad(AbstractAggregate o) {
-    o.initLifecycle(Lifecycle.ENABLED);
-    o.callAssistant().clearMessages();
+    o.withLifecycle(Lifecycle.ENABLED).callAssistant().clearMessages();
   }
 
   void handlePostPersist(AbstractAggregate o) {
-    o.initLifecycle(Lifecycle.ENABLED);
-    this.registerToUnitOfWork(o);
-    o.callAssistant().clearMessages();
+    this.registerToUnitOfWork(o.withLifecycle(Lifecycle.ENABLED));
   }
 
   void handlePostRemove(AbstractAggregate o) {
-    o.initLifecycle(Lifecycle.DESTROYED);
-    this.registerToUnitOfWork(o);
-    o.callAssistant().clearMessages();
+    this.registerToUnitOfWork(o.withLifecycle(Lifecycle.DESTROYED));
   }
 
-  void handlePostUpdate(AbstractAggregate o) {
-    o.callAssistant().clearMessages();
-  }
+  void handlePostUpdate(AbstractAggregate o) {}
 
   void handlePrePersist(AbstractAggregate o) {}
 
   void handlePreRemove(AbstractAggregate o) {}
 
   void handlePreUpdate(AbstractAggregate o) {
-    o.initLifecycle(Lifecycle.ENABLED);
-    this.registerToUnitOfWork(o);
+    this.registerToUnitOfWork(o.withLifecycle(Lifecycle.ENABLED));
   }
 
   @PostLoad

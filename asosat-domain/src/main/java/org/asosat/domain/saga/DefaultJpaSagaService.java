@@ -35,7 +35,7 @@ import org.asosat.kernel.util.JpaUtils;
 public class DefaultJpaSagaService extends AbstractSagaService {
 
   @Inject
-  JpaRepository repo;
+  protected JpaRepository repo;
 
   protected final Map<Class<?>, Boolean> persistSagaClasses =
       new ConcurrentHashMap<>(256, 0.75f, 256);

@@ -23,7 +23,13 @@ public class CalciteDialect implements Dialect {
 
   @Override
   public String getLimitSql(String sql, int offset, int limit) {
-    return null;
+    StringBuilder sbd = new StringBuilder(50 + sql.length());
+    sbd.append(sql).append(" ");
+    sbd.append(" OFFSET ").append(offset).append(" ROWS");
+    if (limit > 0) {
+      sbd.append(" FETCH NEXT ").append(limit).append(" ROWS ONLY");
+    }
+    return sbd.toString();
   }
 
   @Override

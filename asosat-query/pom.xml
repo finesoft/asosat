@@ -15,6 +15,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<xversion.calcite>1.17.0</xversion.calcite>
+		<xversion.commons-dbutils>1.7</xversion.commons-dbutils>
+		<xversion.commons-dbcp2>2.0.1</xversion.commons-dbcp2>
+		<xversion.freemarker>2.3.28</xversion.freemarker>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -23,9 +26,14 @@
 			<version>${xversion.asosat}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-dbcp2</artifactId>
+			<version>${xversion.commons-dbcp2}</version>
+		</dependency>
+		<dependency>
 			<groupId>commons-dbutils</groupId>
 			<artifactId>commons-dbutils</artifactId>
-			<version>1.7</version>
+			<version>${xversion.commons-dbutils}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.calcite</groupId>
@@ -50,7 +58,7 @@
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
-			<version>2.3.28</version>
+			<version>${xversion.freemarker}</version>
 		</dependency>
 	</dependencies>
 	<description>For Sql or NoSql querying.</description>

@@ -35,14 +35,15 @@ public class PropertyConfigResource implements ConfigResource {
   public static final String DFLT_CFG_REF_PATH_REG =
       ".*config.*\\.properties;.*application.*\\.properties";
 
-  final Map<String, String> holder = new ConcurrentHashMap<>();
-  private volatile boolean init = false;
-
-  public PropertyConfigResource() {}
-
   public static PropertyConfigResource instance() {
     return DefaultContext.bean(PropertyConfigResource.class);
   }
+
+  final Map<String, String> holder = new ConcurrentHashMap<>();
+
+  private volatile boolean init = false;
+
+  public PropertyConfigResource() {}
 
 
   @Override

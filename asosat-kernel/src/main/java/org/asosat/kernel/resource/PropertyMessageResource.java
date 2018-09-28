@@ -25,7 +25,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.apache.commons.vfs2.PatternFileSelector;
 import org.asosat.kernel.context.DefaultContext;
-import org.asosat.kernel.normal.conversion.Conversions;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  *
@@ -35,16 +35,19 @@ import org.asosat.kernel.normal.conversion.Conversions;
 @ApplicationScoped
 public class PropertyMessageResource implements MessageResource {
 
-  public static final String MSG_REC_PATH_REG_KEY = "asosat.message.source.pathRegex";
-  public static final String MSG_REC_LOAD_WAY = "asosat.message.source.loadWay";
-  public static final String DFLT_MSG_REF_PATH_REG = ".*messages.*\\.properties";
   final Map<Locale, Map<String, MessageFormat>> holder = new ConcurrentHashMap<>(128);
+
   private volatile boolean init = false;
-  private volatile boolean lazyLoad = false;
-  private String pathRegex;
 
   @Inject
-  ConfigResource config;
+  @ConfigProperty(name = "asosat.message.source.path.regex",
+      defaultValue = ".*messages.*\\.properties")
+  String pathRegex;
+
+  @Inject
+  @ConfigProperty(name = "asosat.message.source.load.way")
+  volatile boolean lazyLoad = false;
+
 
   public PropertyMessageResource() {}
 
@@ -127,11 +130,6 @@ public class PropertyMessageResource implements MessageResource {
 
   @PostConstruct
   synchronized void init() {
-    if (this.config != null) {
-      this.pathRegex =
-          this.config.getValue(MSG_REC_PATH_REG_KEY, Conversions::toString, DFLT_MSG_REF_PATH_REG);
-      this.lazyLoad = this.config.getValue(MSG_REC_LOAD_WAY, Conversions::toBoolean, false);
-    }
     if (!this.lazyLoad) {
       this.load();
     }

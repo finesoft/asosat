@@ -28,7 +28,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.apache.commons.vfs2.PatternFileSelector;
 import org.asosat.kernel.context.DefaultContext;
-import org.asosat.kernel.normal.conversion.Conversions;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  * @author bingo 上午10:30:07
@@ -38,18 +38,17 @@ import org.asosat.kernel.normal.conversion.Conversions;
 @SuppressWarnings("rawtypes")
 public class PropertyEnumerationResource implements EnumerationResource {
 
-  public static final String ENUM_REC_PATH_REG_KEY = "asosat.enum.source.pathRegex";
-  public static final String ENUM_REC_LOAD_WAY = "asosat.enum.source.loadWay";
-  public static final String DFLT_ENUM_REF_PATH_REG = ".*enum.*\\.properties";
-
   final Map<Locale, EnumLiteralsObject> holder = new ConcurrentHashMap<>();
   private volatile boolean init = false;
-  private volatile boolean lazyLoad = false;
-
-  private String pathRegex = DFLT_ENUM_REF_PATH_REG;
 
   @Inject
-  ConfigResource config;
+  @ConfigProperty(name = "asosat.enum.source.path.regex", defaultValue = ".*enum.*\\.properties")
+  String pathRegex;
+
+  @Inject
+  @ConfigProperty(name = "asosat.enum.source.load.way")
+  volatile boolean lazyLoad = false;
+
 
   public PropertyEnumerationResource() {}
 
@@ -142,11 +141,6 @@ public class PropertyEnumerationResource implements EnumerationResource {
 
   @PostConstruct
   synchronized void init() {
-    if (this.config != null) {
-      this.pathRegex = this.config.getValue(ENUM_REC_PATH_REG_KEY, Conversions::toString,
-          DFLT_ENUM_REF_PATH_REG);
-      this.lazyLoad = this.config.getValue(ENUM_REC_LOAD_WAY, Conversions::toBoolean, false);
-    }
     if (!this.lazyLoad) {
       this.load();
     }

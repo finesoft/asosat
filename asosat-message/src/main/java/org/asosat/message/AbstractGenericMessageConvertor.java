@@ -30,9 +30,8 @@ import org.asosat.kernel.abstraction.Message.ExchangedMessage;
 import org.asosat.kernel.abstraction.MessageService.MessageConvertor;
 import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.exception.GeneralRuntimeException;
-import org.asosat.kernel.normal.conversion.Conversions;
-import org.asosat.kernel.resource.ConfigResource;
 import org.asosat.kernel.util.JpaUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  * @author bingo 下午3:28:14
@@ -42,12 +41,11 @@ import org.asosat.kernel.util.JpaUtils;
 @InfrastructureServices
 public abstract class AbstractGenericMessageConvertor<P, A> implements MessageConvertor {
 
-  public static final String MSG_PKG = "localmessage.class.package.path";
   public static final String MSG_QUE_SPT = ";";
-  public static final String DFLT_MSG_PKG = "com;cn";
 
   @Inject
-  protected ConfigResource configResource;
+  @ConfigProperty(name = "message.class.local.package", defaultValue = "com;cn")
+  protected String localMsgClsPath;
 
   protected final Map<String, Constructor<AbstractGenericMessage<P, A>>> constructors =
       new HashMap<>();
@@ -71,15 +69,12 @@ public abstract class AbstractGenericMessageConvertor<P, A> implements MessageCo
   }
 
   @PreDestroy
-  protected void destroy() {
-
-  }
+  protected void destroy() {}
 
   @PostConstruct
   @SuppressWarnings("unchecked")
   protected synchronized void enable() {
-    String paths = this.configResource.getValue(MSG_PKG, Conversions::toString, DFLT_MSG_PKG);
-    for (String path : paths.split(MSG_QUE_SPT)) {
+    for (String path : this.localMsgClsPath.split(MSG_QUE_SPT)) {
       getClassPathPackageClassNames(path).forEach(clz -> {
         Class<?> cls = tryToLoadClassForName(clz);
         if (cls != null && AbstractGenericMessage.class.isAssignableFrom(cls)

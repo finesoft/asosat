@@ -33,7 +33,7 @@ public abstract class AbstractGeneralAggregate<P, T extends AbstractGeneralAggre
   private static final long serialVersionUID = 3926909112607573627L;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "snowflake")
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   @GenericGenerator(name = "snowflake",
       strategy = "org.asosat.thorntail.provider.HibernateSnowflakeIdGenerator")
   private Long id;

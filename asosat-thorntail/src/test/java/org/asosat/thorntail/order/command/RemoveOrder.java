@@ -19,8 +19,8 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import org.asosat.kernel.pattern.command.Command;
 import org.asosat.kernel.pattern.command.CommandHandler;
+import org.asosat.kernel.pattern.repository.JpaRepository;
 import org.asosat.thorntail.order.domain.Order;
-import org.asosat.thorntail.order.domain.Repository;
 
 /**
  * asosat-thorntail-example
@@ -48,7 +48,7 @@ public class RemoveOrder {
   public static class RemoveOrderHandler implements CommandHandler<RemoveOrderCmd, Void> {
 
     @Inject
-    Repository repo;
+    JpaRepository repo;
 
     @Override
     public Void handle(RemoveOrderCmd command) {

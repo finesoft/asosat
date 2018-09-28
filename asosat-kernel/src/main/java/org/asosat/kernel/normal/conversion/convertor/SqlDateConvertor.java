@@ -13,44 +13,37 @@
  */
 package org.asosat.kernel.normal.conversion.convertor;
 
-import java.util.Currency;
-import org.apache.commons.beanutils.converters.AbstractConverter;
+import org.apache.commons.beanutils.converters.SqlDateConverter;
 import org.asosat.kernel.normal.conversion.Convertor;
 
 /**
  * asosat-kernel
  *
- * @author bingo 上午12:47:19
+ * @author bingo 下午4:57:08
  *
  */
-public class CurrencyConvertor extends AbstractConverter implements Convertor {
+public class SqlDateConvertor implements Convertor {
 
-  public CurrencyConvertor() {
+  SqlDateConverter delegate = new SqlDateConverter(null);
+
+  public SqlDateConvertor() {
     super();
   }
 
   /**
-   * @param defaultValue
+   * @param delegate
    */
-  public CurrencyConvertor(Currency defaultValue) {
-    super(defaultValue);
-  }
-
-  @Override
-  protected <T> T convertToType(Class<T> type, Object value) throws Throwable {
-    if (type != null && type.equals(Currency.class)) {
-      if (value instanceof Currency) {
-        return type.cast(value);
-      } else {
-        return type.cast(Currency.getInstance(value.toString()));
-      }
+  public SqlDateConvertor(SqlDateConverter delegate) {
+    this();
+    if (delegate != null) {
+      this.delegate = delegate;
     }
-    throw this.conversionException(type, value);
   }
 
+
   @Override
-  protected Class<?> getDefaultType() {
-    return Currency.class;
+  public <T> T convert(Class<T> type, Object value) {
+    return this.delegate.convert(type, value);
   }
 
 }

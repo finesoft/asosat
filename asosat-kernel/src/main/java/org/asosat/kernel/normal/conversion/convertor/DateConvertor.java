@@ -11,24 +11,39 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.normal.conversion;
+package org.asosat.kernel.normal.conversion.convertor;
+
+import org.apache.commons.beanutils.converters.DateConverter;
+import org.asosat.kernel.normal.conversion.Convertor;
 
 /**
  * asosat-kernel
  *
- * @author bingo 上午12:16:42
+ * @author bingo 下午4:57:08
  *
  */
-public interface ConversionService {
+public class DateConvertor implements Convertor {
 
-  Object convert(final Object value, final Class<?> clazz);
+  DateConverter delegate = new DateConverter(null);
 
-  void deregister(Class<?> clazz);
+  public DateConvertor() {
+    super();
+  }
 
-  Convertor getConvertor(Class<?> targetType);
+  /**
+   * @param delegate
+   */
+  public DateConvertor(DateConverter delegate) {
+    this();
+    if (delegate != null) {
+      this.delegate = delegate;
+    }
+  }
 
-  Convertor getConvertor(final Class<?> sourceType, final Class<?> targetType);
 
-  <T> void register(Convertor convertor, Class<T> clazz);
+  @Override
+  public <T> T convert(Class<T> type, Object value) {
+    return this.delegate.convert(type, value);
+  }
 
 }

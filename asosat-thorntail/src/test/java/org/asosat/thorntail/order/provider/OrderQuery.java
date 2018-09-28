@@ -32,6 +32,8 @@ import org.asosat.query.sql.paging.dialect.SQLServer2012Dialect;
  */
 @ApplicationScoped
 public class OrderQuery extends AbstractSqlNamedQuery {
+
+
   SqlQueryConfiguration configuration;
 
   @Override

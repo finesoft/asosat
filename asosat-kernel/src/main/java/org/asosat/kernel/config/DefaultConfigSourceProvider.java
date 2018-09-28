@@ -11,24 +11,22 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.normal.conversion;
+package org.asosat.kernel.config;
+
+import org.eclipse.microprofile.config.spi.ConfigSource;
+import org.eclipse.microprofile.config.spi.ConfigSourceProvider;
 
 /**
  * asosat-kernel
  *
- * @author bingo 上午12:16:42
+ * @author bingo 下午7:07:00
  *
  */
-public interface ConversionService {
+public class DefaultConfigSourceProvider implements ConfigSourceProvider {
 
-  Object convert(final Object value, final Class<?> clazz);
-
-  void deregister(Class<?> clazz);
-
-  Convertor getConvertor(Class<?> targetType);
-
-  Convertor getConvertor(final Class<?> sourceType, final Class<?> targetType);
-
-  <T> void register(Convertor convertor, Class<T> clazz);
+  @Override
+  public Iterable<ConfigSource> getConfigSources(ClassLoader forClassLoader) {
+    return null;
+  }
 
 }

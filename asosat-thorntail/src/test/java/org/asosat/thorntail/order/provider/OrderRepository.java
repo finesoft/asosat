@@ -13,37 +13,20 @@
  */
 package org.asosat.thorntail.order.provider;
 
-import java.io.IOException;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import org.asosat.kernel.abstraction.Message.ExchangedMessage;
 import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
-import org.asosat.kernel.pattern.interceptor.Retry;
-import org.asosat.kernel.pattern.repository.JpaRepository;
-import org.asosat.message.MemonyMessageTesting;
-import org.asosat.message.MessageSender;
+import org.asosat.kernel.annotation.stereotype.Repositories;
+import org.asosat.kernel.pattern.repository.AbstractJpaRepository;
 
 /**
- * @author bingo 上午11:04:00
+ * asosat-thorntail
+ *
+ * @author bingo 下午6:25:28
  *
  */
 @ApplicationScoped
+@Repositories
 @InfrastructureServices
-public class FakeMessageSender implements MessageSender {
-
-  @Inject
-  protected JpaRepository repo;
-
-  public FakeMessageSender() {}
-
-  @Retry(exceptions = IOException.class)
-  @Transactional
-  @Override
-  public boolean send(ExchangedMessage message) throws Exception {
-    MemonyMessageTesting.test(message);
-    return true;
-  }
-
+public class OrderRepository extends AbstractJpaRepository {
 
 }

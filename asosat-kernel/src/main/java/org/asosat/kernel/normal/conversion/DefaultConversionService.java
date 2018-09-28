@@ -14,7 +14,6 @@
 package org.asosat.kernel.normal.conversion;
 
 import javax.enterprise.context.ApplicationScoped;
-import org.apache.commons.beanutils.Converter;
 
 /**
  * asosat-kernel
@@ -37,12 +36,12 @@ public class DefaultConversionService implements ConversionService {
 
   @Override
   public Convertor getConvertor(Class<?> targetType) {
-    return (Convertor) Conversions.provider.lookup(targetType);
+    return Conversions.getConvertor(targetType);
   }
 
   @Override
-  public Converter getConvertor(Class<?> sourceType, Class<?> targetType) {
-    return Conversions.provider.lookup(sourceType, targetType);
+  public Convertor getConvertor(Class<?> sourceType, Class<?> targetType) {
+    return Conversions.getConvertor(sourceType, targetType);
   }
 
   @Override

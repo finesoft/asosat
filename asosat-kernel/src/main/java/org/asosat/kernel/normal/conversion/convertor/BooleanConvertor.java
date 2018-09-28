@@ -11,24 +11,26 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.normal.conversion;
+package org.asosat.kernel.normal.conversion.convertor;
+
+import org.apache.commons.beanutils.converters.BooleanConverter;
+import org.asosat.kernel.normal.conversion.Convertor;
 
 /**
  * asosat-kernel
  *
- * @author bingo 上午12:16:42
+ * @author bingo 下午5:15:01
  *
  */
-public interface ConversionService {
+public class BooleanConvertor implements Convertor {
 
-  Object convert(final Object value, final Class<?> clazz);
+  BooleanConverter delegate =
+      new BooleanConverter(new String[] {"true", "yes", "y", "on", "1", "是"},
+          new String[] {"false", "no", "n", "off", "0", "否"}, false);
 
-  void deregister(Class<?> clazz);
-
-  Convertor getConvertor(Class<?> targetType);
-
-  Convertor getConvertor(final Class<?> sourceType, final Class<?> targetType);
-
-  <T> void register(Convertor convertor, Class<T> clazz);
+  @Override
+  public <T> T convert(Class<T> type, Object value) {
+    return this.delegate.convert(type, value);
+  }
 
 }

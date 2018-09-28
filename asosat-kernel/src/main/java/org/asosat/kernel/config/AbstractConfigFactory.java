@@ -11,18 +11,28 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.thorntail.order.domain;
+package org.asosat.kernel.config;
 
-import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
-import org.asosat.kernel.pattern.repository.AbstractJpaRepository;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.spi.ConfigSource;
+import org.eclipse.microprofile.config.spi.Converter;
+import io.smallrye.config.ConfigFactory;
 
 /**
- * asosat-thorntail-example
+ * asosat-kernel
  *
- * @author bingo 下午7:29:07
+ * @author bingo 下午6:10:11
  *
  */
-@InfrastructureServices
-public class Repository extends AbstractJpaRepository {
+public abstract class AbstractConfigFactory implements ConfigFactory {
+
+  @Override
+  public Config newConfig(List<ConfigSource> sources,
+      @SuppressWarnings("rawtypes") Map<Type, Converter> configConverters) {
+    return new DefaultConfig(sources);
+  }
 
 }

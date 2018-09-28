@@ -11,24 +11,28 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.normal.conversion;
+package org.asosat.kernel.annotation;
+
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import javax.inject.Qualifier;
 
 /**
  * asosat-kernel
  *
- * @author bingo 上午12:16:42
+ * @author bingo 下午6:38:55
  *
  */
-public interface ConversionService {
-
-  Object convert(final Object value, final Class<?> clazz);
-
-  void deregister(Class<?> clazz);
-
-  Convertor getConvertor(Class<?> targetType);
-
-  Convertor getConvertor(final Class<?> sourceType, final Class<?> targetType);
-
-  <T> void register(Convertor convertor, Class<T> clazz);
+@Documented
+@Retention(RUNTIME)
+@Target({TYPE, FIELD, METHOD, PARAMETER})
+@Qualifier
+public @interface Asosats {
 
 }

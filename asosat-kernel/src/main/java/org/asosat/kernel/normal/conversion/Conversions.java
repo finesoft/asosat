@@ -24,8 +24,11 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Currency;
+import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,23 +48,29 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtilsBean;
-import org.apache.commons.beanutils.converters.BigDecimalConverter;
-import org.apache.commons.beanutils.converters.BigIntegerConverter;
-import org.apache.commons.beanutils.converters.BooleanConverter;
-import org.apache.commons.beanutils.converters.ByteConverter;
-import org.apache.commons.beanutils.converters.CharacterConverter;
-import org.apache.commons.beanutils.converters.DoubleConverter;
-import org.apache.commons.beanutils.converters.FloatConverter;
-import org.apache.commons.beanutils.converters.IntegerConverter;
-import org.apache.commons.beanutils.converters.LongConverter;
-import org.apache.commons.beanutils.converters.ShortConverter;
-import org.apache.commons.beanutils.converters.StringConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.asosat.kernel.exception.KernelRuntimeException;
+import org.asosat.kernel.normal.conversion.convertor.BigDecimalConvertor;
+import org.asosat.kernel.normal.conversion.convertor.BigIntegerConvertor;
+import org.asosat.kernel.normal.conversion.convertor.BooleanConvertor;
+import org.asosat.kernel.normal.conversion.convertor.ByteConvertor;
+import org.asosat.kernel.normal.conversion.convertor.CalendarConvertor;
+import org.asosat.kernel.normal.conversion.convertor.CharacterConvertor;
+import org.asosat.kernel.normal.conversion.convertor.ClassConvertor;
 import org.asosat.kernel.normal.conversion.convertor.CurrencyConvertor;
+import org.asosat.kernel.normal.conversion.convertor.DateConvertor;
+import org.asosat.kernel.normal.conversion.convertor.DoubleConvertor;
 import org.asosat.kernel.normal.conversion.convertor.EnumConvertor;
+import org.asosat.kernel.normal.conversion.convertor.FloatConvertor;
 import org.asosat.kernel.normal.conversion.convertor.InstantConvertor;
+import org.asosat.kernel.normal.conversion.convertor.IntegerConvertor;
 import org.asosat.kernel.normal.conversion.convertor.LocalDateConvertor;
+import org.asosat.kernel.normal.conversion.convertor.LongConvertor;
+import org.asosat.kernel.normal.conversion.convertor.ShortConvertor;
+import org.asosat.kernel.normal.conversion.convertor.SqlDateConvertor;
+import org.asosat.kernel.normal.conversion.convertor.SqlTimeConvertor;
+import org.asosat.kernel.normal.conversion.convertor.SqlTimestampConvertor;
+import org.asosat.kernel.normal.conversion.convertor.StringConvertor;
 import org.asosat.kernel.normal.conversion.convertor.TimeZoneConvertor;
 import org.asosat.kernel.normal.conversion.convertor.ZonedDateTimeConvertor;
 import org.asosat.kernel.util.MyBagUtils;
@@ -74,39 +83,77 @@ import org.asosat.kernel.util.MyObjUtils;
 public class Conversions {
 
   static ConvertUtilsBean provider = new ConvertUtilsBean();
-
   static Convertor enumConvertor = new EnumConvertor();
+  static Set<Class<?>> supportTypes = new HashSet<>();
 
   static {
     synchronized (provider) {
       provider.register(true, false, 0);
-      provider.register(new BooleanConverter(new String[] {"true", "yes", "y", "on", "1", "是"},
-          new String[] {"false", "no", "n", "off", "0", "否"}, false), Boolean.class);
-      provider.register(new ByteConverter(null), Byte.class);
-      provider.register(new CharacterConverter(null), Character.class);
-      provider.register(new DoubleConverter(null), Double.class);
-      provider.register(new FloatConverter(null), Float.class);
-      provider.register(new IntegerConverter(null), Integer.class);
-      provider.register(new LongConverter(null), Long.class);
-      provider.register(new ShortConverter(null), Short.class);
-      provider.register(new StringConverter(null), String.class);
-      provider.register(new BigDecimalConverter(null), BigDecimal.class);
-      provider.register(new BigIntegerConverter(null), BigInteger.class);
+      provider.register(new BooleanConvertor(), Boolean.class);
+      supportTypes.add(Boolean.class);
+      provider.register(new ByteConvertor(), Byte.class);
+      supportTypes.add(Byte.class);
+      provider.register(new CharacterConvertor(), Character.class);
+      supportTypes.add(Character.class);
+      provider.register(new DoubleConvertor(), Double.class);
+      supportTypes.add(Double.class);
+      provider.register(new FloatConvertor(), Float.class);
+      supportTypes.add(Float.class);
+      provider.register(new IntegerConvertor(), Integer.class);
+      supportTypes.add(Integer.class);
+      provider.register(new LongConvertor(), Long.class);
+      supportTypes.add(Long.class);
+      provider.register(new ShortConvertor(), Short.class);
+      supportTypes.add(Short.class);
+      provider.register(new StringConvertor(), String.class);
+      supportTypes.add(String.class);
+      provider.register(new BigDecimalConvertor(), BigDecimal.class);
+      supportTypes.add(BigDecimal.class);
+      provider.register(new BigIntegerConvertor(), BigInteger.class);
+      supportTypes.add(BigInteger.class);
       provider.register(new InstantConvertor(), Instant.class);
+      supportTypes.add(Instant.class);
       provider.register(new LocalDateConvertor(), LocalDate.class);
+      supportTypes.add(LocalDate.class);
       provider.register(new CurrencyConvertor(), Currency.class);
+      supportTypes.add(Currency.class);
       provider.register(new TimeZoneConvertor(), TimeZone.class);
+      supportTypes.add(TimeZone.class);
       provider.register(new ZonedDateTimeConvertor(), ZonedDateTime.class);
+      supportTypes.add(ZonedDateTime.class);
+      provider.register(new CalendarConvertor(), Calendar.class);
+      supportTypes.add(Calendar.class);
+      provider.register(new DateConvertor(), Date.class);
+      supportTypes.add(Date.class);
+      provider.register(new SqlDateConvertor(), java.sql.Date.class);
+      supportTypes.add(java.sql.Date.class);
+      provider.register(new SqlTimeConvertor(), java.sql.Time.class);
+      supportTypes.add(java.sql.Time.class);
+      provider.register(new SqlTimestampConvertor(), java.sql.Timestamp.class);
+      supportTypes.add(java.sql.Timestamp.class);
+      provider.register(new ClassConvertor(), Class.class);
+      supportTypes.add(Class.class);
     }
   }
 
   protected Conversions() {}
 
 
+  public static Convertor getConvertor(Class<?> targetType) {
+    return Convertor.class.cast(provider.lookup(targetType));
+  }
+
+  public static Convertor getConvertor(Class<?> sourceType, Class<?> targetType) {
+    return Convertor.class.cast(provider.lookup(sourceType, targetType));
+  }
+
+  public static Set<Class<?>> getSupportTypes() {
+    return Collections.unmodifiableSet(supportTypes);
+  }
+
   public static void main(String... dfltVal) {
     System.out.println(Conversions.toBigDecimal("123.45"));
-    System.out.println(Conversions.toBigInteger("12312"));
-    System.out.println(Conversions.toBoolean("否"));
+    System.out.println(Conversions.toBoolean("是"));
   }
 
   public static BigDecimal toBigDecimal(Object obj) {

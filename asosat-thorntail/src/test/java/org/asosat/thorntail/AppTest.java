@@ -21,6 +21,11 @@ import io.thorntail.test.ThorntailTestRunner;
 public class AppTest {
 
   @Test
+  public void test() {
+
+  }
+
+  @Test
   public void testConfirmOrder() {
     Object result =
         given().body(new ConfirmOrderCmd().id(1L)).contentType(MediaType.APPLICATION_JSON).when()

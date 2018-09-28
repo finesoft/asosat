@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.asosat</groupId>
@@ -110,9 +112,27 @@
 			<version>${xversion.junit.platform.version}</version>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
+
 	<description>A series of skills and technology (asosat) for enterprise system development.</description>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 	<modules>
 		<module>asosat-kernel</module>
 		<module>asosat-domain</module>
@@ -121,5 +141,5 @@
 		<module>asosat-indices</module>
 		<module>asosat-query</module>
 		<module>asosat-thorntail</module>
-  </modules>
+	</modules>
 </project>

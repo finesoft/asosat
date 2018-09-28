@@ -13,6 +13,7 @@
  */
 package org.asosat.kernel.resource;
 
+import static org.asosat.kernel.util.MyClsUtils.defaultClassLoader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
@@ -20,6 +21,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSelector;
 import org.apache.commons.vfs2.FileSystemManager;
@@ -32,6 +34,8 @@ import org.asosat.kernel.util.VFSUtils;
 public class MultiClassPathFiles {
 
   private final static Map<String, String> SUFFIX_SCHEMA_MAP = new HashMap<>();
+
+  private static Logger logger = Logger.getLogger(MultiClassPathFiles.class.getName());
 
   static {
     SUFFIX_SCHEMA_MAP.put("zip", "zip");
@@ -54,9 +58,11 @@ public class MultiClassPathFiles {
   public static FileObject get(String path) {
     Map<String, FileObject> selectFiles = select(VFSUtils.buildSelector(path));
     if (selectFiles.isEmpty()) {
+      logger.severe(() -> String.format("Can not found file with path [%s]", path));
       return null;
     } else {
       if (selectFiles.size() > 1) {
+        logger.warning(() -> String.format("Found multi files with path [%s]", path));
         throw new IllegalArgumentException("Single file cannot be determined!");
       }
       return selectFiles.values().iterator().next();
@@ -68,7 +74,7 @@ public class MultiClassPathFiles {
     final Map<String, FileObject> combined = new ConcurrentHashMap<>();
     try {
       FileSystemManager fsm = VFSUtils.getFileSystemManager();
-      Enumeration<URL> currPathUrls = ClassLoader.getSystemResources("");
+      Enumeration<URL> currPathUrls = defaultClassLoader().getResources("");// ClassLoader.getSystemResources("")
       while (currPathUrls.hasMoreElements()) {
         URL u = currPathUrls.nextElement();
         for (FileObject fo : fsm.resolveFile(u).findFiles(fs)) {

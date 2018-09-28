@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.thorntail.order.command;
+package org.asosat.thorntail.demo.command;
 
 import static org.asosat.kernel.resource.GlobalMessageCodes.ERR_PARAM;
 import static org.asosat.kernel.util.Preconditions.requireNotNull;
@@ -20,7 +20,7 @@ import javax.transaction.Transactional;
 import org.asosat.kernel.pattern.command.Command;
 import org.asosat.kernel.pattern.command.CommandHandler;
 import org.asosat.kernel.pattern.repository.JpaRepository;
-import org.asosat.thorntail.order.domain.Order;
+import org.asosat.thorntail.demo.domain.Order;
 
 /**
  * asosat-thorntail-example

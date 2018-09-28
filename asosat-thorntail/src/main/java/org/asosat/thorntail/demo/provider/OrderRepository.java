@@ -11,39 +11,22 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.thorntail.order.provider;
+package org.asosat.thorntail.demo.provider;
 
-import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
-import org.asosat.kernel.abstraction.Message;
-import org.asosat.kernel.abstraction.Message.ExchangedMessage;
 import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
-import org.asosat.message.AbstractGenericMessage;
-import org.asosat.message.AbstractGenericMessageConvertor;
+import org.asosat.kernel.annotation.stereotype.Repositories;
+import org.asosat.kernel.pattern.repository.AbstractJpaRepository;
 
 /**
- * @author bingo 下午3:27:05
+ * asosat-thorntail
+ *
+ * @author bingo 下午6:25:28
  *
  */
 @ApplicationScoped
+@Repositories
 @InfrastructureServices
-public class FakeMessageConvertor
-    extends AbstractGenericMessageConvertor<Map<String, Object>, Map<String, Object>> {
-
-  public FakeMessageConvertor() {}
-
-
-  @Override
-  public AbstractGenericMessage<Map<String, Object>, Map<String, Object>> from(
-      ExchangedMessage message) {
-    return super.from(message);
-  }
-
-
-  @Override
-  public ExchangedMessage to(Message message) {
-    return null;
-  }
-
+public class OrderRepository extends AbstractJpaRepository {
 
 }

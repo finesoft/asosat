@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.thorntail.order.controller;
+package org.asosat.thorntail.demo.controller;
 
 import static org.asosat.kernel.util.MyMapUtils.asMap;
 import java.util.List;
@@ -24,10 +24,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.asosat.kernel.context.DefaultContext;
 import org.asosat.thorntail.controller.AbstractController;
-import org.asosat.thorntail.order.command.ConfirmOrder.ConfirmOrderCmd;
-import org.asosat.thorntail.order.command.RemoveOrder.RemoveOrderCmd;
-import org.asosat.thorntail.order.command.SaveOrder.SaveOrderCmd;
-import org.asosat.thorntail.order.provider.OrderQuery;
+import org.asosat.thorntail.demo.command.ConfirmOrder.ConfirmOrderCmd;
+import org.asosat.thorntail.demo.command.RemoveOrder.RemoveOrderCmd;
+import org.asosat.thorntail.demo.command.SaveOrder.SaveOrderCmd;
+import org.asosat.thorntail.demo.provider.OrderQuery;
 
 /**
  * asosat-thorntail

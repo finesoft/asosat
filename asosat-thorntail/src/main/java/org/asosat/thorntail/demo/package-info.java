@@ -14,7 +14,7 @@
 /**
  * asosat-thorntail
  * 
- * @author bingo 下午3:06:57
+ * @author bingo 上午12:47:07
  *
  */
-package org.asosat.thorntail.order.domain;
+package org.asosat.thorntail.demo;

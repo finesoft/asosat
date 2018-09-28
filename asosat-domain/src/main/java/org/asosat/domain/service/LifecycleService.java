@@ -16,6 +16,7 @@ package org.asosat.domain.service;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.event.TransactionPhase;
+import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import org.asosat.domain.aggregate.LifcyclePhase;
 import org.asosat.domain.event.LifecycleEvent;
@@ -29,6 +30,7 @@ import org.asosat.kernel.pattern.repository.JpaRepository;
 public class LifecycleService {
 
   @Inject
+  @Any
   protected JpaRepository repo;
 
   public void merge(Object obj, boolean immediately) {

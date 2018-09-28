@@ -9,8 +9,8 @@
 
 		<!-- mapping files -->
 		<!-- mapping classes -->
-		<class>org.asosat.thorntail.demo.domain.Order</class>
-		<class>org.asosat.thorntail.demo.domain.OrderItem</class>
+		<class>org.asosat.thorntail.order.domain.Order</class>
+		<class>org.asosat.thorntail.order.domain.OrderItem</class>
 
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 

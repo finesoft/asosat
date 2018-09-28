@@ -28,7 +28,7 @@ public interface EnumerationResource {
 
   List<Class<Enum>> getAllEnumClass();
 
-  String getEnumClassLiteral(Class<Enum> enumClass, Locale locale);
+  String getEnumClassLiteral(Class<?> enumClass, Locale locale);
 
   String getEnumItemLiteral(Enum enumVal, Locale locale);
 

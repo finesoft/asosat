@@ -11,47 +11,39 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.domain.saga;
+package org.asosat.thorntail.demo.provider;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.io.IOException;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import org.asosat.kernel.abstraction.Message.ExchangedMessage;
 import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
-import org.asosat.kernel.exception.NotSupportedException;
+import org.asosat.kernel.pattern.interceptor.Retry;
 import org.asosat.kernel.pattern.repository.JpaRepository;
-import org.asosat.kernel.pattern.saga.Saga;
-import org.asosat.kernel.util.JpaUtils;
+import org.asosat.message.MemonyMessageTesting;
+import org.asosat.message.MessageSender;
 
 /**
- * asosat-domain
- *
- * @author bingo 下午10:53:36
+ * @author bingo 上午11:04:00
  *
  */
-@InfrastructureServices
 @ApplicationScoped
-public class DefaultJpaSagaService extends AbstractSagaService {
+@InfrastructureServices
+public class FakeMessageSender implements MessageSender {
 
   @Inject
-  @Any
   protected JpaRepository repo;
 
-  protected final Map<Class<?>, Boolean> persistSagaClasses =
-      new ConcurrentHashMap<>(256, 0.75f, 256);
+  public FakeMessageSender() {}
 
+  @Retry(exceptions = IOException.class)
   @Transactional
   @Override
-  public void persist(Saga saga) {
-    if (this.persistSagaClasses.computeIfAbsent(saga.getClass(),
-        JpaUtils::isPersistenceEntityClass)) {
-      this.repo.persist(saga);
-      this.repo.flush();
-    } else {
-      throw new NotSupportedException();
-    }
+  public boolean send(ExchangedMessage message) throws Exception {
+    MemonyMessageTesting.test(message);
+    return true;
   }
+
 
 }

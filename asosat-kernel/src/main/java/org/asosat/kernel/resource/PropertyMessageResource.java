@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import org.apache.commons.vfs2.PatternFileSelector;
 import org.asosat.kernel.context.DefaultContext;
@@ -35,25 +36,27 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @ApplicationScoped
 public class PropertyMessageResource implements MessageResource {
 
+  public static PropertyMessageResource instance() {
+    return DefaultContext.bean(PropertyMessageResource.class);
+  }
+
   final Map<Locale, Map<String, MessageFormat>> holder = new ConcurrentHashMap<>(128);
 
   private volatile boolean init = false;
 
   @Inject
+  @Any
   @ConfigProperty(name = "asosat.message.source.path.regex",
       defaultValue = ".*messages.*\\.properties")
   String pathRegex;
 
+
   @Inject
-  @ConfigProperty(name = "asosat.message.source.load.way")
+  @Any
+  @ConfigProperty(name = "asosat.message.source.load.way", defaultValue = "false")
   volatile boolean lazyLoad = false;
 
-
   public PropertyMessageResource() {}
-
-  public static PropertyMessageResource instance() {
-    return DefaultContext.bean(PropertyMessageResource.class);
-  }
 
   @Override
   public String getMessage(Locale locale, Object key, Object[] args) throws NoSuchMessageException {

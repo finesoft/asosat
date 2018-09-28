@@ -3,12 +3,18 @@ package org.asosat.thorntail;
 import static io.restassured.RestAssured.given;
 import static org.asosat.kernel.util.MyBagUtils.asList;
 import static org.asosat.kernel.util.MyMapUtils.asMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
-import org.asosat.thorntail.order.command.ConfirmOrder.ConfirmOrderCmd;
-import org.asosat.thorntail.order.command.RemoveOrder.RemoveOrderCmd;
-import org.asosat.thorntail.order.command.SaveOrder.SaveOrderCmd;
+import org.asosat.kernel.abstraction.Lifecycle;
+import org.asosat.kernel.exception.GeneralRuntimeException;
+import org.asosat.kernel.resource.EnumerationResource;
+import org.asosat.kernel.resource.GlobalMessageCodes;
+import org.asosat.thorntail.demo.command.ConfirmOrder.ConfirmOrderCmd;
+import org.asosat.thorntail.demo.command.RemoveOrder.RemoveOrderCmd;
+import org.asosat.thorntail.demo.command.SaveOrder.SaveOrderCmd;
 import org.asosat.thorntail.provider.JsonUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,9 +26,13 @@ import io.thorntail.test.ThorntailTestRunner;
 @RunWith(ThorntailTestRunner.class)
 public class AppTest {
 
+  @Inject
+  EnumerationResource er;
+
   @Test
   public void test() {
-
+    System.out.println(this.er.getEnumItemLiteral(Lifecycle.DESTROYED, Locale.CHINA));
+    throw new GeneralRuntimeException(GlobalMessageCodes.ERR_OBJ_SEL, "xxx");
   }
 
   @Test

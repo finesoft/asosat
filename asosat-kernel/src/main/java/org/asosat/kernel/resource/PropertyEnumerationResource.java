@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import org.apache.commons.vfs2.PatternFileSelector;
 import org.asosat.kernel.context.DefaultContext;
@@ -38,23 +39,26 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @SuppressWarnings("rawtypes")
 public class PropertyEnumerationResource implements EnumerationResource {
 
-  final Map<Locale, EnumLiteralsObject> holder = new ConcurrentHashMap<>();
-  private volatile boolean init = false;
-
-  @Inject
-  @ConfigProperty(name = "asosat.enum.source.path.regex", defaultValue = ".*enum.*\\.properties")
-  String pathRegex;
-
-  @Inject
-  @ConfigProperty(name = "asosat.enum.source.load.way")
-  volatile boolean lazyLoad = false;
-
-
-  public PropertyEnumerationResource() {}
-
   public static PropertyEnumerationResource instance() {
     return DefaultContext.bean(PropertyEnumerationResource.class);
   }
+
+  final Map<Locale, EnumLiteralsObject> holder = new ConcurrentHashMap<>();
+
+  private volatile boolean init = false;
+
+  @Inject
+  @Any
+  @ConfigProperty(name = "asosat.enum.source.path.regex", defaultValue = ".*enum.*\\.properties")
+  String pathRegex;
+
+
+  @Inject
+  @Any
+  @ConfigProperty(name = "asosat.enum.source.load.way", defaultValue = "false")
+  volatile boolean lazyLoad = false;
+
+  public PropertyEnumerationResource() {}
 
   @SuppressWarnings("unchecked")
   @Override
@@ -64,8 +68,8 @@ public class PropertyEnumerationResource implements EnumerationResource {
   }
 
   @Override
-  public String getEnumClassLiteral(Class<Enum> enumClass, Locale locale) {
-    return this.holder.get(locale) == null ? null : (this.holder.get(locale).getLiteral(enumClass));
+  public String getEnumClassLiteral(Class<?> enumClass, Locale locale) {
+    return this.holder.get(locale) == null ? null : this.holder.get(locale).getLiteral(enumClass);
   }
 
   @SuppressWarnings("unchecked")
@@ -80,7 +84,7 @@ public class PropertyEnumerationResource implements EnumerationResource {
   public <T extends Enum> Map<T, String> getEnumItemLiterals(Class<T> enumClass, Locale locale) {
     this.load();
     Map<Enum, String> lLiterals =
-        this.holder.get(locale) == null ? null : (this.holder.get(locale).getLiterals(enumClass));
+        this.holder.get(locale) == null ? null : this.holder.get(locale).getLiterals(enumClass);
     return lLiterals == null ? null : new LinkedHashMap(lLiterals);
   }
 

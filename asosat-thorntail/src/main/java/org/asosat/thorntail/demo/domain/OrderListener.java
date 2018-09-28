@@ -11,10 +11,24 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+package org.asosat.thorntail.demo.domain;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
+import org.asosat.kernel.annotation.stereotype.DomainServices;
+
 /**
- * asosat-thorntail
- * 
- * @author bingo 下午3:11:54
+ * asosat-thorntail-example
+ *
+ * @author bingo 下午2:26:05
  *
  */
-package org.asosat.thorntail.order.provider;
+@ApplicationScoped
+@DomainServices
+public class OrderListener {
+
+  public void onConfirmed(@Observes OrderConfirmedEvent e) {
+    Order order = e.getSource();
+    System.out.println(order.getNumber() + " was confirmed!");
+  }
+}

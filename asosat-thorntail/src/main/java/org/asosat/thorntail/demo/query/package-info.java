@@ -14,7 +14,7 @@
 /**
  * asosat-thorntail
  * 
- * @author bingo 下午3:06:47
+ * @author bingo 上午12:47:43
  *
  */
-package org.asosat.thorntail.order.controller;
+package org.asosat.thorntail.demo.query;

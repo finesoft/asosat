@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.thorntail.order.domain;
+package org.asosat.thorntail.demo.domain;
 
 import static org.asosat.kernel.resource.GlobalMessageCodes.ERR_PARAM;
 import static org.asosat.kernel.util.Preconditions.requireGt;

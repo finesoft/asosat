@@ -11,22 +11,10 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.thorntail.order.provider;
-
-import javax.enterprise.context.ApplicationScoped;
-import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
-import org.asosat.kernel.annotation.stereotype.Repositories;
-import org.asosat.kernel.pattern.repository.AbstractJpaRepository;
-
 /**
  * asosat-thorntail
- *
- * @author bingo 下午6:25:28
+ * 
+ * @author bingo 上午12:47:29
  *
  */
-@ApplicationScoped
-@Repositories
-@InfrastructureServices
-public class OrderRepository extends AbstractJpaRepository {
-
-}
+package org.asosat.thorntail.demo.controller;

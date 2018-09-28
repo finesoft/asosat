@@ -11,38 +11,38 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.thorntail.order.provider;
+package org.asosat.thorntail.demo.provider;
 
-import java.io.IOException;
+import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import org.asosat.kernel.abstraction.Message;
 import org.asosat.kernel.abstraction.Message.ExchangedMessage;
 import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
-import org.asosat.kernel.pattern.interceptor.Retry;
-import org.asosat.kernel.pattern.repository.JpaRepository;
-import org.asosat.message.MemonyMessageTesting;
-import org.asosat.message.MessageSender;
+import org.asosat.message.AbstractGenericMessage;
+import org.asosat.message.AbstractGenericMessageConvertor;
 
 /**
- * @author bingo 上午11:04:00
+ * @author bingo 下午3:27:05
  *
  */
 @ApplicationScoped
 @InfrastructureServices
-public class FakeMessageSender implements MessageSender {
+public class FakeMessageConvertor
+    extends AbstractGenericMessageConvertor<Map<String, Object>, Map<String, Object>> {
 
-  @Inject
-  protected JpaRepository repo;
+  public FakeMessageConvertor() {}
 
-  public FakeMessageSender() {}
 
-  @Retry(exceptions = IOException.class)
-  @Transactional
   @Override
-  public boolean send(ExchangedMessage message) throws Exception {
-    MemonyMessageTesting.test(message);
-    return true;
+  public AbstractGenericMessage<Map<String, Object>, Map<String, Object>> from(
+      ExchangedMessage message) {
+    return super.from(message);
+  }
+
+
+  @Override
+  public ExchangedMessage to(Message message) {
+    return null;
   }
 
 

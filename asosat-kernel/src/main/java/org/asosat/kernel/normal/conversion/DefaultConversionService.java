@@ -13,6 +13,7 @@
  */
 package org.asosat.kernel.normal.conversion;
 
+import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
 /**
@@ -25,13 +26,13 @@ import javax.enterprise.context.ApplicationScoped;
 public class DefaultConversionService implements ConversionService {
 
   @Override
-  public Object convert(Object value, Class<?> clazz) {
-    return Conversions.provider.convert(value, clazz);
+  public <T> T convert(Object value, Class<T> clazz) {
+    return Convertors.instance.convertx(value, clazz);
   }
 
   @Override
   public void deregister(Class<?> clazz) {
-    Conversions.provider.deregister(clazz);
+    Convertors.instance.deregister(clazz);
   }
 
   @Override
@@ -44,9 +45,18 @@ public class DefaultConversionService implements ConversionService {
     return Conversions.getConvertor(sourceType, targetType);
   }
 
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public <T> List<T> listConvert(Object value, Class<T> clazz) {
+    return Convertors.instance.convertx(value, List.class, clazz);
+  }
+
+
+
   @Override
   public <T> void register(Convertor convertor, Class<T> clazz) {
-    Conversions.provider.register(convertor, clazz);
+    Convertors.instance.register(convertor, clazz);
   }
 
 }

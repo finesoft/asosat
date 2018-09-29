@@ -13,6 +13,8 @@
  */
 package org.asosat.kernel.normal.conversion;
 
+import java.util.List;
+
 /**
  * asosat-kernel
  *
@@ -21,13 +23,15 @@ package org.asosat.kernel.normal.conversion;
  */
 public interface ConversionService {
 
-  Object convert(final Object value, final Class<?> clazz);
+  <T> T convert(final Object value, final Class<T> clazz);
 
   void deregister(Class<?> clazz);
 
   Convertor getConvertor(Class<?> targetType);
 
   Convertor getConvertor(final Class<?> sourceType, final Class<?> targetType);
+
+  <T> List<T> listConvert(final Object value, final Class<T> clazz);
 
   <T> void register(Convertor convertor, Class<T> clazz);
 

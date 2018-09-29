@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.asosat.kernel.normal.conversion.Conversions;
+import org.asosat.kernel.normal.conversion.Convertors;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.Converter;
 import io.smallrye.config.SmallRyeConfig;
@@ -36,7 +37,7 @@ public class DefaultConfig extends SmallRyeConfig {
   static Map<Type, Converter> converters = new HashMap<>();
 
   static {
-    Conversions.getSupportTypes()
+    Convertors.instance().getSupportTypes()
         .forEach(t -> converters.put(t, (o) -> Conversions.getConvertor(t).convert(t, o)));
   }
 

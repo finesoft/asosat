@@ -13,6 +13,7 @@
  */
 package org.asosat.kernel.normal.conversion;
 
+import static org.asosat.kernel.util.MyBagUtils.asList;
 import static org.asosat.kernel.util.MyClsUtils.isSimpleClass;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -24,11 +25,8 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Currency;
-import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,32 +45,9 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.ConvertUtilsBean;
 import org.apache.commons.lang3.StringUtils;
+import org.asosat.kernel.abstraction.Lifecycle;
 import org.asosat.kernel.exception.KernelRuntimeException;
-import org.asosat.kernel.normal.conversion.convertor.BigDecimalConvertor;
-import org.asosat.kernel.normal.conversion.convertor.BigIntegerConvertor;
-import org.asosat.kernel.normal.conversion.convertor.BooleanConvertor;
-import org.asosat.kernel.normal.conversion.convertor.ByteConvertor;
-import org.asosat.kernel.normal.conversion.convertor.CalendarConvertor;
-import org.asosat.kernel.normal.conversion.convertor.CharacterConvertor;
-import org.asosat.kernel.normal.conversion.convertor.ClassConvertor;
-import org.asosat.kernel.normal.conversion.convertor.CurrencyConvertor;
-import org.asosat.kernel.normal.conversion.convertor.DateConvertor;
-import org.asosat.kernel.normal.conversion.convertor.DoubleConvertor;
-import org.asosat.kernel.normal.conversion.convertor.EnumConvertor;
-import org.asosat.kernel.normal.conversion.convertor.FloatConvertor;
-import org.asosat.kernel.normal.conversion.convertor.InstantConvertor;
-import org.asosat.kernel.normal.conversion.convertor.IntegerConvertor;
-import org.asosat.kernel.normal.conversion.convertor.LocalDateConvertor;
-import org.asosat.kernel.normal.conversion.convertor.LongConvertor;
-import org.asosat.kernel.normal.conversion.convertor.ShortConvertor;
-import org.asosat.kernel.normal.conversion.convertor.SqlDateConvertor;
-import org.asosat.kernel.normal.conversion.convertor.SqlTimeConvertor;
-import org.asosat.kernel.normal.conversion.convertor.SqlTimestampConvertor;
-import org.asosat.kernel.normal.conversion.convertor.StringConvertor;
-import org.asosat.kernel.normal.conversion.convertor.TimeZoneConvertor;
-import org.asosat.kernel.normal.conversion.convertor.ZonedDateTimeConvertor;
 import org.asosat.kernel.util.MyBagUtils;
 import org.asosat.kernel.util.MyObjUtils;
 
@@ -82,78 +57,22 @@ import org.asosat.kernel.util.MyObjUtils;
  */
 public class Conversions {
 
-  static ConvertUtilsBean provider = new ConvertUtilsBean();
-  static Convertor enumConvertor = new EnumConvertor();
-  static Set<Class<?>> supportTypes = new HashSet<>();
-
-  static {
-    synchronized (provider) {
-      provider.register(true, false, 0);
-      provider.register(new BooleanConvertor(), Boolean.class);
-      supportTypes.add(Boolean.class);
-      provider.register(new ByteConvertor(), Byte.class);
-      supportTypes.add(Byte.class);
-      provider.register(new CharacterConvertor(), Character.class);
-      supportTypes.add(Character.class);
-      provider.register(new DoubleConvertor(), Double.class);
-      supportTypes.add(Double.class);
-      provider.register(new FloatConvertor(), Float.class);
-      supportTypes.add(Float.class);
-      provider.register(new IntegerConvertor(), Integer.class);
-      supportTypes.add(Integer.class);
-      provider.register(new LongConvertor(), Long.class);
-      supportTypes.add(Long.class);
-      provider.register(new ShortConvertor(), Short.class);
-      supportTypes.add(Short.class);
-      provider.register(new StringConvertor(), String.class);
-      supportTypes.add(String.class);
-      provider.register(new BigDecimalConvertor(), BigDecimal.class);
-      supportTypes.add(BigDecimal.class);
-      provider.register(new BigIntegerConvertor(), BigInteger.class);
-      supportTypes.add(BigInteger.class);
-      provider.register(new InstantConvertor(), Instant.class);
-      supportTypes.add(Instant.class);
-      provider.register(new LocalDateConvertor(), LocalDate.class);
-      supportTypes.add(LocalDate.class);
-      provider.register(new CurrencyConvertor(), Currency.class);
-      supportTypes.add(Currency.class);
-      provider.register(new TimeZoneConvertor(), TimeZone.class);
-      supportTypes.add(TimeZone.class);
-      provider.register(new ZonedDateTimeConvertor(), ZonedDateTime.class);
-      supportTypes.add(ZonedDateTime.class);
-      provider.register(new CalendarConvertor(), Calendar.class);
-      supportTypes.add(Calendar.class);
-      provider.register(new DateConvertor(), Date.class);
-      supportTypes.add(Date.class);
-      provider.register(new SqlDateConvertor(), java.sql.Date.class);
-      supportTypes.add(java.sql.Date.class);
-      provider.register(new SqlTimeConvertor(), java.sql.Time.class);
-      supportTypes.add(java.sql.Time.class);
-      provider.register(new SqlTimestampConvertor(), java.sql.Timestamp.class);
-      supportTypes.add(java.sql.Timestamp.class);
-      provider.register(new ClassConvertor(), Class.class);
-      supportTypes.add(Class.class);
-    }
-  }
-
-  protected Conversions() {}
-
-
   public static Convertor getConvertor(Class<?> targetType) {
-    return Convertor.class.cast(provider.lookup(targetType));
+    return Convertor.class.cast(Convertors.instance.lookup(targetType));
   }
 
   public static Convertor getConvertor(Class<?> sourceType, Class<?> targetType) {
-    return Convertor.class.cast(provider.lookup(sourceType, targetType));
+    return Convertor.class.cast(Convertors.instance.lookup(sourceType, targetType));
   }
 
-  public static Set<Class<?>> getSupportTypes() {
-    return Collections.unmodifiableSet(supportTypes);
-  }
-
+  @SuppressWarnings("unchecked")
   public static void main(String... dfltVal) {
-    System.out.println(Conversions.toBigDecimal("123.45"));
+    Convertors.instance().convertx(asList("ENABLED", "DESTROYED"), List.class, Lifecycle.class)
+        .forEach(System.out::println);
+    Arrays.stream(Convertors.instance().convertx(asList("ENABLED", "DESTROYED"), Lifecycle[].class))
+        .forEach(System.out::println);
     System.out.println(Conversions.toBoolean("是"));
+
   }
 
   public static BigDecimal toBigDecimal(Object obj) {
@@ -161,7 +80,7 @@ public class Conversions {
   }
 
   public static BigDecimal toBigDecimal(Object obj, BigDecimal dfltVal) {
-    Object val = provider.convert(obj, BigDecimal.class);
+    Object val = Convertors.instance.convert(obj, BigDecimal.class);
     return val != null ? BigDecimal.class.cast(val) : dfltVal;
   }
 
@@ -174,7 +93,7 @@ public class Conversions {
   }
 
   public static BigInteger toBigInteger(Object obj, BigInteger dfltVal) {
-    Object val = provider.convert(obj, BigInteger.class);
+    Object val = Convertors.instance.convert(obj, BigInteger.class);
     return val != null ? BigInteger.class.cast(val) : dfltVal;
   }
 
@@ -183,12 +102,12 @@ public class Conversions {
   }
 
   public static Boolean toBoolean(Object obj) {
-    Object val = provider.convert(obj, Boolean.class);
+    Object val = Convertors.instance.convert(obj, Boolean.class);
     return val == null ? Boolean.FALSE : Boolean.class.cast(val);
   }
 
   public static Character toCharacter(Object obj) {
-    return Character.class.cast(provider.convert(obj, Character.class));
+    return Character.class.cast(Convertors.instance.convert(obj, Character.class));
   }
 
   public static Currency toCurrency(Object obj) {
@@ -196,7 +115,7 @@ public class Conversions {
   }
 
   public static Currency toCurrency(Object obj, Currency dfltVal) {
-    Object val = provider.convert(obj, Currency.class);
+    Object val = Convertors.instance.convert(obj, Currency.class);
     return val != null ? Currency.class.cast(val) : dfltVal;
   }
 
@@ -205,7 +124,7 @@ public class Conversions {
   }
 
   public static Double toDouble(Object obj, Double dfltVal) {
-    Object val = provider.convert(obj, Double.class);
+    Object val = Convertors.instance.convert(obj, Double.class);
     return val != null ? Double.class.cast(val) : dfltVal;
   }
 
@@ -215,8 +134,7 @@ public class Conversions {
 
   @SuppressWarnings("unchecked")
   public static <T extends Enum<T>> T toEnum(Object obj, Class<T> enumClazz) {
-    autoRegisterEnumConvertor(enumClazz);
-    Object val = provider.convert(obj, enumClazz);
+    Object val = Convertors.instance.convert(obj, enumClazz);
     return val != null ? (T) val : null;
   }
 
@@ -252,7 +170,7 @@ public class Conversions {
   }
 
   public static Float toFloat(Object obj, Float dfltVal) {
-    Object val = provider.convert(obj, Float.class);
+    Object val = Convertors.instance.convert(obj, Float.class);
     return val != null ? Float.class.cast(val) : dfltVal;
   }
 
@@ -265,7 +183,7 @@ public class Conversions {
   }
 
   public static Instant toInstant(Object obj, Instant dfltVal) {
-    Object val = provider.convert(obj, Instant.class);
+    Object val = Convertors.instance.convert(obj, Instant.class);
     return val != null ? Instant.class.cast(val) : dfltVal;
   }
 
@@ -278,7 +196,7 @@ public class Conversions {
   }
 
   public static Integer toInteger(Object obj, Integer dfltVal) {
-    Object val = provider.convert(obj, Integer.class);
+    Object val = Convertors.instance.convert(obj, Integer.class);
     return val != null ? Integer.class.cast(val) : dfltVal;
   }
 
@@ -301,7 +219,7 @@ public class Conversions {
   }
 
   public static LocalDate toLocalDate(Object obj, LocalDate dfltVal) {
-    Object val = provider.convert(obj, LocalDate.class);
+    Object val = Convertors.instance.convert(obj, LocalDate.class);
     return val != null ? LocalDate.class.cast(val) : dfltVal;
   }
 
@@ -310,7 +228,7 @@ public class Conversions {
   }
 
   public static Locale toLocale(Object obj) {
-    Object val = provider.convert(obj, Locale.class);
+    Object val = Convertors.instance.convert(obj, Locale.class);
     return val != null ? Locale.class.cast(val) : null;
   }
 
@@ -324,7 +242,7 @@ public class Conversions {
   }
 
   public static Long toLong(Object obj, Long dfltVal) {
-    Object val = provider.convert(obj, Long.class);
+    Object val = Convertors.instance.convert(obj, Long.class);
     return val != null ? Long.class.cast(val) : dfltVal;
   }
 
@@ -346,7 +264,7 @@ public class Conversions {
   }
 
   public static Short toShort(Object obj, Short dfltVal) {
-    Object val = provider.convert(obj, Short.class);
+    Object val = Convertors.instance.convert(obj, Short.class);
     return val != null ? Short.class.cast(val) : dfltVal;
   }
 
@@ -359,7 +277,7 @@ public class Conversions {
   }
 
   public static TimeZone toTimeZone(Object obj) {
-    Object val = provider.convert(obj, TimeZone.class);
+    Object val = Convertors.instance.convert(obj, TimeZone.class);
     return val != null ? TimeZone.class.cast(val) : null;
   }
 
@@ -368,7 +286,7 @@ public class Conversions {
   }
 
   public static ZonedDateTime toZonedDateTime(Object obj, ZonedDateTime dfltVal) {
-    Object val = provider.convert(obj, ZonedDateTime.class);
+    Object val = Convertors.instance.convert(obj, ZonedDateTime.class);
     return val != null ? ZonedDateTime.class.cast(val) : dfltVal;
   }
 
@@ -376,15 +294,7 @@ public class Conversions {
     return toList(obj, Conversions::toZonedDateTime);
   }
 
-  static void autoRegisterEnumConvertor(Class<?> clazz) {
-    if (clazz != null && clazz.isEnum() && Conversions.provider.lookup(clazz) == null) {
-      synchronized (provider) {
-        if (provider.lookup(clazz) == null) {
-          provider.register(enumConvertor, clazz);
-        }
-      }
-    }
-  }
+  protected Conversions() {}
 
 
   @SuppressWarnings({"unchecked", "rawtypes"})
@@ -396,10 +306,6 @@ public class Conversions {
         new ConcurrentHashMap<>();
 
     private static final int DLFT_LOOP_DEEP = 8;
-
-    private MapConvertor() {
-
-    }
 
     /**
      * 转换集合对象为Map
@@ -502,7 +408,6 @@ public class Conversions {
       return beanToMap(obj, DLFT_LOOP_DEEP, unLoadProperties);
     }
 
-
     // List判断是否加载在调用处已处理
     private static List beanToMap(Collection<?> list, Map<Integer, List<Object>> hashStack,
         Set<String> unLoadProperties, String prefix, Map<Object, Object> temp, int deep,
@@ -555,6 +460,7 @@ public class Conversions {
       }
       return result;
     }
+
 
     private static Map beanToMap(Map map, Map<Integer, List<Object>> hashStack,
         Set<String> unLoadProperties, String prefix, Map<Object, Object> temp, int deep,
@@ -616,8 +522,8 @@ public class Conversions {
         Set<String> unLoadProperties, String prefix, Map<Object, Object> temp, int deep,
         int maxLoopDeep)
         throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-      if (obj == null || isSimpleClass(obj.getClass()) || (obj instanceof Map)
-          || (obj instanceof Collection) || (obj instanceof Object[])) {
+      if (obj == null || isSimpleClass(obj.getClass()) || obj instanceof Map
+          || obj instanceof Collection || obj instanceof Object[]) {
         throw new KernelRuntimeException(
             " Unsupport transform class type :" + (obj == null ? "null" : obj.getClass()));
       }
@@ -755,6 +661,10 @@ public class Conversions {
         }
       }
       return false;
+    }
+
+    private MapConvertor() {
+
     }
 
   }

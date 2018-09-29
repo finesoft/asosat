@@ -14,6 +14,7 @@
 package org.asosat.kernel.concurrent;
 
 import static org.asosat.kernel.util.MyClsUtils.tryToLoadClassForName;
+import static org.asosat.kernel.util.MyStrUtils.isNotBlank;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -46,8 +47,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import org.asosat.kernel.context.DefaultContext;
 import org.asosat.kernel.exception.NotSupportedException;
-import org.asosat.kernel.normal.conversion.Conversions;
-import org.asosat.kernel.resource.ConfigResource;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  * @author bingo 下午6:07:59
@@ -73,11 +73,40 @@ public class AsynchronousExecutor {
   public static final String SE_NAME = SE + ".name";
   public static final String SE_REJEXE_HANDLER_NAME = SE + ".rejectedExecutionHandler.name";
 
+  public static AsynchronousExecutor instance() {
+    return DefaultContext.bean(AsynchronousExecutor.class);
+  }
+
   @Inject
   BeanManager beanManager;
 
   @Inject
-  ConfigResource config;
+  @ConfigProperty(name = AE_CORE_SIZE, defaultValue = "0")
+  int asyncCorePoolSize;
+  @Inject
+  @ConfigProperty(name = AE_MAX_SIZE, defaultValue = "0")
+  int asyncMaxPoolSize;
+  @Inject
+  @ConfigProperty(name = AE_KEEP_ALIVE_VALUE, defaultValue = "0")
+  long asyncKeepAlive;
+  @Inject
+  @ConfigProperty(name = AE_KEEP_ALIVE_UNIT, defaultValue = "MILLISECONDS")
+  String asyncKeepAliveUnit;
+  @Inject
+  @ConfigProperty(name = AE_QUEUE_CAPACITY, defaultValue = "0")
+  int asyncQueueCapacity;
+  @Inject
+  @ConfigProperty(name = AE_QUEUE_FAIR, defaultValue = "0")
+  int asyncQueueFairSize;
+  @Inject
+  @ConfigProperty(name = AE_REJEXE_HANDLER_NAME, defaultValue = "")
+  String rejectedHandlerName;
+  @Inject
+  @ConfigProperty(name = AE_NAME, defaultValue = AE_NAME_DFLT)
+  String threadFactoryName;
+  @Inject
+  @ConfigProperty(name = SE_NAME, defaultValue = SE_NAME_DFLT)
+  String scheduleThreadFactoryName;
 
   ExecutorService linkedExecutorService;// fair
 
@@ -91,10 +120,6 @@ public class AsynchronousExecutor {
 
   public AsynchronousExecutor() {
     super();
-  }
-
-  public static AsynchronousExecutor instance() {
-    return DefaultContext.bean(AsynchronousExecutor.class);
   }
 
   public ExecutorService getArrayExecutorService() {
@@ -236,44 +261,37 @@ public class AsynchronousExecutor {
 
   private void initExecutorManual() {
     final int coreSize =
-        this.config.getValue(AE_CORE_SIZE, Conversions::toInteger,
-            Math.max(2, Runtime.getRuntime().availableProcessors())),
-        maxSize = this.config.getValue(AE_MAX_SIZE, Conversions::toInteger, coreSize);
-    final long keepAlive = this.config.getValue(AE_KEEP_ALIVE_VALUE, Conversions::toLong, 0L);
-    final String keepAliveUnit =
-        this.config.getValue(AE_KEEP_ALIVE_UNIT, Conversions::toString, "MILLISECONDS");
-    final TimeUnit timeUnit = TimeUnit.valueOf(keepAliveUnit);
-    final String rejectedHandlerName =
-        this.config.getValue(AE_REJEXE_HANDLER_NAME, Conversions::toString);
+        this.asyncCorePoolSize < 1 ? Math.max(2, Runtime.getRuntime().availableProcessors())
+            : this.asyncCorePoolSize,
+        maxSize = this.asyncMaxPoolSize < 1 ? coreSize : this.asyncCorePoolSize;
+    final TimeUnit timeUnit = TimeUnit.valueOf(this.asyncKeepAliveUnit);
     final RejectedExecutionHandler rejectedHandler;
-    if (rejectedHandlerName != null) {
-      rejectedHandler = this.lookupByName(rejectedHandlerName, RejectedExecutionHandler.class);
+    if (isNotBlank(this.rejectedHandlerName)) {
+      rejectedHandler = this.lookupByName(this.rejectedHandlerName, RejectedExecutionHandler.class);
     } else {
       rejectedHandler = new ThreadPoolExecutor.AbortPolicy();
     }
-    final String threadFactoryName =
-        this.config.getValue(AE_NAME, Conversions::toString, AE_NAME_DFLT);
-
     if (this.linkedExecutorService == null) {
       final int capacity =
-          this.config.getValue(AE_QUEUE_CAPACITY, Conversions::toInteger, Integer.MAX_VALUE);
+          this.asyncQueueCapacity < 1 ? Integer.MAX_VALUE : this.asyncQueueCapacity;
       final BlockingQueue<Runnable> linked = new LinkedBlockingQueue<>(capacity);
-      final ThreadFactory threadFactory = new DefaultThreadFactory(threadFactoryName + "-linked");
-      this.linkedExecutorService = new ThreadPoolExecutor(coreSize, maxSize, keepAlive, timeUnit,
-          linked, threadFactory, rejectedHandler);
+      final ThreadFactory threadFactory =
+          new DefaultThreadFactory(this.threadFactoryName + "-linked");
+      this.linkedExecutorService = new ThreadPoolExecutor(coreSize, maxSize, this.asyncKeepAlive,
+          timeUnit, linked, threadFactory, rejectedHandler);
     }
 
     if (this.arrayExecutorService == null) {
-      final int size = this.config.getValue(AE_QUEUE_FAIR, Conversions::toInteger, 1024);
+      final int size = this.asyncQueueFairSize < 1 ? 1024 : this.asyncQueueFairSize;
       final BlockingQueue<Runnable> array = new ArrayBlockingQueue<>(size, false);
-      final ThreadFactory threadFactory = new DefaultThreadFactory(threadFactoryName + "-array");
-      this.arrayExecutorService = new ThreadPoolExecutor(coreSize, maxSize, keepAlive, timeUnit,
-          array, threadFactory, rejectedHandler);
+      final ThreadFactory threadFactory =
+          new DefaultThreadFactory(this.threadFactoryName + "-array");
+      this.arrayExecutorService = new ThreadPoolExecutor(coreSize, maxSize, this.asyncKeepAlive,
+          timeUnit, array, threadFactory, rejectedHandler);
     }
 
     if (this.shceduledExecutorService == null) {
-      final String sthreadFactoryName =
-          this.config.getValue(SE_NAME, Conversions::toString, SE_NAME_DFLT);
+      final String sthreadFactoryName = this.scheduleThreadFactoryName;
       final ThreadFactory threadFactory = new DefaultThreadFactory(sthreadFactoryName);
       this.shceduledExecutorService =
           new ScheduledThreadPoolExecutor(coreSize, threadFactory, rejectedHandler);
@@ -297,7 +315,7 @@ public class AsynchronousExecutor {
 
     DefaultThreadFactory(String name) {
       SecurityManager s = System.getSecurityManager();
-      this.group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+      this.group = s != null ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
       this.namePrefix = name + "-pool-thread-";
     }
 

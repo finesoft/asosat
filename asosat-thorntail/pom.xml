@@ -160,6 +160,7 @@
 			</plugin>
 		</plugins>
 	</build>
+	<!--  
 	<repositories>
 		<repository>
 			<id>oss.sonatype.org-snapshot</id>
@@ -184,5 +185,6 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+	-->
 	<description>Examples with thorntailv4.</description>
 </project>

@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import org.asosat.kernel.abstraction.Lifecycle;
+import org.asosat.kernel.concurrent.AsynchronousExecutor;
 import org.asosat.kernel.normal.conversion.ConversionService;
 import org.asosat.kernel.resource.EnumerationResource;
 import org.asosat.thorntail.demo.command.ConfirmOrder.ConfirmOrderCmd;
@@ -33,6 +34,9 @@ public class AppTest {
   @Inject
   ConversionService cs;
 
+  @Inject
+  AsynchronousExecutor ae;
+
   @Test
   public void testConfirmOrder() {
     Object result =
@@ -47,6 +51,7 @@ public class AppTest {
         x -> System.out.println(this.er.getEnumItemLiteral(Lifecycle.class.cast(x), Locale.CHINA)));
     System.out.println(
         this.er.getEnumItemLiteral(this.cs.convert("ENABLED", Lifecycle.class), Locale.CHINA));
+    this.ae.runAsync(() -> System.out.println("xxxxxxxxxxxxxxxxxx"));
   }
 
   @Test

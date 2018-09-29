@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.resource;
+package org.asosat.kernel.config;
 
 import static org.asosat.kernel.util.MyMapUtils.getMapValue;
 import java.util.Arrays;
@@ -24,13 +24,14 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import org.apache.commons.vfs2.PatternFileSelector;
 import org.asosat.kernel.context.DefaultContext;
+import org.asosat.kernel.resource.PropertyResourceBundle;
 
 /**
  * @author bingo 下午2:53:26
  *
  */
 @ApplicationScoped
-public class PropertyConfigResource implements ConfigResource {
+public class PropertyConfigResource {
 
   public static final String DFLT_CFG_REF_PATH_REG =
       ".*config.*\\.properties;.*application.*\\.properties";
@@ -46,12 +47,10 @@ public class PropertyConfigResource implements ConfigResource {
   public PropertyConfigResource() {}
 
 
-  @Override
   public Map<String, String> getProperties() {
     return Collections.unmodifiableMap(this.holder);
   }
 
-  @Override
   public <T> T getValue(String propertyName, final Function<Object, T> extractor) {
     return getMapValue(this.holder, propertyName, extractor);
   }

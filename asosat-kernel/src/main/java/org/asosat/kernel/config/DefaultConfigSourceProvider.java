@@ -13,6 +13,14 @@
  */
 package org.asosat.kernel.config;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.vfs2.PatternFileSelector;
+import org.asosat.kernel.resource.PropertyResourceBundle;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.ConfigSourceProvider;
 
@@ -24,9 +32,42 @@ import org.eclipse.microprofile.config.spi.ConfigSourceProvider;
  */
 public class DefaultConfigSourceProvider implements ConfigSourceProvider {
 
+  public static final String DFLT_CFG_REF_PATH_REG =
+      ".*config.*\\.properties;.*application.*\\.properties";
+
   @Override
   public Iterable<ConfigSource> getConfigSources(ClassLoader forClassLoader) {
-    return null;
+    List<ConfigSource> list = new ArrayList<>();
+    Arrays.stream(DFLT_CFG_REF_PATH_REG.split(";")).forEach(
+        fn -> PropertyResourceBundle.getBundles(new PatternFileSelector(fn)).forEach((s, res) -> {
+          list.add(new ConfigSource() {
+            final Map<String, String> map = Collections.unmodifiableMap(new HashMap<>(res.dump()));
+            final String name = s;
+            final int ordinal = DEFAULT_ORDINAL * 10;
+
+            @Override
+            public String getName() {
+              return this.name;
+            }
+
+            @Override
+            public int getOrdinal() {
+              return this.ordinal;
+            }
+
+            @Override
+            public Map<String, String> getProperties() {
+              return this.map;
+            }
+
+            @Override
+            public String getValue(String propertyName) {
+              return this.map.get(propertyName);
+            }
+
+          });
+        }));
+    return list;
   }
 
 }

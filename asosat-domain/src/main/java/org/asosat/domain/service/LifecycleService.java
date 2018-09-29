@@ -40,7 +40,7 @@ public class LifecycleService {
     }
   }
 
-  public void onLifecycle(@Observes(during = TransactionPhase.IN_PROGRESS) LifecycleEvent event) {
+  public void on(@Observes(during = TransactionPhase.IN_PROGRESS) LifecycleEvent event) {
     if (event.getSource() != null) {
       Entity entity = event.getSource();
       if (event.getPhase() == LifcyclePhase.ENABLE) {

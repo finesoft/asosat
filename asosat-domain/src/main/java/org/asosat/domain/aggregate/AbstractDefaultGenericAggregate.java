@@ -32,7 +32,7 @@ public abstract class AbstractDefaultGenericAggregate<P, T extends AbstractDefau
   public AbstractDefaultGenericAggregate() {}
 
   @SuppressWarnings("unchecked")
-  public T apply(Consumer<T> consumer) {
+  public T accept(Consumer<T> consumer) {
     T me = (T) this;
     if (consumer != null) {
       consumer.accept(me);
@@ -46,6 +46,18 @@ public abstract class AbstractDefaultGenericAggregate<P, T extends AbstractDefau
       return function.apply((T) this);
     }
     return null;
+  }
+
+  @SuppressWarnings("unchecked")
+  public <R> T applyThenAccept(Function<T, R> function, Consumer<R> consumer) {
+    T me = (T) this;
+    if (function != null) {
+      R r = function.apply(me);
+      if (consumer != null) {
+        consumer.accept(r);
+      }
+    }
+    return me;
   }
 
   @SuppressWarnings("unchecked")

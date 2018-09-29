@@ -64,7 +64,7 @@ public abstract class AbstractDefaultGenericAggregate<P, T extends AbstractDefau
   @Override
   public void destroy(P param, DestroyHandler<P, T> handler) {
     if (handler != null) {
-      handler.onPreDestroy(param, (T) this);
+      handler.preDestroy(param, (T) this);
     }
     this.destroy(false);
   }
@@ -73,7 +73,7 @@ public abstract class AbstractDefaultGenericAggregate<P, T extends AbstractDefau
   @Override
   public T enable(P param, EnablingHandler<P, T> handler) {
     if (handler != null) {
-      handler.onPreEnable(param, (T) this);
+      handler.preEnable(param, (T) this);
     }
     return (T) this.enable(false);
   }

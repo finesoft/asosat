@@ -35,7 +35,7 @@ public interface Being extends Serializable {
 
   @FunctionalInterface
   static interface DestroyHandler<P, T> {
-    void onPreDestroy(P param, T destroyable);
+    void preDestroy(P param, T destroyable);
   }
 
   @FunctionalInterface
@@ -45,6 +45,6 @@ public interface Being extends Serializable {
 
   @FunctionalInterface
   static interface EnablingHandler<P, T> {
-    void onPreEnable(P param, T enabling);
+    void preEnable(P param, T enabling);
   }
 }

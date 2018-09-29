@@ -26,19 +26,24 @@ import java.util.List;
 public interface Aggregate extends Entity, Being, Readable<Aggregate> {
 
   /**
+   * Arise events.
+   */
+  void arise(Event event, Annotation... qualifiers);
+
+  /**
+   * Raise messages
+   */
+  void arise(Message... messages);
+
+  /**
+   * Arise asynchronous events
+   */
+  void ariseAsync(Event event, Annotation... qualifiers);
+
+  /**
    * If flush is true then the integration event queue will be clear
    */
   List<Message> extractMessages(boolean flush);
-
-  /**
-   * Fire events.
-   */
-  void fire(Event event, Annotation... qualifiers);
-
-  /**
-   * fire asynchronous events
-   */
-  void fireAsync(Event event, Annotation... qualifiers);
 
   /**
    * In this case, it means whether it is persisted or not
@@ -51,11 +56,6 @@ public interface Aggregate extends Entity, Being, Readable<Aggregate> {
    * The aggregate isn't persisted, or is destroyed, but still live in memory until the GC recycle.
    */
   Boolean isPhantom();
-
-  /**
-   * Raise messages
-   */
-  void raise(Message... messages);
 
 
   public static interface AggregateIdentifier extends EntityIdentifier {
@@ -133,8 +133,8 @@ public interface Aggregate extends Entity, Being, Readable<Aggregate> {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((typeCls == null) ? 0 : typeCls.hashCode());
+      result = prime * result + (id == null ? 0 : id.hashCode());
+      result = prime * result + (typeCls == null ? 0 : typeCls.hashCode());
       return result;
     }
 

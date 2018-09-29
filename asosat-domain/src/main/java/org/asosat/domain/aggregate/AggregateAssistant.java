@@ -35,17 +35,22 @@ public interface AggregateAssistant {
   /**
    * Obtain the message queue, if flush is true then clear queue.
    */
-  List<Message> extractMessages(boolean flush);
+  List<Message> dequeueMessages(boolean flush);
 
   /**
-   * fire aggregate event
+   * enqueue aggregate message to queue
    */
-  void fire(Event event, Annotation... qualifiers);
+  void enqueueMessages(Message... messages);
 
   /**
    * fire aggregate asynchronous event
    */
-  void fireAsync(Event event, Annotation... qualifiers);
+  void fireAsyncEvent(Event event, Annotation... qualifiers);
+
+  /**
+   * fire aggregate event
+   */
+  void fireEvent(Event event, Annotation... qualifiers);
 
   /**
    * The aggregate which it serve
@@ -56,10 +61,5 @@ public interface AggregateAssistant {
    * Obtain the message serial number
    */
   long getMessageSequenceNumber();
-
-  /**
-   * Handle aggregate message
-   */
-  void raise(Message... messages);
 
 }

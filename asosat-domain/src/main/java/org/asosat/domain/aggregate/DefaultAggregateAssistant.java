@@ -84,7 +84,7 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
   }
 
   @Override
-  public List<Message> extractMessages(boolean flush) {
+  public List<Message> dequeueMessages(boolean flush) {
     final AtomicLong counter = new AtomicLong(this.lastMessageSequenceNumber);
     List<Message> exMsgs = this.messages.stream().map(m -> {
       m.getMetadata().resetSequenceNumber(counter.incrementAndGet());
@@ -98,7 +98,7 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
   }
 
   @Override
-  public void fire(Event event, Annotation... qualifiers) {
+  public void fireEvent(Event event, Annotation... qualifiers) {
     if (event != null) {
       this.logger.log(Level.FINE, String.format(FIRE_LOG, event.toString()));
       DefaultContext.fireEvent(event, qualifiers);
@@ -106,7 +106,7 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
   }
 
   @Override
-  public void fireAsync(Event event, Annotation... qualifiers) {
+  public void fireAsyncEvent(Event event, Annotation... qualifiers) {
     if (event != null) {
       this.logger.log(Level.FINE, String.format(FIRE_LOG, event.toString()));
       DefaultContext.fireAsyncEvent(event, qualifiers);
@@ -136,7 +136,7 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
   }
 
   @Override
-  public void raise(Message... messages) {
+  public void enqueueMessages(Message... messages) {
     if (this.aggregate.getId() != null) {
       for (Message msg : messages) {
         if (msg != null) {

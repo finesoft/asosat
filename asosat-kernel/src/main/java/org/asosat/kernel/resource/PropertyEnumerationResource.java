@@ -21,6 +21,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -43,15 +45,18 @@ public class PropertyEnumerationResource implements EnumerationResource {
     return DefaultContext.bean(PropertyEnumerationResource.class);
   }
 
+  @Inject
+  Logger logger;
+
   final Map<Locale, EnumLiteralsObject> holder = new ConcurrentHashMap<>();
 
   private volatile boolean init = false;
 
   @Inject
   @Any
-  @ConfigProperty(name = "asosat.enum.source.path.regex", defaultValue = ".*enum.*\\.properties")
+  @ConfigProperty(name = "asosat.enum.source.path.regex",
+      defaultValue = ".*enum([A-Za-z0-9_-]*)\\.properties$")
   String pathRegex;
-
 
   @Inject
   @Any
@@ -100,8 +105,13 @@ public class PropertyEnumerationResource implements EnumerationResource {
         if (!this.init) {
           try {
             this.destroy();
-            PropertyResourceBundle.getBundles(new PatternFileSelector(this.pathRegex))
+            PropertyResourceBundle
+                .getBundles(new PatternFileSelector(
+                    Pattern.compile(this.pathRegex, Pattern.CASE_INSENSITIVE)))
                 .forEach((s, res) -> {
+                  this.logger.config(() -> String.format(
+                      "Find enumeration resource, the path is %s, use pattern [%s]", s,
+                      this.pathRegex));
                   Locale locale = res.getLocale();
                   EnumLiteralsObject obj =
                       this.holder.computeIfAbsent(locale, (k) -> new EnumLiteralsObject());

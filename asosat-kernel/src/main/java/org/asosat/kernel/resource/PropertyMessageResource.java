@@ -18,6 +18,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -45,11 +47,14 @@ public class PropertyMessageResource implements MessageResource {
   private volatile boolean init = false;
 
   @Inject
+  Logger logger;
+
+  // .*messages.*\\.properties
+  @Inject
   @Any
   @ConfigProperty(name = "asosat.message.source.path.regex",
-      defaultValue = ".*messages.*\\.properties")
+      defaultValue = ".*message([A-Za-z0-9_-]*)\\.properties$")
   String pathRegex;
-
 
   @Inject
   @Any
@@ -110,8 +115,13 @@ public class PropertyMessageResource implements MessageResource {
         if (!this.init) {
           try {
             this.destroy();
-            PropertyResourceBundle.getBundles(new PatternFileSelector(this.pathRegex))
+            PropertyResourceBundle
+                .getBundles(new PatternFileSelector(
+                    Pattern.compile(this.pathRegex, Pattern.CASE_INSENSITIVE)))
                 .forEach((s, res) -> {
+                  this.logger.config(
+                      () -> String.format("Find message resource, the path is %s, use pattern [%s]",
+                          s, this.pathRegex));
                   Map<String, MessageFormat> localeMap = res.dump().entrySet().stream().collect(
                       Collectors.toMap(k -> k.getKey(), v -> new MessageFormat(v.getValue())));
                   this.holder.computeIfAbsent(res.getLocale(), (k) -> new ConcurrentHashMap<>())

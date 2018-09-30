@@ -24,7 +24,6 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.vfs2.FileObject;
@@ -38,24 +37,9 @@ import org.asosat.kernel.normal.setting.DefaultSetting;
 public class PropertyResourceBundle extends ResourceBundle {
 
   public static final String LOCALE_SPT = "_";
-  private Map<String, Object> lookup;
-  private long lastModifiedTime;
-  private Locale locale;
-  private String baseBundleName;
-
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  public PropertyResourceBundle(FileObject fo) throws IOException {
-    this.baseBundleName = fo.getName().getBaseName();
-    this.locale = PropertyResourceBundle.detectLocaleByName(this.baseBundleName);
-    this.lastModifiedTime = fo.getContent().getLastModifiedTime();
-    Properties properties = new Properties();
-    properties
-        .load(new InputStreamReader(fo.getContent().getInputStream(), DefaultSetting.CHARSET));
-    this.lookup = new HashMap(properties);
-  }
 
   public static Map<String, PropertyResourceBundle> getBundles(FileSelector fs) {
-    Map<String, PropertyResourceBundle> map = new ConcurrentHashMap<>();
+    Map<String, PropertyResourceBundle> map = new HashMap<>();
     MultiClassPathFiles.select(fs).forEach((s, fo) -> {
       try {
         map.putIfAbsent(s, new PropertyResourceBundle(fo));
@@ -72,6 +56,24 @@ public class PropertyResourceBundle extends ResourceBundle {
     } else {
       return DefaultSetting.LOCALE;
     }
+  }
+
+  private Map<String, Object> lookup;
+  private long lastModifiedTime;
+
+  private Locale locale;
+
+  private String baseBundleName;
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public PropertyResourceBundle(FileObject fo) throws IOException {
+    this.baseBundleName = fo.getName().getBaseName();
+    this.locale = PropertyResourceBundle.detectLocaleByName(this.baseBundleName);
+    this.lastModifiedTime = fo.getContent().getLastModifiedTime();
+    Properties properties = new Properties();
+    properties
+        .load(new InputStreamReader(fo.getContent().getInputStream(), DefaultSetting.CHARSET));
+    this.lookup = new HashMap(properties);
   }
 
   public Map<String, String> dump() {
@@ -96,7 +98,7 @@ public class PropertyResourceBundle extends ResourceBundle {
   public Enumeration<String> getKeys() {
     ResourceBundle parent = this.parent;
     return new ResourceBundleEnumeration(this.lookup.keySet(),
-        (parent != null) ? parent.getKeys() : null);
+        parent != null ? parent.getKeys() : null);
   }
 
   public long getLastModifiedTime() {

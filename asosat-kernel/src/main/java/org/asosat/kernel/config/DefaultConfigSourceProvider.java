@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import org.apache.commons.vfs2.PatternFileSelector;
 import org.asosat.kernel.resource.PropertyResourceBundle;
 import org.eclipse.microprofile.config.spi.ConfigSource;
@@ -32,42 +34,53 @@ import org.eclipse.microprofile.config.spi.ConfigSourceProvider;
  */
 public class DefaultConfigSourceProvider implements ConfigSourceProvider {
 
-  public static final String DFLT_CFG_REF_PATH_REG =
-      ".*config.*\\.properties;.*application.*\\.properties";
+  public static final String[] DFLT_PATH_REGEX = {".*config([A-Za-z0-9_-]*)\\.properties$",
+      ".*application([A-Za-z0-9_-]*)\\.properties$", ".*setting([A-Za-z0-9_-]*)\\.properties$"};
 
   @Override
   public Iterable<ConfigSource> getConfigSources(ClassLoader forClassLoader) {
-    List<ConfigSource> list = new ArrayList<>();
-    Arrays.stream(DFLT_CFG_REF_PATH_REG.split(";")).forEach(
-        fn -> PropertyResourceBundle.getBundles(new PatternFileSelector(fn)).forEach((s, res) -> {
-          list.add(new ConfigSource() {
-            final Map<String, String> map = Collections.unmodifiableMap(new HashMap<>(res.dump()));
-            final String name = s;
-            final int ordinal = DEFAULT_ORDINAL * 10;
-
-            @Override
-            public String getName() {
-              return this.name;
-            }
-
-            @Override
-            public int getOrdinal() {
-              return this.ordinal;
-            }
-
-            @Override
-            public Map<String, String> getProperties() {
-              return this.map;
-            }
-
-            @Override
-            public String getValue(String propertyName) {
-              return this.map.get(propertyName);
-            }
-
-          });
-        }));
+    final List<ConfigSource> list = new ArrayList<>();
+    Arrays.stream(DFLT_PATH_REGEX)
+        .forEach(regex -> PropertyResourceBundle
+            .getBundles(new PatternFileSelector(regex, Pattern.CASE_INSENSITIVE))
+            .forEach((s, res) -> list.add(new PropertyConfigSource(s, res))));
     return list;
+  }
+
+  public static class PropertyConfigSource implements ConfigSource {
+
+    final Map<String, String> map;
+    final String name;
+    final int ordinal = DEFAULT_ORDINAL * 10;
+
+    Logger logger = Logger.getLogger(PropertyConfigSource.class.getName());
+
+    PropertyConfigSource(String name, PropertyResourceBundle properties) {
+      this.logger.config(() -> String.format("Find config resource, the path is %s", name));
+      this.map = Collections.unmodifiableMap(new HashMap<>(properties.dump()));
+      this.name = name;
+    }
+
+    @Override
+    public String getName() {
+      return this.name;
+    }
+
+    @Override
+    public int getOrdinal() {
+      return this.ordinal;
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+      return this.map;
+    }
+
+    @Override
+    public String getValue(String propertyName) {
+      return this.map.get(propertyName);
+    }
+
   }
 
 }

@@ -53,8 +53,6 @@ public class MultiClassPathFiles {
   }
 
 
-  private MultiClassPathFiles() {}
-
   public static FileObject get(String path) {
     Map<String, FileObject> selectFiles = select(VFSUtils.buildSelector(path));
     if (selectFiles.isEmpty()) {
@@ -91,7 +89,8 @@ public class MultiClassPathFiles {
         }
       }
     } catch (IOException e) {
-
+      logger.warning(() -> String.format(
+          "Select class path files occur an error, the error message is %s", e.getMessage()));
     }
     return combined;
   }
@@ -110,5 +109,7 @@ public class MultiClassPathFiles {
     }
     return null;
   }
+
+  private MultiClassPathFiles() {}
 
 }

@@ -80,6 +80,15 @@ public interface JpaRepository extends Repository<Query> {
   EntityManager getEntityManager();
 
   /**
+   * retrieve for modify
+   * 
+   * @param entityClass
+   * @param id
+   * @return retrieve
+   */
+  <T> T getForUpdate(Class<T> entityClass, Serializable id);
+
+  /**
    * Use named query and query parameter's map to retrieve object list.
    */
   <T> List<T> select(String queryName, Map<?, ?> param);

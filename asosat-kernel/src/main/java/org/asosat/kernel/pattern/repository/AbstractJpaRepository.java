@@ -220,6 +220,11 @@ public abstract class AbstractJpaRepository implements JpaRepository {
     return this.getEntityManager().getEntityManagerFactory();
   }
 
+  @Override
+  public <T> T getForUpdate(Class<T> entityClass, Serializable id) {
+    return this.get(entityClass, id, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+  }
+
   public boolean isLoaded(Object object) {
     return object != null
         && this.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(object);

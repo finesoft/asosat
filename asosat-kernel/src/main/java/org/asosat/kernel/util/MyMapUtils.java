@@ -84,41 +84,41 @@ public class MyMapUtils {
   }
 
   public static BigDecimal getMapBigDecimal(final Map<?, ?> map, final Object key) {
-    return getMapValue(map, key, Conversions::toBigDecimal);
+    return getMapObject(map, key, Conversions::toBigDecimal);
   }
 
   public static BigDecimal getMapBigDecimal(final Map<?, ?> map, final Object key,
       BigDecimal dflt) {
-    return getMapValue(map, key, Conversions::toBigDecimal, dflt);
+    return getMapObject(map, key, Conversions::toBigDecimal, dflt);
   }
 
   public static BigInteger getMapBigInteger(final Map<?, ?> map, final Object key) {
-    return getMapValue(map, key, Conversions::toBigInteger);
+    return getMapObject(map, key, Conversions::toBigInteger);
   }
 
   public static BigInteger getMapBigInteger(final Map<?, ?> map, final Object key,
       BigInteger dflt) {
-    return getMapValue(map, key, Conversions::toBigInteger, dflt);
+    return getMapObject(map, key, Conversions::toBigInteger, dflt);
   }
 
   public static Boolean getMapBoolean(final Map<?, ?> map, final Object key) {
-    return getMapValue(map, key, Conversions::toBoolean);
+    return getMapObject(map, key, Conversions::toBoolean);
   }
 
   public static Currency getMapCurrency(final Map<?, ?> map, final Object key) {
-    return getMapValue(map, key, Conversions::toCurrency);
+    return getMapObject(map, key, Conversions::toCurrency);
   }
 
   public static Currency getMapCurrency(final Map<?, ?> map, final Object key, Currency dflt) {
-    return getMapValue(map, key, Conversions::toCurrency, dflt);
+    return getMapObject(map, key, Conversions::toCurrency, dflt);
   }
 
   public static Double getMapDouble(final Map<?, ?> map, final Object key) {
-    return getMapValue(map, key, Conversions::toDouble);
+    return getMapObject(map, key, Conversions::toDouble);
   }
 
   public static Double getMapDouble(final Map<?, ?> map, final Object key, Double dflt) {
-    return getMapValue(map, key, Conversions::toDouble, dflt);
+    return getMapObject(map, key, Conversions::toDouble, dflt);
   }
 
   public static <T extends Enum<T>> T getMapEnum(final Map<?, ?> map, final Object key,
@@ -135,27 +135,27 @@ public class MyMapUtils {
   }
 
   public static Float getMapFloat(final Map<?, ?> map, final Object key) {
-    return getMapValue(map, key, Conversions::toFloat);
+    return getMapObject(map, key, Conversions::toFloat);
   }
 
   public static Float getMapFloat(final Map<?, ?> map, final Object key, Float dflt) {
-    return getMapValue(map, key, Conversions::toFloat, dflt);
+    return getMapObject(map, key, Conversions::toFloat, dflt);
   }
 
   public static Instant getMapInstant(final Map<?, ?> map, final Object key) {
-    return getMapValue(map, key, Conversions::toInstant);
+    return getMapObject(map, key, Conversions::toInstant);
   }
 
   public static Instant getMapInstant(final Map<?, ?> map, final Object key, Instant dflt) {
-    return getMapValue(map, key, Conversions::toInstant, dflt);
+    return getMapObject(map, key, Conversions::toInstant, dflt);
   }
 
   public static Integer getMapInteger(final Map<?, ?> map, final Object key) {
-    return getMapValue(map, key, Conversions::toInteger);
+    return getMapObject(map, key, Conversions::toInteger);
   }
 
   public static Integer getMapInteger(final Map<?, ?> map, final Object key, Integer dflt) {
-    return getMapValue(map, key, Conversions::toInteger, dflt);
+    return getMapObject(map, key, Conversions::toInteger, dflt);
   }
 
   @SuppressWarnings("unchecked")
@@ -165,31 +165,31 @@ public class MyMapUtils {
 
   public static <T> List<T> getMapList(final Map<?, ?> map, final Object key,
       final Function<Object, T> objFunc) {
-    return getMapValueList(map, key, (v) -> Conversions.toList(v, objFunc));
+    return getMapObjectList(map, key, (v) -> Conversions.toList(v, objFunc));
   }
 
   public static LocalDate getMapLocalDate(final Map<?, ?> map, final Object key) {
-    return getMapValue(map, key, Conversions::toLocalDate);
+    return getMapObject(map, key, Conversions::toLocalDate);
   }
 
   public static LocalDate getMapLocalDate(final Map<?, ?> map, final Object key, LocalDate dflt) {
-    return getMapValue(map, key, Conversions::toLocalDate, dflt);
+    return getMapObject(map, key, Conversions::toLocalDate, dflt);
   }
 
   public static Locale getMapLocale(final Map<?, ?> map, final Object key) {
-    return getMapValue(map, key, Conversions::toLocale);
+    return getMapObject(map, key, Conversions::toLocale);
   }
 
   public static Locale getMapLocale(final Map<?, ?> map, final Object key, Locale dflt) {
-    return getMapValue(map, key, Conversions::toLocale, dflt);
+    return getMapObject(map, key, Conversions::toLocale, dflt);
   }
 
   public static Long getMapLong(final Map<?, ?> map, final Object key) {
-    return getMapValue(map, key, Conversions::toLong);
+    return getMapObject(map, key, Conversions::toLong);
   }
 
   public static Long getMapLong(final Map<?, ?> map, final Object key, Long dflt) {
-    return getMapValue(map, key, Conversions::toLong, dflt);
+    return getMapObject(map, key, Conversions::toLong, dflt);
   }
 
   @SuppressWarnings("unchecked")
@@ -204,24 +204,7 @@ public class MyMapUtils {
     }
   }
 
-  public static Short getMapShort(final Map<?, ?> map, final Object key) {
-    return getMapValue(map, key, Conversions::toShort);
-  }
-
-  public static Short getMapShort(final Map<?, ?> map, final Object key, Short dflt) {
-    return getMapValue(map, key, Conversions::toShort, dflt);
-  }
-
-  public static String getMapString(final Map<?, ?> map, final Object key) {
-    return getMapValue(map, key, Conversions::toString);
-  }
-
-  public static String getMapString(final Map<?, ?> map, final Object key, String dflt) {
-    String att = getMapValue(map, key, Conversions::toString);
-    return att == null ? dflt : att;
-  }
-
-  public static <T> T getMapValue(final Map<?, ?> map, final Object key,
+  public static <T> T getMapObject(final Map<?, ?> map, final Object key,
       final BiFunction<Object, T, T> extractor, final T dfltVal) {
     T value =
         map != null && key != null && map.containsKey(key) ? extractor.apply(map.get(key), dfltVal)
@@ -239,23 +222,40 @@ public class MyMapUtils {
    * @param dfltVal
    * @return bingo 下午4:03:08
    */
-  public static <T> T getMapValue(final Map<?, ?> map, final Object key,
+  public static <T> T getMapObject(final Map<?, ?> map, final Object key,
       final Function<Object, T> extractor) {
     return map != null && key != null && map.containsKey(key) ? extractor.apply(map.get(key))
         : null;
   }
 
-  public static <T> List<T> getMapValueList(final Map<?, ?> map, final Object key,
+  public static <T> List<T> getMapObjectList(final Map<?, ?> map, final Object key,
       final Function<Object, List<T>> extractor) {
     return map != null && key != null && map.containsKey(key) ? extractor.apply(map.get(key))
         : null;
   }
 
-  public static <T> T getMapValueOrElse(final Map<?, ?> map, final Object key,
+  public static <T> T getMapObjectOrElse(final Map<?, ?> map, final Object key,
       final Function<Object, T> extractor, final Supplier<T> sup) {
     T value =
         map != null && key != null && map.containsKey(key) ? extractor.apply(map.get(key)) : null;
     return value == null ? sup.get() : value;
+  }
+
+  public static Short getMapShort(final Map<?, ?> map, final Object key) {
+    return getMapObject(map, key, Conversions::toShort);
+  }
+
+  public static Short getMapShort(final Map<?, ?> map, final Object key, Short dflt) {
+    return getMapObject(map, key, Conversions::toShort, dflt);
+  }
+
+  public static String getMapString(final Map<?, ?> map, final Object key) {
+    return getMapObject(map, key, Conversions::toString);
+  }
+
+  public static String getMapString(final Map<?, ?> map, final Object key, String dflt) {
+    String att = getMapObject(map, key, Conversions::toString);
+    return att == null ? dflt : att;
   }
 
   public static <K, V> Map<V, K> invertMap(final Map<K, V> map) {

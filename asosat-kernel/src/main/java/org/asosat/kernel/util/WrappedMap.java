@@ -26,7 +26,7 @@ import static org.asosat.kernel.util.MyMapUtils.getMapList;
 import static org.asosat.kernel.util.MyMapUtils.getMapLocalDate;
 import static org.asosat.kernel.util.MyMapUtils.getMapLocale;
 import static org.asosat.kernel.util.MyMapUtils.getMapLong;
-import static org.asosat.kernel.util.MyMapUtils.getMapValue;
+import static org.asosat.kernel.util.MyMapUtils.getMapObject;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
@@ -186,19 +186,19 @@ public interface WrappedMap<K, V> extends Map<K, V> {
   }
 
   default Short getShort(K key) {
-    return getMapValue(unwrap(), key, Conversions::toShort);
+    return getMapObject(unwrap(), key, Conversions::toShort);
   }
 
   default Short getShort(K key, Short dflt) {
-    return getMapValue(unwrap(), key, Conversions::toShort, dflt);
+    return getMapObject(unwrap(), key, Conversions::toShort, dflt);
   }
 
   default String getString(K key) {
-    return getMapValue(unwrap(), key, Conversions::toString);
+    return getMapObject(unwrap(), key, Conversions::toString);
   }
 
   default String getString(K key, String dflt) {
-    String att = getMapValue(unwrap(), key, Conversions::toString);
+    String att = getMapObject(unwrap(), key, Conversions::toString);
     return att == null ? dflt : att;
   }
 

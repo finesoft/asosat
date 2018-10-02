@@ -13,7 +13,7 @@
  */
 package org.asosat.kernel.config;
 
-import static org.asosat.kernel.util.MyMapUtils.getMapValue;
+import static org.asosat.kernel.util.MyMapUtils.getMapObject;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -52,7 +52,7 @@ public class PropertyConfigResource {
   }
 
   public <T> T getValue(String propertyName, final Function<Object, T> extractor) {
-    return getMapValue(this.holder, propertyName, extractor);
+    return getMapObject(this.holder, propertyName, extractor);
   }
 
   public synchronized void reload() {

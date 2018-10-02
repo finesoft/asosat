@@ -34,10 +34,6 @@ import org.asosat.kernel.normal.conversion.Conversions;
 
 public class MyMapUtils {
 
-  private MyMapUtils() {
-    super();
-  }
-
   public static DynamicAttributeMap asAttributeMap(Object... objects) {
     DynamicAttributeMap map = new DynamicAttributeMap();
     String key = null;
@@ -196,13 +192,13 @@ public class MyMapUtils {
     return getMapValue(map, key, Conversions::toLong, dflt);
   }
 
-  @SuppressWarnings("rawtypes")
-  public static Map getMapMap(final Map<?, ?> map, final Object key) {
+  @SuppressWarnings("unchecked")
+  public static <K, V> Map<K, V> getMapMap(final Map<?, ?> map, final Object key) {
     Object v = map.get(key);
     if (v == null) {
       return null;
     } else if (v instanceof Map) {
-      return (Map) v;
+      return (Map<K, V>) v;
     } else {
       throw new RuntimeException("Can't get map from key " + key);
     }
@@ -272,6 +268,10 @@ public class MyMapUtils {
 
   public static <K, V> Properties toProperties(final Map<K, V> map) {
     return MapUtils.toProperties(map);
+  }
+
+  private MyMapUtils() {
+    super();
   }
 
 }

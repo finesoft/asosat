@@ -49,30 +49,6 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
 
   public AbstractAggregate() {}
 
-  /**
-   * Arise event
-   */
-  @Override
-  public void arise(Event event, Annotation... qualifiers) {
-    this.callAssistant().fireEvent(event, qualifiers);
-  }
-
-  /**
-   * Arise message
-   */
-  @Override
-  public void arise(Message... messages) {
-    this.callAssistant().enqueueMessages(messages);
-  }
-
-  /**
-   * Arise event.
-   */
-  @Override
-  public void ariseAsync(Event event, Annotation... qualifiers) {
-    this.callAssistant().fireAsyncEvent(event, qualifiers);
-  }
-
   @Override
   public synchronized List<Message> extractMessages(boolean flush) {
     return this.callAssistant().dequeueMessages(flush);
@@ -111,6 +87,30 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
     return this.getId() == null || this.lifecycle != Lifecycle.ENABLED;
   }
 
+  /**
+   * Arise event
+   */
+  @Override
+  public void raise(Event event, Annotation... qualifiers) {
+    this.callAssistant().fireEvent(event, qualifiers);
+  }
+
+  /**
+   * Arise message
+   */
+  @Override
+  public void raise(Message... messages) {
+    this.callAssistant().enqueueMessages(messages);
+  }
+
+  /**
+   * Arise event.
+   */
+  @Override
+  public void raiseAsync(Event event, Annotation... qualifiers) {
+    this.callAssistant().fireAsyncEvent(event, qualifiers);
+  }
+
   @Override
   public String toString() {
     return this.getClass().getSimpleName() + " [id=" + this.getId() + ",evoVerNum = "
@@ -145,8 +145,8 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
    * destroyed
    */
   protected synchronized void destroy(boolean immediately) {
-    this.arise(new LifecycleEvent(this, LifcyclePhase.DESTROY, immediately));
-    this.arise(new LifecycleEvent(this, LifcyclePhase.DESTROYED));
+    this.raise(new LifecycleEvent(this, LifcyclePhase.DESTROY, immediately));
+    this.raise(new LifecycleEvent(this, LifcyclePhase.DESTROYED));
   }
 
   /**
@@ -155,8 +155,8 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
   protected synchronized AbstractAggregate enable(boolean immediately) {
     requireFalse(this.getLifecycle() == Lifecycle.DESTROYED, ERR_AGG_LC,
         this.toHumanReader(Locale.getDefault()));
-    this.arise(new LifecycleEvent(this, LifcyclePhase.ENABLE, immediately));
-    this.arise(new LifecycleEvent(this, LifcyclePhase.ENABLED));
+    this.raise(new LifecycleEvent(this, LifcyclePhase.ENABLE, immediately));
+    this.raise(new LifecycleEvent(this, LifcyclePhase.ENABLED));
     return this;
   }
 

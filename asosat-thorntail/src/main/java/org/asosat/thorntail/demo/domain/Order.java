@@ -119,7 +119,7 @@ public class Order extends AbstractDefaultGenericAggregate<Map<String, Object>, 
     if (!this.isEnabled()) {
       this.enable(true);
     }
-    this.arise(new OrderConfirmedEvent(this));
+    this.raise(new OrderConfirmedEvent(this));
   }
 
   /**

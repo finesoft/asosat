@@ -28,8 +28,8 @@ import java.util.regex.Pattern;
  */
 public class SqlHelper {
 
-  public static final String OFFSET_PARAM_NME = "offset";
-  public static final String LIMIT_PARAM_NME = "limit";
+  public static final String OFFSET_PARAM_NME = "_offset";
+  public static final String LIMIT_PARAM_NME = "_limit";
   public static final int OFFSET_PARAM_VAL = 1;
   public static final int LIMIT_PARAM_VAL = 16;
 
@@ -50,10 +50,6 @@ public class SqlHelper {
   public static final Pattern DISTINCT_PATTERN = buildShallowIndexPattern(DISTINCT, true);
   public static final Pattern ORDER_BY_PATTERN = buildShallowIndexPattern(ORDER_BY, true);
   public static final String SELECT_SPACE = "select ";
-
-  private SqlHelper() {
-    super();
-  }
 
   public static boolean containDistinct(String sql) {
     return sql != null && shallowIndexOfPattern(sql, DISTINCT_PATTERN, 0) > 0;
@@ -85,7 +81,6 @@ public class SqlHelper {
     return getMapInteger(param, OFFSET_PARAM_NME, OFFSET_PARAM_VAL);
   }
 
-
   public static String getOrderBy(String sql) {
     if (sql != null) {
       int pos = shallowIndexOfPattern(sql, ORDER_BY_PATTERN, 0);
@@ -96,9 +91,20 @@ public class SqlHelper {
     return null;
   }
 
+
   public static String getSelectColumns(String sql) {
     return sql.substring(getSelectColumnsStartPosition(sql),
         shallowIndexOfPattern(sql, FROM_PATTERN, 0));
+  }
+
+  public static String removeOrderBy(String sql) {
+    if (sql != null) {
+      int pos = shallowIndexOfPattern(sql, ORDER_BY_PATTERN, 0);
+      if (pos > 0) {
+        return sql.substring(0, pos);
+      }
+    }
+    return sql;
   }
 
   // public static void main(String... regex) {
@@ -117,16 +123,6 @@ public class SqlHelper {
   // System.out.println(getOrderBy(sql));
   // }
 
-  public static String removeOrderBy(String sql) {
-    if (sql != null) {
-      int pos = shallowIndexOfPattern(sql, ORDER_BY_PATTERN, 0);
-      if (pos > 0) {
-        return sql.substring(0, pos);
-      }
-    }
-    return sql;
-  }
-
   public static String removeSelect(String sql) {
     int pos = shallowIndexOfPattern(sql, FROM_PATTERN, 0);
     if (pos != -1) {
@@ -135,7 +131,6 @@ public class SqlHelper {
       return sql;
     }
   }
-
 
   /**
    *
@@ -181,6 +176,7 @@ public class SqlHelper {
     }
     return index;
   }
+
 
   /**
    * Builds a pattern that can be used to find matches of case-insensitive matches based on the
@@ -243,9 +239,9 @@ public class SqlHelper {
     // adjustment for 'select distinct ' and 'select '.
     final String sql = sb.toString().substring(startPos).toLowerCase();
     if (sql.startsWith(SELECT_DISTINCT_SPACE)) {
-      return (startPos + SELECT_DISTINCT_SPACE.length());
+      return startPos + SELECT_DISTINCT_SPACE.length();
     } else if (sql.startsWith(SELECT_SPACE)) {
-      return (startPos + SELECT_SPACE.length());
+      return startPos + SELECT_SPACE.length();
     }
     return startPos;
   }
@@ -267,7 +263,6 @@ public class SqlHelper {
     return false;
   }
 
-
   static final int shallowIndexOf(String sb, String search, int fromIndex) {
     final String lowercase = sb.toLowerCase(); // case-insensitive match
     final int len = lowercase.length();
@@ -288,6 +283,11 @@ public class SqlHelper {
       }
     } while (cur < len && depth != 0 && pos != -1);
     return depth == 0 ? pos : -1;
+  }
+
+
+  private SqlHelper() {
+    super();
   }
 
   static class IgnoreRange {

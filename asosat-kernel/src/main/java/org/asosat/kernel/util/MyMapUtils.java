@@ -214,7 +214,7 @@ public class MyMapUtils {
 
   /**
    * Return expect value of type from supplied map with key and convertor. Usage: BigDecimal value =
-   * getMapValue(map,"key",Convertor::toBigDecimal)
+   * getMapObject(map,"key",Convertor::toBigDecimal)
    *
    * @param map
    * @param key
@@ -224,20 +224,17 @@ public class MyMapUtils {
    */
   public static <T> T getMapObject(final Map<?, ?> map, final Object key,
       final Function<Object, T> extractor) {
-    return map != null && key != null && map.containsKey(key) ? extractor.apply(map.get(key))
-        : null;
+    return map != null ? extractor.apply(map.get(key)) : null;
   }
 
   public static <T> List<T> getMapObjectList(final Map<?, ?> map, final Object key,
       final Function<Object, List<T>> extractor) {
-    return map != null && key != null && map.containsKey(key) ? extractor.apply(map.get(key))
-        : null;
+    return map != null ? extractor.apply(map.get(key)) : null;
   }
 
   public static <T> T getMapObjectOrElse(final Map<?, ?> map, final Object key,
       final Function<Object, T> extractor, final Supplier<T> sup) {
-    T value =
-        map != null && key != null && map.containsKey(key) ? extractor.apply(map.get(key)) : null;
+    T value = map != null ? extractor.apply(map.get(key)) : null;
     return value == null ? sup.get() : value;
   }
 

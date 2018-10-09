@@ -206,10 +206,7 @@ public class MyMapUtils {
 
   public static <T> T getMapObject(final Map<?, ?> map, final Object key,
       final BiFunction<Object, T, T> extractor, final T dfltVal) {
-    T value =
-        map != null && key != null && map.containsKey(key) ? extractor.apply(map.get(key), dfltVal)
-            : null;
-    return value == null ? dfltVal : value;
+    return map != null ? extractor.apply(map.get(key), dfltVal) : dfltVal;
   }
 
   /**

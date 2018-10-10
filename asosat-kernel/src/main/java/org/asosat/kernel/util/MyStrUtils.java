@@ -22,10 +22,6 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class MyStrUtils {
 
-  private MyStrUtils() {
-    super();
-  }
-
   public static String asDefaultIfBlank(final Object obj, final String defaultStr) {
     return defaultIfBlank(asDefaultString(obj), defaultStr);
   }
@@ -82,7 +78,6 @@ public class MyStrUtils {
     return StringUtils.isAnyBlank(css);
   }
 
-
   /**
    * @see StringUtils#isBlank(CharSequence)
    * @param cs
@@ -91,6 +86,7 @@ public class MyStrUtils {
   public static boolean isBlank(final CharSequence cs) {
     return StringUtils.isBlank(cs);
   }
+
 
   /**
    * @see StringUtils#isNoneBlank(CharSequence...)
@@ -203,6 +199,26 @@ public class MyStrUtils {
   }
 
   /**
+   * @see StringUtils#trim(String)
+   *
+   * @param str
+   * @return trim
+   */
+  public static String trim(String str) {
+    return StringUtils.trim(str);
+  }
+
+  /**
+   * @see StringUtils#trimToEmpty(String)
+   *
+   * @param str
+   * @return trimToEmpty
+   */
+  public static String trimToEmpty(String str) {
+    return StringUtils.trimToEmpty(str);
+  }
+
+  /**
    * @see StringUtils#truncate(String, int)
    * @param str
    * @param maxWidth
@@ -221,5 +237,9 @@ public class MyStrUtils {
    */
   public static String truncate(final String str, final int offset, final int maxWidth) {
     return StringUtils.truncate(str, offset, maxWidth);
+  }
+
+  private MyStrUtils() {
+    super();
   }
 }

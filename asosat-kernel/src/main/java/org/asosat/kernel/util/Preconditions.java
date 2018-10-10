@@ -37,10 +37,6 @@ import org.asosat.kernel.exception.GeneralRuntimeException;
  */
 public class Preconditions {
 
-  private Preconditions() {
-    super();
-  }
-
   @SafeVarargs
   public static <T> T requireAllMatch(T obj, Object code, SinglePrecondition<T>... asts) {
     return requireAllMatch(obj, code, () -> new Object[0], asts);
@@ -283,7 +279,6 @@ public class Preconditions {
     return obj;
   }
 
-
   /**
    * 字符串长度必须小于 MaxLen 且大于MinLen
    *
@@ -320,6 +315,7 @@ public class Preconditions {
     }
     return obj;
   }
+
 
   /**
    * 邮件地址校验
@@ -664,6 +660,12 @@ public class Preconditions {
     return requireTrue(obj, o -> o != null && o.getId() != null, code, parameters);
   }
 
+  @SuppressWarnings("rawtypes")
+  public static <T extends EntityReference> T requireValidReference(T obj, Predicate<T> p,
+      Object code, Object... parameters) {
+    return requireTrue(obj, o -> o != null && o.getId() != null && p.test(o), code, parameters);
+  }
+
   /**
    * 手机号码校验
    *
@@ -689,5 +691,9 @@ public class Preconditions {
       throw new GeneralRuntimeException(code, parameters);
     }
     return phoneNumber;
+  }
+
+  private Preconditions() {
+    super();
   }
 }

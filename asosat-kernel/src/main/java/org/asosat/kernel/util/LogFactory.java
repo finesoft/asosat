@@ -16,11 +16,13 @@ package org.asosat.kernel.util;
 import java.util.logging.Logger;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 
 /**
  * @author bingo 下午7:37:00
  *
  */
+@InfrastructureServices
 public class LogFactory {
 
   public LogFactory() {

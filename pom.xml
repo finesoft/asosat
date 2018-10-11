@@ -214,8 +214,8 @@
 		<module>asosat-message</module>
 		<module>asosat-indices</module>
 		<module>asosat-query</module>
-		<module>asosat-thorntail</module>
 		<module>asosat-migrate</module>
+		<module>asosat-thorntail</module>
  
   </modules>
 </project>

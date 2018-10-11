@@ -58,6 +58,11 @@
 				<artifactId>asosat-indices</artifactId>
 				<version>${xversion.asosat}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.asosat</groupId>
+				<artifactId>asosat-migrate</artifactId>
+				<version>${xversion.asosat}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -82,6 +87,11 @@
 			<groupId>org.asosat</groupId>
 			<artifactId>asosat-indices</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.asosat</groupId>
+			<artifactId>asosat-migrate</artifactId>
+		</dependency>
+		
 
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
@@ -96,11 +106,6 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-core</artifactId>
-			<version>4.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.jms</groupId>
@@ -160,31 +165,11 @@
 			</plugin>
 		</plugins>
 	</build>
-	<!--  
-	<repositories>
-		<repository>
-			<id>oss.sonatype.org-snapshot</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>oss.sonatype.org-plugin-snapshot</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
-	-->
+	<!-- <repositories> <repository> <id>oss.sonatype.org-snapshot</id> <url>https://oss.sonatype.org/content/repositories/snapshots/</url> 
+		<releases> <enabled>false</enabled> </releases> <snapshots> <enabled>true</enabled> 
+		</snapshots> </repository> </repositories> <pluginRepositories> <pluginRepository> 
+		<id>oss.sonatype.org-plugin-snapshot</id> <url>https://oss.sonatype.org/content/repositories/snapshots/</url> 
+		<releases> <enabled>false</enabled> </releases> <snapshots> <enabled>true</enabled> 
+		</snapshots> </pluginRepository> </pluginRepositories> -->
 	<description>Examples with thorntailv4.</description>
 </project>

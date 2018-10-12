@@ -11,12 +11,17 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.sql.DataSource;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.callback.Callback;
 import org.flywaydb.core.api.configuration.FluentConfiguration;
 
 @ApplicationScoped
 public abstract class FlywayMigrator {
+
+  @Inject
+  @ConfigProperty(name = "asosat.migrate.enable", defaultValue = "false")
+  Boolean enable;
 
   @Inject
   Logger logger;
@@ -26,8 +31,14 @@ public abstract class FlywayMigrator {
   protected Instance<FlywayCallback> callbacks;
 
   public void migrate() {
-    this.logger.fine(() -> "Start migrate process");
-    this.getConfigProviders().map(this::build).forEach(this::doMigrate);
+    if (this.enable != null && this.enable.booleanValue()) {
+      this.logger.fine(() -> "Start migrate process");
+      this.getConfigProviders().map(this::build).forEach(this::doMigrate);
+    } else {
+      this.logger.fine(() -> String.format(
+          "Disable migrate process, If you want to migrate, set $s in the configuration file!",
+          "asosat.migrate.enable=true"));
+    }
   }
 
   protected Flyway build(FlywayConfigProvider provider) {

@@ -26,6 +26,7 @@ public abstract class FlywayMigrator {
   protected Instance<FlywayCallback> callbacks;
 
   public void migrate() {
+    this.logger.fine(() -> "Start migrate process");
     this.getConfigProviders().map(this::build).forEach(this::doMigrate);
   }
 
@@ -34,6 +35,9 @@ public abstract class FlywayMigrator {
     Collection<String> locations = provider.getLocations();
     Set<String> locationsToUse =
         locations == null ? asSet(this.defaultLocation(ds)) : new HashSet<>(locations);
+    this.logger.fine(
+        () -> String.format("Build flyway instance that data source is %s and location is [%s]",
+            ds.toString(), String.join(";", locationsToUse.toArray(new String[0]))));
     FluentConfiguration fc =
         Flyway.configure().dataSource(ds).locations(locationsToUse.toArray(new String[0]));
     if (this.callbacks.isResolvable()) {

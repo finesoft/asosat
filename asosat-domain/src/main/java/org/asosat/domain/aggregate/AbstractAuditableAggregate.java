@@ -35,7 +35,7 @@ public abstract class AbstractAuditableAggregate extends AbstractAggregate {
   public synchronized List<Message> extractMessages(boolean flush) {
     List<Message> events = super.extractMessages(flush);
     if (flush && !events.isEmpty()) {
-      this.setEvoVerNum(this.getEvoVerNum() + events.size());
+      this.setEvn(this.getEvn() + events.size());
     }
     return events;
   }

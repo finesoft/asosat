@@ -47,7 +47,7 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
 
   public DefaultAggregateAssistant(Aggregate aggregate) {
     this.aggregate = requireNotNull(aggregate, ERR_AGG_AST_INSTAL);
-    this.lastMessageSequenceNumber = aggregate.getEvoVerNum();
+    this.lastMessageSequenceNumber = aggregate.getEvn();
   }
 
   public DefaultAggregateAssistant(Aggregate aggregate, long lastMessageSequenceNumber) {

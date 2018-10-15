@@ -56,7 +56,7 @@ public abstract class FlywayMigrator {
       this.getConfigProviders().map(this::build).forEach(this::doMigrate);
     } else {
       this.logger.fine(() -> String.format(
-          "Disable migrate process, If you want to migrate, set $s in the configuration file!",
+          "Disable migrate process, If you want to migrate, set %s in the configuration file!",
           "asosat.migrate.enable=true"));
     }
   }

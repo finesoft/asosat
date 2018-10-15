@@ -20,7 +20,7 @@ public interface Being extends Serializable {
   /**
    * the evolution version number, use as persistence version
    */
-  Long getEvoVerNum();
+  Long getEvn();
 
   /**
    * the lifecycle of being

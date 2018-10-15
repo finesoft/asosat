@@ -177,9 +177,9 @@ public abstract class AbstractJpaRepository implements JpaRepository {
     return this.getEntityManager().find(entityClass, id, lockMode, properties);
   }
 
-  public <T extends Being> T get(Class<T> entityClass, Serializable id, long evoVerNum) {
+  public <T extends Being> T get(Class<T> entityClass, Serializable id, long evn) {
     T entity = this.get(entityClass, id);
-    return entity != null && entity.getEvoVerNum().longValue() == evoVerNum ? entity : null;
+    return entity != null && entity.getEvn().longValue() == evn ? entity : null;
   }
 
   public <T> T get(Class<T> entityClass, Serializable id, Map<String, Object> properties) {

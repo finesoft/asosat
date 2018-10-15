@@ -44,8 +44,8 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
   protected transient volatile AggregateAssistant assistant;
 
   @Version
-  @Column(name = "evoVerNum")
-  private volatile long evoVerNum = 1L;
+  @Column(name = "evn")
+  private volatile long evn = 1L;
 
   public AbstractAggregate() {}
 
@@ -59,8 +59,8 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
    * {@link javax.persistence.Version} in JPA
    */
   @Override
-  public synchronized Long getEvoVerNum() {
-    return this.evoVerNum;
+  public synchronized Long getEvn() {
+    return this.evn;
   }
 
   /**
@@ -113,8 +113,8 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
 
   @Override
   public String toString() {
-    return this.getClass().getSimpleName() + " [id=" + this.getId() + ",evoVerNum = "
-        + this.getEvoVerNum() + "]";
+    return this.getClass().getSimpleName() + " [id=" + this.getId() + ",evn = " + this.getEvn()
+        + "]";
   }
 
   /**
@@ -166,8 +166,8 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
     return this.getId() != null;
   }
 
-  protected synchronized void setEvoVerNum(long evoVerNum) {
-    this.evoVerNum = evoVerNum;
+  protected synchronized void setEvn(long evn) {
+    this.evn = evn;
   }
 
   protected synchronized AbstractAggregate withLifecycle(Lifecycle lifecycle) {

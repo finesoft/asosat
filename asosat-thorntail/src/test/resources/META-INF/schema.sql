@@ -1,7 +1,7 @@
 	if not exists (select * from sysobjects where name='AT_ORD' and xtype='U')
 	    create table AT_ORD (
 	       id bigint not null,
-	        evoVerNum bigint,
+	        evn bigint,
 	        msgSeqNum bigint,
 	        buyer nvarchar(255),
 	        confirmed bit,

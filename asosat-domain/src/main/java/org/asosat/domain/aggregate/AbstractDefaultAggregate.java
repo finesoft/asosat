@@ -29,8 +29,11 @@ public abstract class AbstractDefaultAggregate extends AbstractAggregate {
 
   private static final long serialVersionUID = -1347035224644784732L;
 
-  @Column(name = "msgSeqNum")
-  private volatile long msgSeqNum = 0L;
+  /**
+   * Message sequence number
+   */
+  @Column(name = "msn")
+  private volatile long msn = 0L;
 
   protected AbstractDefaultAggregate() {}
 
@@ -38,25 +41,28 @@ public abstract class AbstractDefaultAggregate extends AbstractAggregate {
   public synchronized List<Message> extractMessages(boolean flush) {
     List<Message> events = super.extractMessages(flush);
     if (flush) {
-      this.setMsgSeqNum(this.msgSeqNum + events.size());
+      this.setMsn(this.msn + events.size());
     }
     return events;
   }
 
-  public synchronized long getMsgSeqNum() {
-    return this.msgSeqNum;
+  /**
+   * Message sequence number
+   */
+  public synchronized long getMsn() {
+    return this.msn;
   }
 
   @Override
   protected synchronized AggregateAssistant callAssistant() {
     if (this.assistant == null) {
-      this.assistant = new DefaultAggregateAssistant(this, this.msgSeqNum);
+      this.assistant = new DefaultAggregateAssistant(this, this.msn);
     }
     return this.assistant;
   }
 
-  protected synchronized void setMsgSeqNum(long msgSeqNum) {
-    this.msgSeqNum = msgSeqNum;
+  protected synchronized void setMsn(long msn) {
+    this.msn = msn;
   }
 
 }

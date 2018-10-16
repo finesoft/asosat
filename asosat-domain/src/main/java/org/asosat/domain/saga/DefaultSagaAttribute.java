@@ -19,7 +19,7 @@ import java.time.temporal.Temporal;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.MappedSuperclass;
-import org.asosat.kernel.abstraction.DynamicAttributes.DynamicAttributeType;
+import org.asosat.kernel.abstraction.DynamicAttributes.AttributeType;
 import org.asosat.kernel.normal.conversion.Conversions;
 import org.asosat.kernel.abstraction.Value;
 
@@ -37,7 +37,7 @@ public class DefaultSagaAttribute implements SagaAttribute, Value {
   private String name;
 
   @Column
-  private DynamicAttributeType type;
+  private AttributeType type;
 
   @Column
   private Boolean boolValue;
@@ -52,25 +52,25 @@ public class DefaultSagaAttribute implements SagaAttribute, Value {
   private ZonedDateTime temporalValue;
 
   public DefaultSagaAttribute(String name, Boolean boolValue) {
-    this.setType(DynamicAttributeType.BOOL);
+    this.setType(AttributeType.BOOLEAN);
     this.setName(name);
     this.setBoolValue(Conversions.toBoolean(boolValue));
   }
 
   public DefaultSagaAttribute(String name, Number numberValue) {
-    this.setType(DynamicAttributeType.NUMBER);
+    this.setType(AttributeType.NUMBERIC);
     this.setName(name);
     this.setNumberValue(Conversions.toBigDecimal(numberValue));
   }
 
   public DefaultSagaAttribute(String name, String stringValue) {
-    this.setType(DynamicAttributeType.STRING);
+    this.setType(AttributeType.STRING);
     this.setName(name);
     this.setStringValue(stringValue);
   }
 
   public DefaultSagaAttribute(String name, Temporal temporalValue) {
-    this.setType(DynamicAttributeType.TEMPORAL);
+    this.setType(AttributeType.TEMPORAL);
     this.setName(name);
     this.setTemporalValue(Conversions.toZonedDateTime(temporalValue));
   }
@@ -103,7 +103,7 @@ public class DefaultSagaAttribute implements SagaAttribute, Value {
   }
 
   @Override
-  public DynamicAttributeType getType() {
+  public AttributeType getType() {
     return this.type;
   }
 
@@ -127,7 +127,7 @@ public class DefaultSagaAttribute implements SagaAttribute, Value {
     this.temporalValue = temporalValue;
   }
 
-  protected void setType(DynamicAttributeType type) {
+  protected void setType(AttributeType type) {
     this.type = type;
   }
 

@@ -25,6 +25,10 @@ import org.asosat.kernel.util.WrappedMap;
  */
 public interface DynamicAttributes {
 
+  public enum AttributeType {
+    ENUM, STRING, BOOLEAN, NUMBERIC, TEMPORAL, LOCALE, CURRENCY, TIME_ZONE, REFERENCE;
+  }
+
   public static class DynamicAttributeMap implements WrappedMap<String, Object> {
 
     private final Map<String, Object> map = new LinkedHashMap<>();
@@ -96,15 +100,11 @@ public interface DynamicAttributes {
 
   }
 
-  public enum DynamicAttributeType {
-    ENUM, STRING, BOOL, NUMBER, TEMPORAL
-  }
-
   public static interface DynamicNamedAttribute {
 
     String getName();
 
-    DynamicAttributeType getType();
+    AttributeType getType();
 
     <T> T getValue();
 

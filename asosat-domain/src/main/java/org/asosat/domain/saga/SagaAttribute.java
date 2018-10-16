@@ -14,7 +14,7 @@
 package org.asosat.domain.saga;
 
 import java.time.temporal.Temporal;
-import org.asosat.kernel.abstraction.DynamicAttributes.DynamicAttributeType;
+import org.asosat.kernel.abstraction.DynamicAttributes.AttributeType;
 import org.asosat.kernel.abstraction.DynamicAttributes.DynamicNamedAttribute;
 
 /**
@@ -34,11 +34,11 @@ public interface SagaAttribute extends DynamicNamedAttribute {
   @SuppressWarnings("unchecked")
   @Override
   default <T> T getValue() {
-    if (getType() == DynamicAttributeType.BOOL) {
+    if (getType() == AttributeType.BOOLEAN) {
       return getBoolValue() == null ? null : (T) getBoolValue();
-    } else if (getType() == DynamicAttributeType.NUMBER) {
+    } else if (getType() == AttributeType.NUMBERIC) {
       return getNumberValue() == null ? null : (T) getNumberValue();
-    } else if (getType() == DynamicAttributeType.TEMPORAL) {
+    } else if (getType() == AttributeType.TEMPORAL) {
       return getTemporalValue() == null ? null : (T) getTemporalValue();
     } else {
       return getStringValue() == null ? null : (T) getStringValue();

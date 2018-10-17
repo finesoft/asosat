@@ -16,6 +16,8 @@ package org.asosat.kernel.abstraction;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 import org.asosat.kernel.exception.KernelRuntimeException;
 import org.asosat.kernel.util.WrappedMap;
 
@@ -27,6 +29,20 @@ public interface DynamicAttributes {
 
   public enum AttributeType {
     ENUM, STRING, BOOLEAN, NUMBERIC, TEMPORAL, LOCALE, CURRENCY, TIME_ZONE, REFERENCE;
+  }
+
+  @Converter
+  public static class AttributeTypeJpaConverter
+      implements AttributeConverter<AttributeType, String> {
+    @Override
+    public String convertToDatabaseColumn(AttributeType attribute) {
+      return attribute.name();
+    }
+
+    @Override
+    public AttributeType convertToEntityAttribute(String dbData) {
+      return AttributeType.valueOf(dbData);
+    }
   }
 
   public static class DynamicAttributeMap implements WrappedMap<String, Object> {

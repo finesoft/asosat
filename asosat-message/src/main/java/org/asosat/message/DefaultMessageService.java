@@ -13,14 +13,13 @@
  */
 package org.asosat.message;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.abstraction.Message;
 import org.asosat.kernel.abstraction.Message.ExchangedMessage;
-import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.abstraction.MessageService;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.exception.GeneralRuntimeException;
 import org.asosat.kernel.pattern.interceptor.Asynchronous;
 
@@ -60,7 +59,7 @@ public class DefaultMessageService implements MessageService {
     if (msg != null) {
       this.exchangeMessageHandler.handle(msg);
     } else {
-      this.logger.log(Level.WARNING, "Can not find exchanged message handler!");
+      this.logger.warn(() -> "Can not find exchanged message handler!");
     }
   }
 
@@ -74,7 +73,7 @@ public class DefaultMessageService implements MessageService {
         throw new GeneralRuntimeException(e, "");// FIXME MSG
       }
     } else {
-      this.logger.log(Level.WARNING, "Can not find message channel!");
+      this.logger.warn(() -> "Can not find message channel!");
     }
   }
 

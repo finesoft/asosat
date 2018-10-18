@@ -21,9 +21,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.interceptor.InvocationContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.exception.GeneralRuntimeException;
 import org.asosat.kernel.resource.GlobalMessageCodes;
 
@@ -33,16 +33,12 @@ import org.asosat.kernel.resource.GlobalMessageCodes;
  */
 public class RetryUtils {
 
-  protected static final Logger LOGGER = Logger.getLogger(RetryUtils.class.toString());
+  protected static final Logger LOGGER = LogManager.getLogger(RetryUtils.class.toString());
 
   static final String RTY_LOG =
       "An exception occurred during execution, enter the retry phase, the retry times is %s, interval is %s.";
 
   static final String RTY_ERR_LOG = "An exception occurred during supplier.";
-
-  private RetryUtils() {
-    super();
-  }
 
   @SuppressWarnings("unchecked")
   public static <T> Retrier<T> retrier(InvocationContext ctx) {
@@ -66,6 +62,10 @@ public class RetryUtils {
       Class<? extends Exception>... ignoreExceptions) {
     return new SupplierRetrier<>(execution).transfer(transfer).on(ignoreExceptions).times(times)
         .interval(interval).execute();
+  }
+
+  private RetryUtils() {
+    super();
   }
 
   public static class InvocationRetrier extends Retrier<Object> {
@@ -105,7 +105,7 @@ public class RetryUtils {
           if (this.on.stream().noneMatch(ec -> ec.isAssignableFrom(e.getClass()))) {
             throw this.transfer.apply(e);
           }
-          LOGGER.warning(String.format(RTY_LOG, retryCounter, this.interval));
+          LOGGER.warn(String.format(RTY_LOG, retryCounter, this.interval));
           try {
             Thread.sleep(this.interval.toMillis());
           } catch (InterruptedException te) {
@@ -125,7 +125,7 @@ public class RetryUtils {
       try {
         r = this.execute();
       } catch (Exception e) {
-        LOGGER.log(Level.SEVERE, e, () -> RTY_ERR_LOG);
+        LOGGER.error(RTY_ERR_LOG, e);
         r = s;
       }
       return r;

@@ -17,13 +17,13 @@ import static org.asosat.kernel.util.MyBagUtils.asSet;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.sql.DataSource;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.callback.Callback;
@@ -52,10 +52,10 @@ public abstract class FlywayMigrator {
 
   public void migrate() {
     if (this.enable != null && this.enable.booleanValue()) {
-      this.logger.fine(() -> "Start migrate process");
+      this.logger.info(() -> "Start migrate process");
       this.getConfigProviders().map(this::build).forEach(this::doMigrate);
     } else {
-      this.logger.fine(() -> String.format(
+      this.logger.info(() -> String.format(
           "Disable migrate process, If you want to migrate, set %s in the configuration file!",
           "asosat.migrate.enable=true"));
     }
@@ -66,7 +66,7 @@ public abstract class FlywayMigrator {
     Collection<String> locations = provider.getLocations();
     Set<String> locationsToUse =
         locations == null ? asSet(this.defaultLocation(ds)) : new HashSet<>(locations);
-    this.logger.fine(
+    this.logger.info(
         () -> String.format("Build flyway instance that data source is %s and location is [%s]",
             ds.toString(), String.join(";", locationsToUse.toArray(new String[0]))));
     FluentConfiguration fc =

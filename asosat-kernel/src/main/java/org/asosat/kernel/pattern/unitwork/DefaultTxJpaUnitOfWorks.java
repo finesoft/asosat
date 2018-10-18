@@ -22,7 +22,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.logging.Level;
 import javax.persistence.EntityManager;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
@@ -51,7 +50,7 @@ public class DefaultTxJpaUnitOfWorks extends AbstractUnitOfWorks implements Sync
     this.transaction = transaction;
     this.entityManager = entityManager;
     Arrays.stream(Lifecycle.values()).forEach(e -> this.registration.put(e, new LinkedHashSet<>()));
-    this.logger.log(Level.FINE, String.format(BGN_LOG, transaction.toString()));
+    this.logger.debug(() -> String.format(BGN_LOG, transaction.toString()));
   }
 
   @Override
@@ -62,7 +61,7 @@ public class DefaultTxJpaUnitOfWorks extends AbstractUnitOfWorks implements Sync
     } finally {
       final Map<Lifecycle, Set<AggregateIdentifier>> cloneRegistration = this.getRegistration();
       this.clear();
-      this.logger.log(Level.FINE, String.format(END_LOG, this.transaction.toString()));
+      this.logger.debug(() -> String.format(END_LOG, this.transaction.toString()));
       this.handlePostCompleted(cloneRegistration, success);
     }
   }

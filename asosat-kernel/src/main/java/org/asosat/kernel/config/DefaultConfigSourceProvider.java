@@ -19,9 +19,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.apache.commons.vfs2.PatternFileSelector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.resource.PropertyResourceBundle;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.ConfigSourceProvider;
@@ -53,10 +54,10 @@ public class DefaultConfigSourceProvider implements ConfigSourceProvider {
     final String name;
     final int ordinal = DEFAULT_ORDINAL * 10;
 
-    Logger logger = Logger.getLogger(PropertyConfigSource.class.getName());
+    Logger logger = LogManager.getLogger(PropertyConfigSource.class.getName());
 
     PropertyConfigSource(String name, PropertyResourceBundle properties) {
-      this.logger.config(() -> String.format("Find config resource, the path is %s", name));
+      this.logger.debug(() -> String.format("Find config resource, the path is %s", name));
       this.map = Collections.unmodifiableMap(new HashMap<>(properties.dump()));
       this.name = name;
     }

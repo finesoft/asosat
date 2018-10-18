@@ -13,8 +13,9 @@
  */
 package org.asosat.domain.aggregate;
 
-import java.util.logging.Logger;
 import javax.persistence.MappedSuperclass;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.abstraction.Entity;
 
 /**
@@ -26,7 +27,7 @@ public abstract class AbstractEntity implements Entity {
 
   private static final long serialVersionUID = -4508714167429852231L;
 
-  protected final transient Logger logger = Logger.getLogger(this.getClass().toString());
+  protected final transient Logger logger = LogManager.getLogger(this.getClass().toString());
 
   @Override
   public boolean equals(Object o) {

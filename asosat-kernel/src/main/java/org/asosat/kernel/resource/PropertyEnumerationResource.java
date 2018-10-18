@@ -21,7 +21,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -30,6 +29,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import org.apache.commons.vfs2.PatternFileSelector;
+import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.context.DefaultContext;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -111,7 +111,7 @@ public class PropertyEnumerationResource implements EnumerationResource {
                 .getBundles(new PatternFileSelector(
                     Pattern.compile(this.pathRegex, Pattern.CASE_INSENSITIVE)))
                 .forEach((s, res) -> {
-                  this.logger.config(() -> String.format(
+                  this.logger.info(() -> String.format(
                       "Find enumeration resource, the path is %s, use pattern [%s]", s,
                       this.pathRegex));
                   Locale locale = res.getLocale();

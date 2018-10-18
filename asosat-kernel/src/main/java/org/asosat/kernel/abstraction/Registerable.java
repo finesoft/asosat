@@ -17,7 +17,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author bingo 下午3:03:49
@@ -43,7 +44,7 @@ public interface Registerable<D, C> {
 
   public abstract static class DefaultRegisterable<D, C> implements Registerable<D, C> {
 
-    protected final Logger logger = Logger.getLogger(getClass().toString());
+    protected final Logger logger = LogManager.getLogger(getClass().toString());
 
     private final ConcurrentMap<Class<D>, Set<C>> registration = new ConcurrentHashMap<>();
 
@@ -64,7 +65,7 @@ public interface Registerable<D, C> {
 
   public abstract static class DefaultRegisterableSingle<D, C> implements Registerable<D, C> {
 
-    protected final Logger logger = Logger.getLogger(getClass().toString());
+    protected final Logger logger = LogManager.getLogger(getClass().toString());
 
     private final ConcurrentMap<Class<D>, C> registration = new ConcurrentHashMap<>();
 

@@ -40,12 +40,12 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.abstraction.Lifecycle;
 import org.asosat.kernel.exception.KernelRuntimeException;
 import org.asosat.kernel.util.MyBagUtils;
@@ -300,7 +300,7 @@ public class Conversions {
   @SuppressWarnings({"unchecked", "rawtypes"})
   public static class MapConvertor {
 
-    private static final Logger logger = Logger.getLogger(MapConvertor.class.toString());
+    private static final Logger logger = LogManager.getLogger(MapConvertor.class.toString());
 
     private static final ConcurrentHashMap<Class, List<Field>> cacheClassProperty =
         new ConcurrentHashMap<>();
@@ -574,7 +574,7 @@ public class Conversions {
                 }
               }
             } catch (IllegalAccessException | IllegalArgumentException e) {
-              logger.log(Level.WARNING, e, () -> "");
+              logger.warn("Convert to map error", e);
             }
           }
         }

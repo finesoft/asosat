@@ -13,9 +13,10 @@
  */
 package org.asosat.kernel.util;
 
-import java.util.logging.Logger;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 
 /**
@@ -31,7 +32,7 @@ public class LogFactory {
 
   @Produces
   Logger createLogger(InjectionPoint injectionPoint) {
-    return Logger.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
+    return LogManager.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
   }
 
 }

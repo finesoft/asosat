@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.abstraction.Aggregate;
 import org.asosat.kernel.abstraction.Event;
 import org.asosat.kernel.abstraction.Message;
@@ -39,7 +39,7 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
   static final String FIRE_LOG = "Fire event [%s] to event listener!";
   static final String RISE_LOG = "Register integration message [%s] to message queue!";
 
-  protected final transient Logger logger = Logger.getLogger(this.getClass().toString());
+  protected final transient Logger logger = LogManager.getLogger(this.getClass().toString());
 
   protected transient final Aggregate aggregate;
   protected transient final Queue<Message> messages = new LinkedList<>();
@@ -80,7 +80,7 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
     if (this.aggregate.getId() != null) {
       for (Message msg : messages) {
         if (msg != null) {
-          this.logger.log(Level.FINE, String.format(RISE_LOG, msg.toString()));
+          this.logger.debug(() -> String.format(RISE_LOG, msg.toString()));
           if (msg instanceof MergableMessage) {
             MergableMessage.mergeToQueue(this.messages, (MergableMessage) msg);
           } else {
@@ -121,7 +121,7 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
   @Override
   public void fireAsyncEvent(Event event, Annotation... qualifiers) {
     if (event != null) {
-      this.logger.log(Level.FINE, String.format(FIRE_LOG, event.toString()));
+      this.logger.debug(() -> String.format(FIRE_LOG, event.toString()));
       DefaultContext.fireAsyncEvent(event, qualifiers);
     }
   }
@@ -129,7 +129,7 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
   @Override
   public void fireEvent(Event event, Annotation... qualifiers) {
     if (event != null) {
-      this.logger.log(Level.FINE, String.format(FIRE_LOG, event.toString()));
+      this.logger.debug(() -> String.format(FIRE_LOG, event.toString()));
       DefaultContext.fireEvent(event, qualifiers);
     }
   }

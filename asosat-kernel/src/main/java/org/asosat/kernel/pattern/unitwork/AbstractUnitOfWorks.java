@@ -16,9 +16,9 @@ package org.asosat.kernel.pattern.unitwork;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.abstraction.Message;
 import org.asosat.kernel.abstraction.MessageService;
 import org.asosat.kernel.abstraction.MessageService.MessageConvertor;
@@ -31,7 +31,7 @@ import org.asosat.kernel.pattern.unitwork.UnitOfWorksManager.UnitOfWorksListener
  */
 public abstract class AbstractUnitOfWorks implements UnitOfWorks {
 
-  protected final transient Logger logger = Logger.getLogger(this.getClass().toString());
+  protected final transient Logger logger = LogManager.getLogger(this.getClass().toString());
   protected final List<Message> message = new LinkedList<>();
   protected final UnitOfWorksManager manager;
   protected final Stream<UnitOfWorksHandler> handlers;
@@ -78,7 +78,7 @@ public abstract class AbstractUnitOfWorks implements UnitOfWorks {
       try {
         listener.onCompleted(registration, success);
       } catch (Exception ex) {
-        this.logger.log(Level.WARNING, ex.getMessage());
+        this.logger.warn("Handle UOW post-completed occurred error!", ex);
       }
     });
   }
@@ -88,7 +88,7 @@ public abstract class AbstractUnitOfWorks implements UnitOfWorks {
       try {
         handler.onPreComplete(this);
       } catch (Exception ex) {
-        this.logger.log(Level.WARNING, ex.getMessage());
+        this.logger.warn("Handle UOW pre-complete occurred error!", ex);
       }
     });
   }

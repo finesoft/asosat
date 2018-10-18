@@ -23,11 +23,11 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.logging.log4j.Logger;
 import org.asosat.query.NamedQuery;
 import org.asosat.query.NamedQueryResolver;
 import org.asosat.query.NamedQueryResolver.Querier;
@@ -85,7 +85,7 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
       PagedList<T> result = PagedList.inst();
       result.withOffset(offset).withPageSize(limit);
       int count = list.size();
-      if (count > (limit + 1)) {
+      if (count > limit + 1) {
         result.withTotal(offset + count);
       } else {
         String totalSql = this.getDialect().getCountSql(sql);

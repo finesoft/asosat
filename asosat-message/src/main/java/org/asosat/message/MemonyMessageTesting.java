@@ -15,7 +15,8 @@ package org.asosat.message;
 
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.abstraction.Message.ExchangedMessage;
 import org.asosat.kernel.abstraction.MessageService;
 import org.asosat.kernel.context.DefaultContext;
@@ -28,24 +29,24 @@ import org.asosat.kernel.resource.GlobalMessageCodes;
  */
 public abstract class MemonyMessageTesting {
 
-  private static Logger logger = Logger.getLogger(MemonyMessageTesting.class.getName());
+  private static Logger logger = LogManager.getLogger(MemonyMessageTesting.class.getName());
 
   private static Random rd = new Random();
 
   public static void test(ExchangedMessage msg) {
-    logger.fine(String.format("Send message [%s] [%s] [%s] to globale bus!", msg.queueName(),
+    logger.debug(String.format("Send message [%s] [%s] [%s] to globale bus!", msg.queueName(),
         msg.getOriginalMessage().getId(), msg.getPayload().toString()));
     CompletableFuture.runAsync(() -> {
       try {
-        Thread.sleep(Long.valueOf(rd.nextInt(1000) % (501) + 50));
+        Thread.sleep(Long.valueOf(rd.nextInt(1000) % 501 + 50));
       } catch (InterruptedException e) {
       }
     }).whenCompleteAsync((r, e) -> {
       if (e != null) {
         throw new GeneralRuntimeException(e, GlobalMessageCodes.ERR_SYS);
       }
-      logger.fine(String.format("Receive message [%s] [%s] [%s] from globale bus!", msg.queueName(),
-          msg.getOriginalMessage().getId(), msg.getPayload().toString()));
+      logger.debug(String.format("Receive message [%s] [%s] [%s] from globale bus!",
+          msg.queueName(), msg.getOriginalMessage().getId(), msg.getPayload().toString()));
       DefaultContext.bean(MessageService.class).receive(msg);
     });
   }

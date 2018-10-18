@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.asosat</groupId>
@@ -36,6 +38,7 @@
 		<xversion.commons-collections4>4.2</xversion.commons-collections4>
 		<xversion.commons-codec>1.11</xversion.commons-codec>
 		<xversion.commons-vfs2>2.2</xversion.commons-vfs2>
+		<xversion.log4j2>2.11.1</xversion.log4j2>
 
 		<!-- MicroProfile integration -->
 		<xversion.smallrye.config>1.3.1</xversion.smallrye.config>
@@ -83,6 +86,17 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-vfs2</artifactId>
 				<version>${xversion.commons-vfs2}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-api</artifactId>
+				<version>${xversion.log4j2}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-core</artifactId>
+				<version>${xversion.log4j2}</version>
 			</dependency>
 
 			<!-- MicroProfile integration -->
@@ -167,6 +181,14 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- LOGGING -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+		</dependency>
+		<!-- <dependency> <groupId>org.apache.logging.log4j</groupId> <artifactId>log4j-core</artifactId> 
+			</dependency> -->
+
 		<!-- CDI Testing -->
 		<dependency>
 			<groupId>org.jboss.weld</groupId>
@@ -186,6 +208,7 @@
 			<version>${xversion.junit.platform.version}</version>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 
 	<description>A series of skills and technology (asosat) for enterprise system development.</description>
@@ -216,6 +239,6 @@
 		<module>asosat-query</module>
 		<module>asosat-migrate</module>
 		<module>asosat-thorntail</module>
- 
-  </modules>
+
+	</modules>
 </project>

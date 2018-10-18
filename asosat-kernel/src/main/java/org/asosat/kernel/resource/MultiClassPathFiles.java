@@ -21,10 +21,11 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSelector;
 import org.apache.commons.vfs2.FileSystemManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.util.VFSUtils;
 
 /**
@@ -35,7 +36,7 @@ public class MultiClassPathFiles {
 
   private final static Map<String, String> SUFFIX_SCHEMA_MAP = new HashMap<>();
 
-  private static Logger logger = Logger.getLogger(MultiClassPathFiles.class.getName());
+  private static Logger logger = LogManager.getLogger(MultiClassPathFiles.class.getName());
 
   static {
     SUFFIX_SCHEMA_MAP.put("zip", "zip");
@@ -56,11 +57,11 @@ public class MultiClassPathFiles {
   public static FileObject get(String path) {
     Map<String, FileObject> selectFiles = select(VFSUtils.buildSelector(path));
     if (selectFiles.isEmpty()) {
-      logger.severe(() -> String.format("Can not found file with path [%s]", path));
+      logger.warn(() -> String.format("Can not found file with path [%s]", path));
       return null;
     } else {
       if (selectFiles.size() > 1) {
-        logger.warning(() -> String.format("Found multi files with path [%s]", path));
+        logger.warn(() -> String.format("Found multi files with path [%s]", path));
         throw new IllegalArgumentException("Single file cannot be determined!");
       }
       return selectFiles.values().iterator().next();
@@ -89,7 +90,7 @@ public class MultiClassPathFiles {
         }
       }
     } catch (IOException e) {
-      logger.warning(() -> String.format(
+      logger.warn(() -> String.format(
           "Select class path files occur an error, the error message is %s", e.getMessage()));
     }
     return combined;

@@ -15,13 +15,12 @@ package org.asosat.thorntail.controller;
 
 import static org.asosat.kernel.util.MyMapUtils.asMap;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.context.DefaultContext;
 import org.asosat.kernel.exception.GeneralRuntimeException;
 import org.asosat.kernel.exception.GeneralRuntimeExceptionMessager;
@@ -41,7 +40,7 @@ public class ControllerExceptionMapper implements ExceptionMapper<Exception> {
   @Override
   public Response toResponse(Exception exception) {
     exception.printStackTrace();
-    this.logger.log(Level.SEVERE, exception.getLocalizedMessage(), exception);
+    this.logger.error(exception.getLocalizedMessage(), exception);
     if (exception instanceof GeneralRuntimeException) {
       GeneralRuntimeException ex = (GeneralRuntimeException) exception;
       return Response.ok(asMap("success", false, "message", ex.getLocalizedMessage(), "attributes",

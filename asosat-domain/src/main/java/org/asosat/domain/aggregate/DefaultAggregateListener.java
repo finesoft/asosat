@@ -13,7 +13,6 @@
  */
 package org.asosat.domain.aggregate;
 
-import java.util.logging.Logger;
 import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
@@ -21,6 +20,8 @@ import javax.persistence.PostUpdate;
 import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.abstraction.Lifecycle;
 import org.asosat.kernel.context.DefaultContext;
 import org.asosat.kernel.pattern.unitwork.DefaultTxJpaUnitOfWorks;
@@ -35,7 +36,7 @@ import org.asosat.kernel.pattern.unitwork.UnitOfWorksManager;
  */
 public class DefaultAggregateListener {
 
-  protected final transient Logger logger = Logger.getLogger(this.getClass().toString());
+  protected final transient Logger logger = LogManager.getLogger(this.getClass().toString());
 
   public DefaultAggregateListener() {}
 
@@ -116,7 +117,7 @@ public class DefaultAggregateListener {
     if (uows != null) {
       uows.getCurrentUnitOfWorks().register(o);
     } else {
-      this.logger.warning(() -> "UnitOfWorksService not found! please check the implements!");
+      this.logger.warn(() -> "UnitOfWorksService not found! please check the implements!");
     }
   }
 

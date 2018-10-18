@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.persistence.Cache;
@@ -29,6 +28,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
 import javax.persistence.Query;
+import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.abstraction.Aggregate.AggregateIdentifier;
 import org.asosat.kernel.abstraction.Being;
 import org.asosat.kernel.abstraction.Entity;
@@ -124,7 +124,7 @@ public abstract class AbstractJpaRepository implements JpaRepository {
     if (cache != null) {
       cache.evict(entityClass);
     } else {
-      this.logger.warning("There is not cache mechanism!");
+      this.logger.warn(() -> "There is not cache mechanism!");
     }
   }
 
@@ -134,7 +134,7 @@ public abstract class AbstractJpaRepository implements JpaRepository {
     if (cache != null) {
       cache.evict(entityClass, id);
     } else {
-      this.logger.warning("There is not cache mechanism!");
+      this.logger.warn(() -> "There is not cache mechanism!");
     }
   }
 
@@ -192,8 +192,8 @@ public abstract class AbstractJpaRepository implements JpaRepository {
     List<T> result = this.select(query);
     if (!isEmpty(result)) {
       if (result.size() > 1) {
-        this.logger.warning(
-            "The query ['" + query + "'] result set record number > 1,may be breach intentions");
+        this.logger.warn(() -> String.format(
+            "The query ['%s'] result set record number > 1, may be breach intentions.", query));
       }
       return result.get(0);
     }

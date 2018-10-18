@@ -23,8 +23,8 @@ import org.asosat.kernel.abstraction.Message;
 import org.asosat.kernel.abstraction.MessageService;
 import org.asosat.kernel.abstraction.MessageService.MessageConvertor;
 import org.asosat.kernel.pattern.saga.SagaService;
-import org.asosat.kernel.pattern.unitwork.UnitOfWorksService.UnitOfWorksHandler;
-import org.asosat.kernel.pattern.unitwork.UnitOfWorksService.UnitOfWorksListener;
+import org.asosat.kernel.pattern.unitwork.UnitOfWorksManager.UnitOfWorksHandler;
+import org.asosat.kernel.pattern.unitwork.UnitOfWorksManager.UnitOfWorksListener;
 
 /**
  * @author bingo 下午7:13:58
@@ -33,7 +33,7 @@ public abstract class AbstractUnitOfWorks implements UnitOfWorks {
 
   protected final transient Logger logger = Logger.getLogger(this.getClass().toString());
   protected final List<Message> message = new LinkedList<>();
-  protected final UnitOfWorksService manager;
+  protected final UnitOfWorksManager manager;
   protected final Stream<UnitOfWorksHandler> handlers;
   protected final Stream<UnitOfWorksListener> listeners;
   protected final MessageService messageService;
@@ -42,7 +42,7 @@ public abstract class AbstractUnitOfWorks implements UnitOfWorks {
   protected volatile boolean activated = false;
 
 
-  protected AbstractUnitOfWorks(UnitOfWorksService manager) {
+  protected AbstractUnitOfWorks(UnitOfWorksManager manager) {
     this.manager = manager;
     this.handlers = manager.getHandlers();
     this.listeners = manager.getListeners();
@@ -65,7 +65,7 @@ public abstract class AbstractUnitOfWorks implements UnitOfWorks {
     this.message.clear();
   }
 
-  protected UnitOfWorksService getManager() {
+  protected UnitOfWorksManager getManager() {
     return this.manager;
   }
 

@@ -20,7 +20,7 @@ import javax.persistence.PersistenceUnit;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
-import org.asosat.kernel.pattern.unitwork.AbstractTxJpaUnitOfWorksService;
+import org.asosat.kernel.pattern.unitwork.AbstractTxJpaUnitOfWorksManager;
 
 /**
  * @author bingo 上午11:27:31
@@ -28,7 +28,7 @@ import org.asosat.kernel.pattern.unitwork.AbstractTxJpaUnitOfWorksService;
  */
 @InfrastructureServices
 @ApplicationScoped
-public class OrderUnitOfWorksService extends AbstractTxJpaUnitOfWorksService {
+public class OrderUnitOfWorksManager extends AbstractTxJpaUnitOfWorksManager {
 
   @Inject
   TransactionManager transactionManager;
@@ -39,7 +39,7 @@ public class OrderUnitOfWorksService extends AbstractTxJpaUnitOfWorksService {
   @PersistenceUnit(name = "examplePu")
   EntityManagerFactory entityManagerFactory;
 
-  public OrderUnitOfWorksService() {}
+  public OrderUnitOfWorksManager() {}
 
   @Override
   public EntityManagerFactory getEntityManagerFactory() {

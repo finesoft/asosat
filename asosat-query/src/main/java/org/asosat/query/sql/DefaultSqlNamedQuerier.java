@@ -26,10 +26,10 @@ import org.asosat.query.mapping.FetchQuery;
  */
 public class DefaultSqlNamedQuerier implements Querier<String, Object[], FetchQuery> {
 
-  final String script;
-  Object[] convertedParams;
-  final Class<?> resultClass;
-  final List<FetchQuery> fetchQueries;
+  protected final String script;
+  protected Object[] convertedParams;
+  protected final Class<?> resultClass;
+  protected final List<FetchQuery> fetchQueries;
 
 
   /**

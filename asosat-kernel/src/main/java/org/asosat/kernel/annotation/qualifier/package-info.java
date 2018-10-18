@@ -11,17 +11,10 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.exception;
-
-import java.util.Locale;
-
 /**
- * @author bingo 上午10:19:35
+ * asosat-kernel
+ * 
+ * @author bingo 上午11:25:32
  *
  */
-public interface GeneralRuntimeExceptionMessager {
-
-  String getMessage(Locale locale, GeneralRuntimeException exception);
-
-  String getUnknowErrorMessage(Locale locale);
-}
+package org.asosat.kernel.annotation.qualifier;

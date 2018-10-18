@@ -14,13 +14,11 @@
 package org.asosat.message;
 
 import org.asosat.kernel.abstraction.Message.ExchangedMessage;
-import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 
 /**
  * @author bingo 下午7:12:27
  *
  */
-@InfrastructureServices
 public interface MessageSender {
 
   boolean send(ExchangedMessage message) throws Exception;

@@ -54,8 +54,6 @@ public interface MessageService {
    * @author bingo 下午10:26:09
    *
    */
-  @InfrastructureServices
-  @FunctionalInterface
   public static interface MessageStroage {
 
     void store(Message message);

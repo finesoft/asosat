@@ -33,6 +33,7 @@ import org.asosat.kernel.abstraction.Aggregate.AggregateIdentifier;
 import org.asosat.kernel.abstraction.Being;
 import org.asosat.kernel.abstraction.Entity;
 import org.asosat.kernel.abstraction.Entity.EntityManagerProvider;
+import org.asosat.kernel.annotation.qualifier.Jpa;
 import org.asosat.kernel.annotation.stereotype.Repositories;
 import org.asosat.kernel.util.JpaUtils;
 
@@ -96,11 +97,12 @@ import org.asosat.kernel.util.JpaUtils;
  *
  * @author bingo 2013年4月16日
  */
-
+@Jpa
 @Repositories
 public abstract class AbstractJpaRepository implements JpaRepository {
 
   @Inject
+  @Jpa
   EntityManagerProvider entityManagerProvider;
 
   @Inject

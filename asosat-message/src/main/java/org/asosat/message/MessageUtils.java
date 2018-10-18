@@ -16,7 +16,7 @@ package org.asosat.message;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import org.asosat.kernel.annotation.MessageQueue;
+import org.asosat.kernel.annotation.qualifier.MessageQueue;
 import org.asosat.kernel.annotation.stereotype.Messages;
 
 /**

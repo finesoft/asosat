@@ -45,7 +45,7 @@ public class DefaultTxJpaUnitOfWorks extends AbstractUnitOfWorks implements Sync
   final transient EntityManager entityManager;
   final Map<Lifecycle, Set<AggregateIdentifier>> registration = new EnumMap<>(Lifecycle.class);
 
-  protected DefaultTxJpaUnitOfWorks(AbstractUnitOfWorksService manager, EntityManager entityManager,
+  protected DefaultTxJpaUnitOfWorks(AbstractUnitOfWorksManager manager, EntityManager entityManager,
       Transaction transaction) {
     super(manager);
     this.transaction = transaction;
@@ -164,8 +164,8 @@ public class DefaultTxJpaUnitOfWorks extends AbstractUnitOfWorks implements Sync
   }
 
   @Override
-  protected AbstractUnitOfWorksService getManager() {
-    return (AbstractUnitOfWorksService) super.getManager();
+  protected AbstractUnitOfWorksManager getManager() {
+    return (AbstractUnitOfWorksManager) super.getManager();
   }
 
   protected void handleMessage() {

@@ -24,9 +24,7 @@ import org.asosat.kernel.pattern.saga.SagaService;
  *
  * @author bingo 上午11:51:01
  */
-@ApplicationScoped
-@InfrastructureServices
-public interface UnitOfWorksService {
+public interface UnitOfWorksManager {
 
   UnitOfWorks getCurrentUnitOfWorks();
 

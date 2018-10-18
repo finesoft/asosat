@@ -21,7 +21,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import org.asosat.kernel.abstraction.Message;
-import org.asosat.kernel.annotation.MessageQueue.MessageQueueLiteral;
+import org.asosat.kernel.annotation.qualifier.MessageQueue.MessageQueueLiteral;
 import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.pattern.saga.Saga;
 import org.asosat.kernel.pattern.saga.SagaService;

@@ -37,10 +37,10 @@ public class DefaultSqlNamedQueryResolver
   final Map<String, DefaultSqlNamedQueryTpl> cachedQueTpls = new ConcurrentHashMap<>();
 
   @Inject
-  QueryMappingService mappingService;
+  protected QueryMappingService mappingService;
 
   @Inject
-  ConversionService conversionService;
+  protected ConversionService conversionService;
 
   @Override
   public DefaultSqlNamedQuerier resolve(String key, Map<String, Object> param) {

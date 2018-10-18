@@ -17,7 +17,6 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.stream.Stream;
 import org.asosat.kernel.abstraction.Aggregate.AggregateIdentifier;
-import org.asosat.kernel.annotation.stereotype.DomainServices;
 import org.asosat.kernel.abstraction.Message;
 
 /**
@@ -34,7 +33,6 @@ public interface SagaService {
 
   void trigger(Message message);
 
-  @DomainServices
   public static interface SagaManager {
 
     Saga begin(Message message);

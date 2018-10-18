@@ -16,13 +16,11 @@ package org.asosat.kernel.resource;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import javax.enterprise.context.ApplicationScoped;
 
 /**
  * @author bingo 上午10:25:24
  *
  */
-@ApplicationScoped
 @SuppressWarnings("rawtypes")
 public interface EnumerationResource {
 

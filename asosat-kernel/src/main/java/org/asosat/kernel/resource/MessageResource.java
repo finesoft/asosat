@@ -15,13 +15,11 @@ package org.asosat.kernel.resource;
 
 import java.util.Locale;
 import java.util.function.Function;
-import javax.enterprise.context.ApplicationScoped;
 
 /**
  * @author bingo 下午12:09:10
  *
  */
-@ApplicationScoped
 public interface MessageResource {
 
   String getMessage(Locale locale, Object key, Object[] args) throws NoSuchMessageException;

@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import org.asosat.kernel.abstraction.Message;
 import org.asosat.kernel.abstraction.MessageService.MessageStroage;
+import org.asosat.kernel.annotation.qualifier.Jpa;
 import org.asosat.kernel.pattern.repository.JpaRepository;
 import org.asosat.kernel.util.JpaUtils;
 
@@ -33,7 +34,8 @@ import org.asosat.kernel.util.JpaUtils;
 public class DefaultJpaMessageStroage implements MessageStroage {
 
   @Inject
-  JpaRepository repo;
+  @Jpa
+  protected JpaRepository repo;
 
   protected final Map<Class<?>, Boolean> persistMessageClasses =
       new ConcurrentHashMap<>(256, 0.75f, 256);

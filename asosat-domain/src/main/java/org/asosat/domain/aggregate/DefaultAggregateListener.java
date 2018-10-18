@@ -24,12 +24,12 @@ import javax.persistence.PreUpdate;
 import org.asosat.kernel.abstraction.Lifecycle;
 import org.asosat.kernel.context.DefaultContext;
 import org.asosat.kernel.pattern.unitwork.DefaultTxJpaUnitOfWorks;
-import org.asosat.kernel.pattern.unitwork.UnitOfWorksService;
+import org.asosat.kernel.pattern.unitwork.UnitOfWorksManager;
 
 /**
  * Global aggregate persistence listener use for unit of work
  *
- * @see UnitOfWorksService
+ * @see UnitOfWorksManager
  * @see DefaultTxJpaUnitOfWorks
  * @author bingo 下午12:06:07
  */
@@ -111,7 +111,8 @@ public class DefaultAggregateListener {
   }
 
   void registerToUnitOfWork(AbstractAggregate o) {
-    UnitOfWorksService uows = DefaultContext.bean(UnitOfWorksService.class);
+    UnitOfWorksManager uows =
+        DefaultContext.bean(UnitOfWorksManager.class, o.lifecycleServiceQualifier());
     if (uows != null) {
       uows.getCurrentUnitOfWorks().register(o);
     } else {

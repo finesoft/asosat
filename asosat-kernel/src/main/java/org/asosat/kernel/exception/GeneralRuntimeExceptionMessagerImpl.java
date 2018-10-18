@@ -20,6 +20,7 @@ import java.util.Locale;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.asosat.kernel.abstraction.Readable;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.resource.EnumerationResource;
 import org.asosat.kernel.resource.GlobalMessageCodes;
 import org.asosat.kernel.resource.MessageSeverity;
@@ -31,6 +32,7 @@ import org.asosat.kernel.util.MyObjUtils;
  *
  */
 @ApplicationScoped
+@InfrastructureServices
 public class GeneralRuntimeExceptionMessagerImpl implements GeneralRuntimeExceptionMessager {
 
   @Inject

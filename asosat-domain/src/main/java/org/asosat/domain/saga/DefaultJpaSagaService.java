@@ -16,9 +16,9 @@ package org.asosat.domain.saga;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import org.asosat.kernel.annotation.qualifier.Jpa;
 import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.exception.NotSupportedException;
 import org.asosat.kernel.pattern.repository.JpaRepository;
@@ -36,7 +36,7 @@ import org.asosat.kernel.util.JpaUtils;
 public class DefaultJpaSagaService extends AbstractSagaService {
 
   @Inject
-  @Any
+  @Jpa
   protected JpaRepository repo;
 
   protected final Map<Class<?>, Boolean> persistSagaClasses =

@@ -13,7 +13,6 @@
  */
 package org.asosat.migrate;
 
-import javax.enterprise.context.ApplicationScoped;
 import org.flywaydb.core.api.callback.Callback;
 
 /**
@@ -23,7 +22,6 @@ import org.flywaydb.core.api.callback.Callback;
  * @author bingo 下午10:18:44
  *
  */
-@ApplicationScoped
 public interface FlywayCallback extends Callback {
 
 }

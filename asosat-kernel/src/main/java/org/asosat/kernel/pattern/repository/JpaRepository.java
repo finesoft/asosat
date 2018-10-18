@@ -24,7 +24,6 @@ import org.asosat.kernel.abstraction.Entity;
 /**
  * @author bingo 下午8:34:30
  */
-@org.asosat.kernel.annotation.stereotype.Repositories
 public interface JpaRepository extends Repository<Query> {
 
   /**
@@ -81,7 +80,7 @@ public interface JpaRepository extends Repository<Query> {
 
   /**
    * retrieve for modify
-   * 
+   *
    * @param entityClass
    * @param id
    * @return retrieve

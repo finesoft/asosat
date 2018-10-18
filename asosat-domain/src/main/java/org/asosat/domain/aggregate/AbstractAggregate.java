@@ -29,6 +29,7 @@ import org.asosat.kernel.abstraction.Aggregate;
 import org.asosat.kernel.abstraction.Event;
 import org.asosat.kernel.abstraction.Lifecycle;
 import org.asosat.kernel.abstraction.Message;
+import org.asosat.kernel.annotation.qualifier.Jpa;
 
 /**
  * @author bingo 下午3:25:51
@@ -145,7 +146,8 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
    * destroyed
    */
   protected synchronized void destroy(boolean immediately) {
-    this.raise(new LifecycleEvent(this, LifcyclePhase.DESTROY, immediately));
+    this.raise(new LifecycleEvent(this, LifcyclePhase.DESTROY, immediately),
+        this.lifecycleServiceQualifier());
     this.raise(new LifecycleEvent(this, LifcyclePhase.DESTROYED));
   }
 
@@ -155,7 +157,8 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
   protected synchronized AbstractAggregate enable(boolean immediately) {
     requireFalse(this.getLifecycle() == Lifecycle.DESTROYED, ERR_AGG_LC,
         this.toHumanReader(Locale.getDefault()));
-    this.raise(new LifecycleEvent(this, LifcyclePhase.ENABLE, immediately));
+    this.raise(new LifecycleEvent(this, LifcyclePhase.ENABLE, immediately),
+        this.lifecycleServiceQualifier());
     this.raise(new LifecycleEvent(this, LifcyclePhase.ENABLED));
     return this;
   }
@@ -164,6 +167,10 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
   @javax.persistence.Transient
   protected boolean isPersisted() {
     return this.getId() != null;
+  }
+
+  protected Annotation lifecycleServiceQualifier() {
+    return Jpa.INST;
   }
 
   protected synchronized void setEvn(long evn) {
@@ -176,5 +183,4 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
     this.lifecycle = lifecycle;
     return this;
   }
-
 }

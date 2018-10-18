@@ -44,7 +44,7 @@ public abstract class AbstractGenericMessageConvertor<P, A> implements MessageCo
   public static final String MSG_QUE_SPT = ";";
 
   @Inject
-  @ConfigProperty(name = "message.class.local.package", defaultValue = "com;cn")
+  @ConfigProperty(name = "asosat.message.class.package", defaultValue = "com.;cn.")
   protected String localMsgClsPath;
 
   protected final Map<String, Constructor<AbstractGenericMessage<P, A>>> constructors =

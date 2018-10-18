@@ -11,24 +11,34 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.pattern.interceptor;
+package org.asosat.kernel.annotation.qualifier;
 
+import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import javax.enterprise.util.Nonbinding;
-import javax.interceptor.InterceptorBinding;
+import javax.enterprise.util.AnnotationLiteral;
+import javax.inject.Qualifier;
 
 /**
- * @author bingo 下午2:04:51
+ * asosat-kernel
+ *
+ * @author bingo 下午7:17:42
  *
  */
-@InterceptorBinding
-@Target({TYPE, METHOD})
+@Documented
 @Retention(RUNTIME)
-public @interface Asynchronous {
-  @Nonbinding
-  boolean fair() default true;
+@Target({TYPE, FIELD, METHOD, PARAMETER})
+@Qualifier
+public @interface Jpa {
+
+  final static JpaLiteral INST = new JpaLiteral();
+
+  public static class JpaLiteral extends AnnotationLiteral<Jpa> {
+    private static final long serialVersionUID = -5142543482377302204L;
+  }
 }

@@ -24,6 +24,7 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
+import org.asosat.kernel.annotation.qualifier.Jpa;
 import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.context.DefaultContext;
 import org.asosat.kernel.exception.GeneralRuntimeException;
@@ -34,17 +35,18 @@ import org.asosat.kernel.exception.GeneralRuntimeException;
  * @author bingo 上午9:35:01
  *
  */
+@Jpa
 @ApplicationScoped
 @InfrastructureServices
-public abstract class AbstractTxJpaUnitOfWorksService extends AbstractUnitOfWorksService {
+public abstract class AbstractTxJpaUnitOfWorksManager extends AbstractUnitOfWorksManager {
+
+  public static DefaultTxJpaUnitOfWorks currentUnitOfWorks() {
+    return DefaultContext.bean(AbstractTxJpaUnitOfWorksxManager.class).getCurrentUnitOfWorks();
+  }
 
   ThreadLocal<DefaultTxJpaUnitOfWorks> UOWS;
 
-  public AbstractTxJpaUnitOfWorksService() {}
-
-  public static DefaultTxJpaUnitOfWorks currentUnitOfWorks() {
-    return DefaultContext.bean(AbstractTxJpaUnitOfWorksxService.class).getCurrentUnitOfWorks();
-  }
+  public AbstractTxJpaUnitOfWorksManager() {}
 
   @Override
   public DefaultTxJpaUnitOfWorks getCurrentUnitOfWorks() {
@@ -80,7 +82,7 @@ public abstract class AbstractTxJpaUnitOfWorksService extends AbstractUnitOfWork
         final EntityManager em =
             this.getEntityManagerFactory().createEntityManager(SynchronizationType.SYNCHRONIZED);
         DefaultTxJpaUnitOfWorks uow =
-            new DefaultTxJpaUnitOfWorks(AbstractTxJpaUnitOfWorksService.this, em, tx);
+            new DefaultTxJpaUnitOfWorks(AbstractTxJpaUnitOfWorksManager.this, em, tx);
         this.getTransactionSynchronizationRegistry().registerInterposedSynchronization(uow);
         return uow;
       } catch (SystemException e) {

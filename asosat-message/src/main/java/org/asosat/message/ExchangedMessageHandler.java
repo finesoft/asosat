@@ -14,13 +14,11 @@
 package org.asosat.message;
 
 import org.asosat.kernel.abstraction.Message.ExchangedMessage;
-import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 
 /**
  * @author bingo 下午2:37:44
  *
  */
-@InfrastructureServices
 public interface ExchangedMessageHandler {
 
   void handle(ExchangedMessage message);

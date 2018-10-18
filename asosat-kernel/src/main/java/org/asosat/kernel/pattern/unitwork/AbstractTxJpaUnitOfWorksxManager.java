@@ -25,6 +25,7 @@ import javax.persistence.SynchronizationType;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
+import org.asosat.kernel.annotation.qualifier.Jpa;
 import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.context.DefaultContext;
 import org.asosat.kernel.exception.GeneralRuntimeException;
@@ -32,17 +33,18 @@ import org.asosat.kernel.exception.GeneralRuntimeException;
 /**
  * @author bingo 下午3:45:08
  */
+@Jpa
 @ApplicationScoped
 @InfrastructureServices
-public abstract class AbstractTxJpaUnitOfWorksxService extends AbstractUnitOfWorksService {
+public abstract class AbstractTxJpaUnitOfWorksxManager extends AbstractUnitOfWorksManager {
+
+  public static DefaultTxJpaUnitOfWorks currentUnitOfWorks() {
+    return DefaultContext.bean(AbstractTxJpaUnitOfWorksxManager.class).getCurrentUnitOfWorks();
+  }
 
   final Map<Transaction, DefaultTxJpaUnitOfWorks> UOWS = new ConcurrentHashMap<>(512, 0.75f, 512);
 
-  public AbstractTxJpaUnitOfWorksxService() {}
-
-  public static DefaultTxJpaUnitOfWorks currentUnitOfWorks() {
-    return DefaultContext.bean(AbstractTxJpaUnitOfWorksxService.class).getCurrentUnitOfWorks();
-  }
+  public AbstractTxJpaUnitOfWorksxManager() {}
 
   @Override
   public DefaultTxJpaUnitOfWorks getCurrentUnitOfWorks() {

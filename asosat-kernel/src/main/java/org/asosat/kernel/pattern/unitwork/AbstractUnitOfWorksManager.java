@@ -28,8 +28,8 @@ import org.asosat.kernel.pattern.saga.SagaService;
  */
 @ApplicationScoped
 @InfrastructureServices
-public abstract class AbstractUnitOfWorksService
-    implements UnitOfWorksService, EntityManagerProvider {
+public abstract class AbstractUnitOfWorksManager
+    implements UnitOfWorksManager, EntityManagerProvider {
 
   @Inject
   Instance<UnitOfWorksListener> listeners;
@@ -43,7 +43,7 @@ public abstract class AbstractUnitOfWorksService
   @Inject
   SagaService sagaService;
 
-  public AbstractUnitOfWorksService() {}
+  public AbstractUnitOfWorksManager() {}
 
   @Override
   public Stream<UnitOfWorksHandler> getHandlers() {

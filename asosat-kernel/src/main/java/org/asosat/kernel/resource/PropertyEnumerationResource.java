@@ -30,6 +30,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import org.apache.commons.vfs2.PatternFileSelector;
+import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.context.DefaultContext;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -38,6 +39,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
  *
  */
 @ApplicationScoped
+@InfrastructureServices
 @SuppressWarnings("rawtypes")
 public class PropertyEnumerationResource implements EnumerationResource {
 

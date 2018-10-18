@@ -21,7 +21,7 @@ import org.asosat.kernel.annotation.stereotype.ApplicationServices;
 import org.asosat.kernel.context.DefaultContext;
 import org.asosat.kernel.pattern.command.Command;
 import org.asosat.kernel.pattern.command.CommandHandler;
-import org.asosat.kernel.pattern.unitwork.AbstractTxJpaUnitOfWorksxService;
+import org.asosat.kernel.pattern.unitwork.AbstractTxJpaUnitOfWorksxManager;
 import org.asosat.kernel.pattern.unitwork.DefaultTxJpaUnitOfWorks;
 
 /**
@@ -47,7 +47,7 @@ public abstract class AbstractCommandHandler<C extends AbstractCommand, R>
   }
 
   protected void raise(Message... messages) {
-    DefaultTxJpaUnitOfWorks uows = AbstractTxJpaUnitOfWorksxService.currentUnitOfWorks();
+    DefaultTxJpaUnitOfWorks uows = AbstractTxJpaUnitOfWorksxManager.currentUnitOfWorks();
     if (uows != null) {
       for (Message msg : messages) {
         uows.register(msg);

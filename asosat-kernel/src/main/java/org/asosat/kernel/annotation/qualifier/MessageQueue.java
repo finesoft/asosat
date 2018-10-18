@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.asosat.kernel.annotation;
+package org.asosat.kernel.annotation.qualifier;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -22,7 +22,6 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Qualifier;
 import org.asosat.kernel.abstraction.Message.MessageQueues;
@@ -44,19 +43,18 @@ public @interface MessageQueue {
 
     private static final long serialVersionUID = -5552841006073177750L;
 
-    private final String value;
-
-    private MessageQueueLiteral(String value) {
-      this.value = value;
-    }
-
     public static MessageQueueLiteral[] from(String... values) {
-      return Arrays.stream(values).map(MessageQueueLiteral::of).collect(Collectors.toList())
-          .toArray(new MessageQueueLiteral[0]);
+      return Arrays.stream(values).map(MessageQueueLiteral::of).toArray(MessageQueueLiteral[]::new);
     }
 
     public static MessageQueueLiteral of(String value) {
       return new MessageQueueLiteral(value);
+    }
+
+    private final String value;
+
+    private MessageQueueLiteral(String value) {
+      this.value = value;
     }
 
     @Override
@@ -85,7 +83,7 @@ public @interface MessageQueue {
     public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((this.value == null) ? 0 : this.value.hashCode());
+      result = prime * result + (this.value == null ? 0 : this.value.hashCode());
       return result;
     }
 

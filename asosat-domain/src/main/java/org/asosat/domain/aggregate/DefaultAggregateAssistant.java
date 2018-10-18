@@ -62,6 +62,41 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
   }
 
   @Override
+  public List<Message> dequeueMessages(boolean flush) {
+    final AtomicLong counter = new AtomicLong(this.lastMessageSequenceNumber);
+    List<Message> exMsgs = this.messages.stream().map(m -> {
+      m.getMetadata().resetSequenceNumber(counter.incrementAndGet());
+      return m;
+    }).collect(Collectors.toList());
+    if (flush) {
+      this.lastMessageSequenceNumber += exMsgs.size();
+      this.clearMessages();
+    }
+    return exMsgs;
+  }
+
+  @Override
+  public void enqueueMessages(Message... messages) {
+    if (this.aggregate.getId() != null) {
+      for (Message msg : messages) {
+        if (msg != null) {
+          this.logger.log(Level.FINE, String.format(RISE_LOG, msg.toString()));
+          if (msg instanceof MergableMessage) {
+            MergableMessage.mergeToQueue(this.messages, (MergableMessage) msg);
+          } else {
+            this.messages.add(msg);
+          }
+        }
+      }
+      // FIXME
+      if (this.aggregate instanceof AbstractDefaultAggregate) {
+        AbstractDefaultAggregate.class.cast(this.aggregate)
+            .setMsn(this.lastMessageSequenceNumber + this.messages.size());
+      }
+    }
+  }
+
+  @Override
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -84,17 +119,11 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
   }
 
   @Override
-  public List<Message> dequeueMessages(boolean flush) {
-    final AtomicLong counter = new AtomicLong(this.lastMessageSequenceNumber);
-    List<Message> exMsgs = this.messages.stream().map(m -> {
-      m.getMetadata().resetSequenceNumber(counter.incrementAndGet());
-      return m;
-    }).collect(Collectors.toList());
-    if (flush) {
-      this.lastMessageSequenceNumber += exMsgs.size();
-      this.clearMessages();
+  public void fireAsyncEvent(Event event, Annotation... qualifiers) {
+    if (event != null) {
+      this.logger.log(Level.FINE, String.format(FIRE_LOG, event.toString()));
+      DefaultContext.fireAsyncEvent(event, qualifiers);
     }
-    return exMsgs;
   }
 
   @Override
@@ -102,14 +131,6 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
     if (event != null) {
       this.logger.log(Level.FINE, String.format(FIRE_LOG, event.toString()));
       DefaultContext.fireEvent(event, qualifiers);
-    }
-  }
-
-  @Override
-  public void fireAsyncEvent(Event event, Annotation... qualifiers) {
-    if (event != null) {
-      this.logger.log(Level.FINE, String.format(FIRE_LOG, event.toString()));
-      DefaultContext.fireAsyncEvent(event, qualifiers);
     }
   }
 
@@ -131,24 +152,8 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((this.aggregate == null) ? 0 : this.aggregate.hashCode());
+    result = prime * result + (this.aggregate == null ? 0 : this.aggregate.hashCode());
     return result;
-  }
-
-  @Override
-  public void enqueueMessages(Message... messages) {
-    if (this.aggregate.getId() != null) {
-      for (Message msg : messages) {
-        if (msg != null) {
-          this.logger.log(Level.FINE, String.format(RISE_LOG, msg.toString()));
-          if (msg instanceof MergableMessage) {
-            MergableMessage.mergeToQueue(this.messages, (MergableMessage) msg);
-          } else {
-            this.messages.add(msg);
-          }
-        }
-      }
-    }
   }
 
   protected void setLastMessageSequenceNumber(long lastMessageSequenceNumber) {

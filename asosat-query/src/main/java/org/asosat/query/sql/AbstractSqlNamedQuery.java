@@ -197,6 +197,7 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
         fetchedResult = fetchedList;
       } else if (!isEmpty(fetchedList)) {
         fetchedResult = fetchedList.get(0);
+        fetchedList = fetchedList.subList(0, 1);
       }
       if (obj instanceof Map) {
         Map.class.cast(obj).put(injectProName, fetchedResult);

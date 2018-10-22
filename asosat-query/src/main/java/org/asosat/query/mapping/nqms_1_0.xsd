@@ -59,7 +59,7 @@
 
   <xsd:complexType name="fetch-query">
     <xsd:annotation>
-      <xsd:documentation>The other query use assign parent query result and parameters, use for one to manay.</xsd:documentation>
+      <xsd:documentation>The other query use assign parent query result and parameters, use for one to many/one.</xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
       <xsd:element name="parameter" type="fetch-query-parameter" minOccurs="0" maxOccurs="unbounded"></xsd:element>
@@ -69,6 +69,7 @@
     <xsd:attribute name="max-fetch-size" type="xsd:positiveInteger" use="optional"></xsd:attribute>
     <xsd:attribute name="reference-query-version" type="xsd:string" use="optional"></xsd:attribute>
     <xsd:attribute name="result-class" type="xsd:string" use="optional"></xsd:attribute>
+    <xsd:attribute name="multi-records" type="xsd:boolean" use="optional"></xsd:attribute>
   </xsd:complexType>
 
   <xsd:complexType name="hint">

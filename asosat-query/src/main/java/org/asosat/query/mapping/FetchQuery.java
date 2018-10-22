@@ -35,6 +35,7 @@ public class FetchQuery implements Serializable {
   private int maxSize;
   private List<FetchQueryParameter> parameters = new ArrayList<>();
   private String referenceQueryversion = "";
+  private boolean multiRecords = true;
 
   /**
    * @return the injectPropertyName
@@ -42,7 +43,6 @@ public class FetchQuery implements Serializable {
   public String getInjectPropertyName() {
     return this.injectPropertyName;
   }
-
 
   /**
    * @return the maxSize
@@ -80,33 +80,35 @@ public class FetchQuery implements Serializable {
     return this.resultClass;
   }
 
-
   public String getVersionedReferenceQueryName() {
     return defaultString(this.getReferenceQuery())
         + (isNotBlank(this.getReferenceQueryversion()) ? "_" + this.getReferenceQueryversion()
             : "");
   }
 
+  public boolean isMultiRecords() {
+    return this.multiRecords;
+  }
 
   void setInjectPropertyName(String injectPropertyName) {
     this.injectPropertyName = injectPropertyName;
   }
 
-
   void setMaxSize(int maxSize) {
     this.maxSize = maxSize;
   }
 
+  void setMultiRecords(boolean multiRecords) {
+    this.multiRecords = multiRecords;
+  }
 
   void setReferenceQuery(String referenceQuery) {
     this.referenceQuery = referenceQuery;
   }
 
-
   void setReferenceQueryversion(String referenceQueryversion) {
     this.referenceQueryversion = referenceQueryversion;
   }
-
 
   void setResultClass(Class<?> resultClass) {
     this.resultClass = resultClass;

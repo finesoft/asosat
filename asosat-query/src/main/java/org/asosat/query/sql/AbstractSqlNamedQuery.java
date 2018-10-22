@@ -177,6 +177,7 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
     // handle fetch
     Map<String, Object> fetchParam = this.resolveFetchParam(obj, fetchQuery, param);
     int maxSize = fetchQuery.getMaxSize();
+    boolean multiRecords = fetchQuery.isMultiRecords();
     String injectProName = fetchQuery.getInjectPropertyName(),
         refQueryName = fetchQuery.getVersionedReferenceQueryName();
     Querier<String, Object[], FetchQuery> querier = this.resolver.resolve(refQueryName, fetchParam);
@@ -190,13 +191,19 @@ public abstract class AbstractSqlNamedQuery implements NamedQuery {
     }
     try {
       this.log("fetch-> " + refQueryName, params, sql);
-      List<?> list = this.getExecutor().select(sql, rcls, params);
-      if (obj instanceof Map) {
-        Map.class.cast(obj).put(injectProName, list);
-      } else {
-        BeanUtils.setProperty(obj, injectProName, list);
+      List<?> fetchedList = this.getExecutor().select(sql, rcls, params);
+      Object fetchedResult = null;
+      if (multiRecords) {
+        fetchedResult = fetchedList;
+      } else if (!isEmpty(fetchedList)) {
+        fetchedResult = fetchedList.get(0);
       }
-      this.fetch(list, fetchQueries, param);
+      if (obj instanceof Map) {
+        Map.class.cast(obj).put(injectProName, fetchedResult);
+      } else {
+        BeanUtils.setProperty(obj, injectProName, fetchedResult);
+      }
+      this.fetch(fetchedList, fetchQueries, param);
     } catch (SQLException | IllegalAccessException | InvocationTargetException e) {
       throw new QueryRuntimeException(e);
     }

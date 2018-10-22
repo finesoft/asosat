@@ -149,6 +149,8 @@ public class QueryParseHandler extends DefaultHandler {
           fq.setReferenceQueryversion(defaultString(atv));
         } else if (SchemaNames.QUE_ATT_RST_CLS.equalsIgnoreCase(aqn)) {
           fq.setResultClass(isBlank(atv) ? java.util.Map.class : tryToLoadClassForName(atv));
+        } else if (SchemaNames.FQE_ATT_MULT.equalsIgnoreCase(aqn)) {
+          fq.setMultiRecords(isBlank(atv) ? true : Conversions.toBoolean(atv));
         }
       }
       this.valueStack.push(fq);

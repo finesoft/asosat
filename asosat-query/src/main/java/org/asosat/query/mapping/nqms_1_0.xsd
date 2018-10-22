@@ -23,7 +23,7 @@
           <xsd:documentation>The query script</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="fetch-query" type="fetch-query" minOccurs="0" maxOccurs="1" />
+      <xsd:element name="fetch-query" type="fetch-query" minOccurs="0" maxOccurs="unbounded" />
       <xsd:element name="hint" type="hint" minOccurs="0" maxOccurs="unbounded" />
     </xsd:sequence>
     <xsd:attribute name="name" type="xsd:string" use="required">

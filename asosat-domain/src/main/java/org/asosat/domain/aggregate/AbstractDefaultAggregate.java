@@ -32,8 +32,8 @@ public abstract class AbstractDefaultAggregate extends AbstractAggregate {
   /**
    * Message sequence number
    */
-  @Column(name = "msn")
-  private volatile long msn = 0L;
+  @Column(name = "mn")
+  private volatile long mn = 0L;
 
   protected AbstractDefaultAggregate() {}
 
@@ -41,7 +41,7 @@ public abstract class AbstractDefaultAggregate extends AbstractAggregate {
   public synchronized List<Message> extractMessages(boolean flush) {
     List<Message> events = super.extractMessages(flush);
     if (flush) {
-      this.setMsn(this.msn + events.size());
+      this.setMn(this.mn + events.size());
     }
     return events;
   }
@@ -49,20 +49,20 @@ public abstract class AbstractDefaultAggregate extends AbstractAggregate {
   /**
    * Message sequence number
    */
-  public synchronized long getMsn() {
-    return this.msn;
+  public synchronized long getMn() {
+    return this.mn;
   }
 
   @Override
   protected synchronized AggregateAssistant callAssistant() {
     if (this.assistant == null) {
-      this.assistant = new DefaultAggregateAssistant(this, this.msn);
+      this.assistant = new DefaultAggregateAssistant(this, this.mn);
     }
     return this.assistant;
   }
 
-  protected synchronized void setMsn(long msn) {
-    this.msn = msn;
+  protected synchronized void setMn(long mn) {
+    this.mn = mn;
   }
 
 }

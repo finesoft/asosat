@@ -45,23 +45,14 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
   protected transient volatile AggregateAssistant assistant;
 
   @Version
-  @Column(name = "evn")
-  private volatile long evn = 1L;
+  @Column(name = "vn")
+  private volatile long vn = 1L;
 
   public AbstractAggregate() {}
 
   @Override
   public synchronized List<Message> extractMessages(boolean flush) {
     return this.callAssistant().dequeueMessages(flush);
-  }
-
-  /**
-   * Return an aggregate evolutionary version number, this is equivalent to
-   * {@link javax.persistence.Version} in JPA
-   */
-  @Override
-  public synchronized Long getEvn() {
-    return this.evn;
   }
 
   /**
@@ -76,6 +67,15 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
   @javax.persistence.Transient
   public synchronized Lifecycle getLifecycle() {
     return this.lifecycle;
+  }
+
+  /**
+   * Return an aggregate evolutionary version number, this is equivalent to
+   * {@link javax.persistence.Version} in JPA
+   */
+  @Override
+  public synchronized Long getVn() {
+    return this.vn;
   }
 
   /**
@@ -114,8 +114,7 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
 
   @Override
   public String toString() {
-    return this.getClass().getSimpleName() + " [id=" + this.getId() + ",evn = " + this.getEvn()
-        + "]";
+    return this.getClass().getSimpleName() + " [id=" + this.getId() + ",vn = " + this.getVn() + "]";
   }
 
   /**
@@ -173,8 +172,8 @@ public abstract class AbstractAggregate extends AbstractEntity implements Aggreg
     return Jpa.INST;
   }
 
-  protected synchronized void setEvn(long evn) {
-    this.evn = evn;
+  protected synchronized void setVn(long vn) {
+    this.vn = vn;
   }
 
   protected synchronized AbstractAggregate withLifecycle(Lifecycle lifecycle) {

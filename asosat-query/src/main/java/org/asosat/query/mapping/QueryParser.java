@@ -42,19 +42,18 @@ import org.xml.sax.XMLReader;
 public class QueryParser {
 
   public static final String SCHEMA_URL = "org/asosat/query/mapping/nqms_1_0.xsd";
-  public static final String DFLT_QUERY_FILES_REGEX = ".*Query.*\\.xml";
 
   public static void main(String... strings) {
-    new QueryParser().parse().forEach(m -> {
+    new QueryParser().parse(".*Query.*\\.xml").forEach(m -> {
       m.selfValidate().forEach(System.out::println);
     });
   }
 
-  public List<QueryMapping> parse() {
+  public List<QueryMapping> parse(String queryFilePathRegex) {
     List<QueryMapping> qmList = new ArrayList<>();
     final QueryParserErrorHandler errHdl = new QueryParserErrorHandler();
     final SAXParserFactory factory = this.createSAXParserFactory();
-    this.getQueryMappingFiles().forEach((s, f) -> {
+    this.getQueryMappingFiles(queryFilePathRegex).forEach((s, f) -> {
       try (InputStream is = f.getContent().getInputStream()) {
         QueryParseHandler handler = new QueryParseHandler(s);
         XMLReader reader = factory.newSAXParser().getXMLReader();
@@ -78,9 +77,9 @@ public class QueryParser {
     return factory;
   }
 
-  Map<String, FileObject> getQueryMappingFiles() {
+  Map<String, FileObject> getQueryMappingFiles(String queryFilePathRegex) {
     Map<String, FileObject> map = new HashMap<>();
-    Arrays.stream(DFLT_QUERY_FILES_REGEX.split(";")).forEach(
+    Arrays.stream(queryFilePathRegex.split(";")).forEach(
         regex -> MultiClassPathFiles.select(new PatternFileSelector(regex)).forEach(map::put));
     return map;
   }

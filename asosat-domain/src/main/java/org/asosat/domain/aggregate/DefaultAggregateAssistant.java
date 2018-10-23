@@ -47,7 +47,7 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
 
   public DefaultAggregateAssistant(Aggregate aggregate) {
     this.aggregate = requireNotNull(aggregate, ERR_AGG_AST_INSTAL);
-    this.lastMessageSequenceNumber = aggregate.getEvn();
+    this.lastMessageSequenceNumber = aggregate.getVn();
   }
 
   public DefaultAggregateAssistant(Aggregate aggregate, long lastMessageSequenceNumber) {
@@ -91,7 +91,7 @@ public class DefaultAggregateAssistant implements AggregateAssistant {
       // FIXME
       if (this.aggregate instanceof AbstractDefaultAggregate) {
         AbstractDefaultAggregate.class.cast(this.aggregate)
-            .setMsn(this.lastMessageSequenceNumber + this.messages.size());
+            .setMn(this.lastMessageSequenceNumber + this.messages.size());
       }
     }
   }

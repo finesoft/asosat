@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import org.asosat.query.QueryRuntimeException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -36,8 +37,10 @@ public class QueryMappingService {
   private Map<String, Query> queries = new HashMap<>();
 
   @Inject
-  @ConfigProperty(name = "asosat.query.mappingFilesPath.regex", defaultValue = ".*Query.*\\.xml")
-  protected String queryFilePathRegex;
+  @Any
+  @ConfigProperty(name = "asosat.query.mapping-files-path.regex",
+      defaultValue = ".*Query([A-Za-z0-9_-]*)\\.xml$")
+  String queryFilePathRegex;
 
   public Query getQuery(String name) {
     return this.queries.get(name);

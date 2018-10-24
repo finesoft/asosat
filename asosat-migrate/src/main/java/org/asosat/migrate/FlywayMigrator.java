@@ -67,7 +67,7 @@ public abstract class FlywayMigrator {
     Set<String> locationsToUse =
         locations == null ? asSet(this.defaultLocation(ds)) : new HashSet<>(locations);
     this.logger.info(() -> String.format("Build flyway instance that location is [%s]",
-        ds.toString(), String.join(";", locationsToUse.toArray(new String[0]))));
+        String.join(";", locationsToUse.toArray(new String[0]))));
     FluentConfiguration fc =
         Flyway.configure().dataSource(ds).locations(locationsToUse.toArray(new String[0]));
     if (this.callbacks.isResolvable()) {

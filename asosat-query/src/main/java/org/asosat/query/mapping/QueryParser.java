@@ -25,6 +25,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.PatternFileSelector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.resource.MultiClassPathFiles;
 import org.asosat.query.QueryRuntimeException;
 import org.xml.sax.ErrorHandler;
@@ -43,6 +45,8 @@ public class QueryParser {
 
   public static final String SCHEMA_URL = "org/asosat/query/mapping/nqms_1_0.xsd";
 
+  static Logger logger = LogManager.getLogger(QueryParser.class);
+
   public static void main(String... strings) {
     new QueryParser().parse(".*Query.*\\.xml").forEach(m -> {
       m.selfValidate().forEach(System.out::println);
@@ -54,6 +58,7 @@ public class QueryParser {
     final QueryParserErrorHandler errHdl = new QueryParserErrorHandler();
     final SAXParserFactory factory = this.createSAXParserFactory();
     this.getQueryMappingFiles(queryFilePathRegex).forEach((s, f) -> {
+      logger.info(String.format("Parse query mapping file %s.", s));
       try (InputStream is = f.getContent().getInputStream()) {
         QueryParseHandler handler = new QueryParseHandler(s);
         XMLReader reader = factory.newSAXParser().getXMLReader();

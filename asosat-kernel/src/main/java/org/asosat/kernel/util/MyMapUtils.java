@@ -13,6 +13,7 @@
  */
 package org.asosat.kernel.util;
 
+import static org.asosat.kernel.normal.conversion.Conversions.toObject;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
@@ -35,18 +36,14 @@ import org.asosat.kernel.normal.conversion.Conversions;
 public class MyMapUtils {
 
   public static DynamicAttributeMap asAttributeMap(Object... objects) {
+    int oLen = objects.length;
+    int rLen = (oLen & 1) == 0 ? oLen : oLen - 1;
     DynamicAttributeMap map = new DynamicAttributeMap();
-    String key = null;
-    int len = objects.length;
-    for (int i = 0; i < len; i++) {
-      if ((i & 1) == 0) {
-        key = Conversions.toString(objects[i]);
-        map.put(key, null);
-      } else {
-        Object v = Conversions.toObject(objects[i]);
-        map.replace(key, v);
-        key = null;
-      }
+    for (int i = 0; i < rLen; i += 2) {
+      map.put(Conversions.toString(objects[i]), toObject(objects[i + 1]));
+    }
+    if (rLen < oLen) {
+      map.put(toObject(Conversions.toString(objects[rLen])), null);
     }
     return map;
   }
@@ -58,18 +55,15 @@ public class MyMapUtils {
    * @return bingo 下午3:32:58
    */
   public static <K, V> Map<K, V> asMap(Object... objects) {
-    Map<K, V> map = new LinkedHashMap<>();
-    K key = null;
-    int len = objects.length;
-    for (int i = 0; i < len; i++) {
-      if ((i & 1) == 0) {
-        key = Conversions.toObject(objects[i]);
-        map.put(key, null);
-      } else {
-        V v = Conversions.toObject(objects[i]);
-        map.replace(key, v);
-        key = null;
-      }
+    int oLen = objects.length;
+    int rLen = (oLen & 1) == 0 ? oLen : oLen - 1;
+    int size = rLen > 0 ? rLen < oLen ? (rLen >> 1) + 1 : rLen >> 1 : oLen > 0 ? 1 : 0;
+    Map<K, V> map = new LinkedHashMap<>(size);
+    for (int i = 0; i < rLen; i += 2) {
+      map.put(toObject(objects[i]), toObject(objects[i + 1]));
+    }
+    if (rLen < oLen) {
+      map.put(toObject(objects[rLen]), null);
     }
     return map;
   }

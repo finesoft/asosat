@@ -44,8 +44,6 @@ public class EncryptUtils {
 
   private static final int R62_MAX_LEN = R62_DIGITS.length;
 
-  private EncryptUtils() {}
-
   /**
    * 从字母组合转为正整数，A->1，B->2...Z-26，AA-27，AB-28....
    *
@@ -590,7 +588,7 @@ public class EncryptUtils {
     BitArray ba = new BitArray(b);
     StringBuilder buf = new StringBuilder();
     int len = b.length * 8;
-    for (int i = len - 1; i >= 0; i--) {
+    for (int i = 0; i < len; i++) {
       buf.append(ba.getBit(i) ? "1" : "0");
     }
     return buf.toString();
@@ -869,4 +867,6 @@ public class EncryptUtils {
     }
     return Integer.valueOf(b[0] & 0xFF | (b[1] & 0xFF) << 8).shortValue();
   }
+
+  private EncryptUtils() {}
 }

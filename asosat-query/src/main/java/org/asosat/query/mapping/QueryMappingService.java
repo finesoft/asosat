@@ -42,13 +42,18 @@ public class QueryMappingService {
       defaultValue = ".*Query([A-Za-z0-9_-]*)\\.xml$")
   String queryFilePathRegex;
 
+  @Inject
+  @Any
+  @ConfigProperty(name = "asosat.query.mapping-files-packages", defaultValue = "org.asosat")
+  String queryPackages;
+
   public Query getQuery(String name) {
     return this.queries.get(name);
   }
 
   @PostConstruct
   public void init() {
-    new QueryParser().parse(this.queryFilePathRegex).forEach(m -> {
+    new QueryParser().parse(this.queryPackages, this.queryFilePathRegex).forEach(m -> {
       List<String> brokens = m.selfValidate();
       if (!brokens.isEmpty()) {
         throw new QueryRuntimeException(String.join("\n", brokens.toArray(new String[0])));

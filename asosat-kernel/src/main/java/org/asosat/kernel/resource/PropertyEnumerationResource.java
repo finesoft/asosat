@@ -13,12 +13,15 @@
  */
 package org.asosat.kernel.resource;
 
+import static org.asosat.kernel.util.MyBagUtils.asSet;
 import static org.asosat.kernel.util.MyClsUtils.tryToLoadClassForName;
+import static org.asosat.kernel.util.MyStrUtils.split;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
@@ -32,6 +35,7 @@ import org.apache.commons.vfs2.PatternFileSelector;
 import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.context.DefaultContext;
+import org.asosat.kernel.util.MyStrUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
@@ -59,6 +63,11 @@ public class PropertyEnumerationResource implements EnumerationResource {
   @ConfigProperty(name = "asosat.enum.source.path.regex",
       defaultValue = ".*enum([A-Za-z0-9_-]*)\\.properties$")
   String pathRegex;
+
+  @Inject
+  @Any
+  @ConfigProperty(name = "asosat.enum.source.packages", defaultValue = "org.asosat")
+  String pathPackages;
 
   @Inject
   @Any
@@ -107,36 +116,41 @@ public class PropertyEnumerationResource implements EnumerationResource {
         if (!this.init) {
           try {
             this.destroy();
-            PropertyResourceBundle
-                .getBundles(new PatternFileSelector(
-                    Pattern.compile(this.pathRegex, Pattern.CASE_INSENSITIVE)))
-                .forEach((s, res) -> {
-                  this.logger.info(() -> String.format(
-                      "Find enumeration resource, the path is %s, use pattern [%s]", s,
-                      this.pathRegex));
-                  Locale locale = res.getLocale();
-                  EnumLiteralsObject obj =
-                      this.holder.computeIfAbsent(locale, (k) -> new EnumLiteralsObject());
-                  res.dump().forEach((k, v) -> {
-                    int i = k.lastIndexOf(".");
-                    String enumClsName = k.substring(0, i), enumItemKey = null;
-                    Class enumCls = null;
-                    try {
-                      enumCls = Class.forName(enumClsName);
-                      enumItemKey = k.substring(i + 1);
-                    } catch (ClassNotFoundException e) {
-                      enumCls = tryToLoadClassForName(k);
-                      if (enumCls != null && Enum.class.isAssignableFrom(enumCls)) {
-                        obj.putEnumClass(enumCls, v);
-                      } else {
-                        throw new RuntimeException("enum class " + s + " error");
+            Set<String> pkgs = asSet(split(this.pathPackages, ";"));
+            pkgs.add("org.asosat");
+            pkgs.stream().filter(MyStrUtils::isNotBlank).forEach(pkg -> {
+              PropertyResourceBundle
+                  .getBundles(pkg,
+                      new PatternFileSelector(
+                          Pattern.compile(this.pathRegex, Pattern.CASE_INSENSITIVE)))
+                  .forEach((s, res) -> {
+                    this.logger.info(() -> String.format(
+                        "Find enumeration resource, the path is %s, use pattern [%s]", s,
+                        this.pathRegex));
+                    Locale locale = res.getLocale();
+                    EnumLiteralsObject obj =
+                        this.holder.computeIfAbsent(locale, (k) -> new EnumLiteralsObject());
+                    res.dump().forEach((k, v) -> {
+                      int i = k.lastIndexOf(".");
+                      String enumClsName = k.substring(0, i), enumItemKey = null;
+                      Class enumCls = null;
+                      try {
+                        enumCls = Class.forName(enumClsName);
+                        enumItemKey = k.substring(i + 1);
+                      } catch (ClassNotFoundException e) {
+                        enumCls = tryToLoadClassForName(k);
+                        if (enumCls != null && Enum.class.isAssignableFrom(enumCls)) {
+                          obj.putEnumClass(enumCls, v);
+                        } else {
+                          throw new RuntimeException("enum class " + s + " error");
+                        }
                       }
-                    }
-                    if (enumItemKey != null) {
-                      obj.putEnum(Enum.valueOf(enumCls, enumItemKey), v);
-                    }
+                      if (enumItemKey != null) {
+                        obj.putEnum(Enum.valueOf(enumCls, enumItemKey), v);
+                      }
+                    });
                   });
-                });
+            });
             // TODO validate
           } finally {
             this.init = true;

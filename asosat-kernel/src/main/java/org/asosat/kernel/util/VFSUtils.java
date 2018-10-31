@@ -21,12 +21,16 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSelectInfo;
 import org.apache.commons.vfs2.FileSelector;
 import org.apache.commons.vfs2.FileSystemException;
@@ -50,10 +54,6 @@ public class VFSUtils {
     }
   }
 
-  private VFSUtils() {
-    super();
-  }
-
   public static SimpleFileSelector buildSelector(Predicate<FileSelectInfo> p) {
     return fileInfo -> fileInfo != null && p.test(fileInfo);
   }
@@ -65,6 +65,14 @@ public class VFSUtils {
 
   public static FileSystemManager getFileSystemManager() {
     return fileSystemManager;
+  }
+
+  public static String getPathFileName(FileObject fo) {
+    try {
+      return fo == null ? null : fo.getName().getPathDecoded();
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   public static void readTxtFile(String filePath, BiConsumer<String, Long> consumer) {
@@ -86,6 +94,57 @@ public class VFSUtils {
         writer.append(lineSpr);
       }
     }
+  }
+
+  private VFSUtils() {
+    super();
+  }
+
+  public static class MultiPatternFileSelector implements FileSelector {
+
+    private List<Pattern> patterns = new ArrayList<>();
+
+    private boolean andConjunction = false;
+
+    public MultiPatternFileSelector(final int flags, String... regexs) {
+      if (regexs.length == 0) {
+        throw new IllegalArgumentException();
+      }
+      for (String r : regexs) {
+        this.patterns.add(Pattern.compile(r, flags));
+      }
+    }
+
+    public MultiPatternFileSelector(Pattern... patterns) {
+      if (patterns.length == 0) {
+        throw new IllegalArgumentException();
+      }
+      for (Pattern p : patterns) {
+        this.patterns.add(p);
+      }
+    }
+
+    @Override
+    public boolean includeFile(FileSelectInfo fileInfo) throws Exception {
+      if (this.andConjunction) {
+        return this.patterns.stream()
+            .allMatch(p -> p.matcher(fileInfo.getFile().getName().getPath()).matches());
+      } else {
+        return this.patterns.stream()
+            .anyMatch(p -> p.matcher(fileInfo.getFile().getName().getPath()).matches());
+      }
+    }
+
+    @Override
+    public boolean traverseDescendents(FileSelectInfo fileInfo) throws Exception {
+      return true;
+    }
+
+    public MultiPatternFileSelector withConjunction(boolean and) {
+      this.andConjunction = and;
+      return this;
+    }
+
   }
 
   @FunctionalInterface

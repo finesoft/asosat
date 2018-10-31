@@ -14,16 +14,26 @@
 package org.asosat.kernel.resource;
 
 import static org.asosat.kernel.util.MyClsUtils.defaultClassLoader;
+import static org.asosat.kernel.util.MyStrUtils.split;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import org.apache.commons.vfs2.FileName;
 import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSelectInfo;
 import org.apache.commons.vfs2.FileSelector;
+import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
+import org.apache.commons.vfs2.VFS;
+import org.apache.commons.vfs2.provider.UriParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.util.VFSUtils;
@@ -34,9 +44,11 @@ import org.asosat.kernel.util.VFSUtils;
  */
 public class MultiClassPathFiles {
 
-  private final static Map<String, String> SUFFIX_SCHEMA_MAP = new HashMap<>();
-
   private static Logger logger = LogManager.getLogger(MultiClassPathFiles.class.getName());
+  static final String JAR_URL_PREFIX = "jar:";
+  static final String FILE_URL_PREFIX = "file:";
+  static final String JAR_URL_SEPARATOR = "!/";
+  static final Map<String, String> SUFFIX_SCHEMA_MAP = new HashMap<>();
 
   static {
     SUFFIX_SCHEMA_MAP.put("zip", "zip");
@@ -53,54 +65,182 @@ public class MultiClassPathFiles {
     SUFFIX_SCHEMA_MAP.put("bz2", "bz2");
   }
 
-
-  public static FileObject get(String path) {
-    Map<String, FileObject> selectFiles = select(VFSUtils.buildSelector(path));
-    if (selectFiles.isEmpty()) {
-      logger.warn(() -> String.format("Can not found file with path [%s]", path));
-      return null;
-    } else {
-      if (selectFiles.size() > 1) {
-        logger.warn(() -> String.format("Found multi files with path [%s]", path));
-        throw new IllegalArgumentException("Single file cannot be determined!");
+  public static List<FileObject> select(FileObject fo, FileSelector fs) {
+    List<FileObject> list = new ArrayList<>();
+    final DefaultFileSelectorInfo info = new DefaultFileSelectorInfo();
+    int level = 0;
+    info.baseFolder(fo).depth(level).file(fo);
+    traverse(fo, level, (f, l) -> {
+      try {
+        info.file(f).depth(l);
+        boolean traverse = fs.traverseDescendents(info);
+        if (traverse && fs.includeFile(info)) {
+          list.add(f);
+        }
+        return traverse;
+      } catch (Exception e) {
+        logger.warn(String.format("Visit %s occurred error, the error message is %s",
+            f.getPublicURIString(), e.getMessage()));
+        return false;
       }
-      return selectFiles.values().iterator().next();
-    }
+    });
+    return list;
   }
 
-  public static Map<String, FileObject> select(FileSelector fs) {
-    // FIXME the name is uniqueness??
-    final Map<String, FileObject> combined = new ConcurrentHashMap<>();
+  public static List<FileObject> select(String classPath, FileSelector fs) {
+    final List<FileObject> result = new ArrayList<>();
+    final String path = classPath == null ? "" : classPath.replaceAll("\\.", "/");
+    ClassLoader classLoader = defaultClassLoader();
     try {
-      FileSystemManager fsm = VFSUtils.getFileSystemManager();
-      Enumeration<URL> currPathUrls = defaultClassLoader().getResources("");// ClassLoader.getSystemResources("")
+      FileSystemManager vfs = VFS.getManager();
+      Enumeration<URL> currPathUrls = classLoader != null ? classLoader.getResources(path)
+          : ClassLoader.getSystemResources(path);
       while (currPathUrls.hasMoreElements()) {
         URL u = currPathUrls.nextElement();
-        for (FileObject fo : fsm.resolveFile(u).findFiles(fs)) {
-          combined.computeIfAbsent(fo.getName().getPathDecoded(), (k) -> fo);
+        String us = u.toExternalForm();
+        logger.info(String.format(
+            "Select file from class path use [defaultClassLoader().getResources('%s')], url is %s.",
+            path, us));
+        for (FileObject sf : select(vfs.resolveFile(u), fs)) {
+          if (!result.contains(sf)) {
+            result.add(sf);
+          }
         }
-      }
-      String[] classPaths = System.getProperty("java.class.path").split(";");
-      for (String pe : classPaths) {
-        String schema = detectScheme(fsm.resolveFile(pe).getName().getBaseName());
-        if (schema != null) {
-          for (FileObject fo : fsm.resolveFile(schema + ":" + pe).findFiles(fs)) {
-            combined.computeIfAbsent(fo.getName().getPathDecoded(), (k) -> fo);
+        // append other resources META-INF...
+        String usx = us.substring(0, us.lastIndexOf(path));
+        usx = usx.endsWith(JAR_URL_SEPARATOR) ? usx : usx + JAR_URL_SEPARATOR;
+        for (FileObject sf : select(vfs.resolveFile(usx), fs)) {
+          if (!result.contains(sf)) {
+            result.add(sf);
           }
         }
       }
     } catch (IOException e) {
       logger.warn(() -> String.format(
-          "Select class path files occur an error, the error message is %s", e.getMessage()));
+          "Select file from class path use [defaultClassLoader().getResources('%s')], the error message is %s.",
+          path, e.getMessage()));
     }
-    return combined;
+    if ("".equals(path)) {
+      traverseSelect(classLoader, fs, result);
+    }
+    return result;
   }
 
-  public static Collection<FileObject> select(String path) {
-    return select(VFSUtils.buildSelector(path)).values();
+  public static FileObject single(String classPath, FileSelector fs) {
+    List<FileObject> list = select(classPath, fs);
+    if (list.size() == 1) {
+      return list.get(0);
+    }
+    logger.warn(() -> String.format("Found multi files with path [%s]", classPath));
+    throw new IllegalArgumentException("Single file cannot be determined!");
   }
 
-  private static String detectScheme(String name) {
+  @SuppressWarnings("resource")
+  public static void traverse(FileObject fo, int level, Visitor... visitors) {
+    if (fo == null) {
+      return;
+    }
+    FileObject file = fo;
+    List<Visitor> visitorList = new ArrayList<>();
+    for (Visitor visitor : visitors) {
+      if (visitor.visit(file, level)) {
+        visitorList.add(visitor);
+      }
+    }
+    if (visitorList.isEmpty()) {
+      return;
+    }
+    try {
+      FileSystemManager vfs = VFS.getManager();
+      if (!file.getType().hasChildren()) {
+        String scheme = schemeWithSuffix(file.getName().getBaseName());
+        if (scheme != null) {
+          if ("zip".equalsIgnoreCase(scheme) || "jar".equalsIgnoreCase(scheme)) {
+            file = vfs.createFileSystem(file);
+          } else {
+            FileName name = file.getName();
+            String uri = scheme + ":" + name.getURI();
+            if ("tgz".equalsIgnoreCase(scheme) || "tbz2".equalsIgnoreCase(scheme)) {
+              if (!uri.endsWith(JAR_URL_SEPARATOR)) {
+                uri = uri + JAR_URL_SEPARATOR;
+              }
+            }
+            file = vfs.resolveFile(uri);
+          }
+        } else {
+          return;
+        }
+      }
+      if (file != null) {
+        if (file.getType().hasChildren()) {
+          Arrays.stream(file.getChildren()).forEach(child -> {
+            int nextLevel = level + 1;
+            traverse(child, nextLevel, visitorList.toArray(new Visitor[0]));
+          });
+        }
+      }
+    } catch (Exception e) {
+      logger.warn(String.format("Visit %s occurred error, the error message is %s",
+          file.getPublicURIString(), e.getMessage()));
+    }
+  }
+
+  public static void traverseSelect(ClassLoader classLoader, FileSelector fs,
+      List<FileObject> result) {
+    FileSystemManager fsm = VFSUtils.getFileSystemManager();
+    if (classLoader instanceof URLClassLoader) {
+      for (URL u : URLClassLoader.class.cast(classLoader).getURLs()) {
+        try {
+          for (FileObject fo : select(
+              fsm.resolveFile(new URL(JAR_URL_PREFIX + u + JAR_URL_SEPARATOR)), fs)) {
+            if (!result.contains(fo)) {
+              result.add(fo);
+            }
+          }
+        } catch (FileSystemException | MalformedURLException e) {
+          logger.debug(() -> String.format(
+              "Traverse select class path files with URLClassLoader error, the error message is %s.",
+              e.getMessage()));
+        }
+      }
+    }
+    if (classLoader == ClassLoader.getSystemClassLoader()) {
+      for (String cp : split(System.getProperty("java.class.path"),
+          System.getProperty("path.separator"))) {
+        String filePath = new File(cp).getAbsolutePath();
+        URL cpUrl;
+        try {
+          cpUrl = new URL(JAR_URL_PREFIX + FILE_URL_PREFIX + filePath + JAR_URL_SEPARATOR);
+          for (FileObject fo : select(fsm.resolveFile(cpUrl), fs)) {
+            if (!result.contains(fo)) {
+              result.add(fo);
+            }
+          }
+        } catch (MalformedURLException | FileSystemException e) {
+          logger.debug(() -> String.format(
+              "Traverse select class path files with SystemClassLoader, the error message is %s",
+              e.getMessage()));
+        }
+      }
+    }
+    if (classLoader != null) {
+      try {
+        traverseSelect(classLoader.getParent(), fs, result);
+      } catch (Exception ex) {
+        if (logger.isDebugEnabled()) {
+          logger.debug(String.format(
+              "Traverse select class path files occur an error,cannot introspect jar files in parent ClassLoader since [%s] does not support 'getParent()': %s.",
+              classLoader, ex));
+        }
+      }
+    }
+  }
+
+  static String schemeWithPrefix(String name) {
+    return UriParser.extractScheme(name);
+  }
+
+  static String schemeWithSuffix(String name) {
     String lcName = name.toLowerCase();
     int dotPos = lcName.lastIndexOf('.');
     if (dotPos > 0 && dotPos < lcName.length()) {
@@ -112,5 +252,53 @@ public class MultiClassPathFiles {
   }
 
   private MultiClassPathFiles() {}
+
+  @FunctionalInterface
+  public static interface Visitor {
+    boolean visit(FileObject fo, int level);
+  }
+
+  static class DefaultFileSelectorInfo implements FileSelectInfo {
+
+    private FileObject baseFolder;
+    private FileObject file;
+    private int depth;
+
+    public DefaultFileSelectorInfo baseFolder(final FileObject baseFolder) {
+      this.baseFolder = baseFolder;
+      return this;
+    }
+
+    public DefaultFileSelectorInfo depth(final int depth) {
+      this.depth = depth;
+      return this;
+    }
+
+    public DefaultFileSelectorInfo file(final FileObject file) {
+      this.file = file;
+      return this;
+    }
+
+    @Override
+    public FileObject getBaseFolder() {
+      return this.baseFolder;
+    }
+
+    @Override
+    public int getDepth() {
+      return this.depth;
+    }
+
+    @Override
+    public FileObject getFile() {
+      return this.file;
+    }
+
+    @Override
+    public String toString() {
+      return super.toString() + " [baseFolder=" + this.baseFolder + ", file=" + this.file
+          + ", depth=" + this.depth + "]";
+    }
+  }
 
 }

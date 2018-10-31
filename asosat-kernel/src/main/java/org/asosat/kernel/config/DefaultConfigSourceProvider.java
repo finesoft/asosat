@@ -14,16 +14,15 @@
 package org.asosat.kernel.config;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import org.apache.commons.vfs2.PatternFileSelector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.resource.PropertyResourceBundle;
+import org.asosat.kernel.util.VFSUtils.MultiPatternFileSelector;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.ConfigSourceProvider;
 
@@ -41,10 +40,9 @@ public class DefaultConfigSourceProvider implements ConfigSourceProvider {
   @Override
   public Iterable<ConfigSource> getConfigSources(ClassLoader forClassLoader) {
     final List<ConfigSource> list = new ArrayList<>();
-    Arrays.stream(DFLT_PATH_REGEX)
-        .forEach(regex -> PropertyResourceBundle
-            .getBundles(new PatternFileSelector(regex, Pattern.CASE_INSENSITIVE))
-            .forEach((s, res) -> list.add(new PropertyConfigSource(s, res))));
+    PropertyResourceBundle
+        .getBundles(null, new MultiPatternFileSelector(Pattern.CASE_INSENSITIVE, DFLT_PATH_REGEX))
+        .forEach((s, res) -> list.add(new PropertyConfigSource(s, res)));
     return list;
   }
 

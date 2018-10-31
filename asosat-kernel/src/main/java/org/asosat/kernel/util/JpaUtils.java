@@ -18,6 +18,7 @@ import static org.asosat.kernel.util.MyClsUtils.getClassPathPackageClassNames;
 import static org.asosat.kernel.util.MyClsUtils.hierarchyList;
 import static org.asosat.kernel.util.MyClsUtils.tryToLoadClassForName;
 import static org.asosat.kernel.util.Preconditions.requireNotBlank;
+import static org.asosat.kernel.util.VFSUtils.getPathFileName;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -77,8 +78,9 @@ public abstract class JpaUtils {
   public static void stdoutPersistJpaOrmXml(String pkg) {
     String packageNameToUse =
         requireNotBlank(pkg, GlobalMessageCodes.ERR_PARAM).replaceAll("\\.", "/");
-    MultiClassPathFiles.select(new FileExtensionSelector("xml")).keySet().stream()
-        .sorted(String::compareTo).forEach(s -> {
+    MultiClassPathFiles.select(pkg, new FileExtensionSelector("xml")).stream()
+        .map(f -> getPathFileName(f)).filter(MyObjUtils::isNonNull).sorted(String::compareTo)
+        .forEach(s -> {
           if (s.contains(packageNameToUse) && s.endsWith("JpaOrm.xml")) {
             System.out.println(new StringBuilder().append("<mapping-file>")
                 .append(s.substring(s.indexOf(packageNameToUse))).append("</mapping-file>"));

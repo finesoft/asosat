@@ -13,9 +13,12 @@
  */
 package org.asosat.kernel.resource;
 
+import static org.asosat.kernel.util.MyBagUtils.asSet;
+import static org.asosat.kernel.util.MyStrUtils.split;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -29,6 +32,7 @@ import org.apache.commons.vfs2.PatternFileSelector;
 import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.annotation.stereotype.InfrastructureServices;
 import org.asosat.kernel.context.DefaultContext;
+import org.asosat.kernel.util.MyStrUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
@@ -57,6 +61,11 @@ public class PropertyMessageResource implements MessageResource {
   @ConfigProperty(name = "asosat.message.source.path.regex",
       defaultValue = ".*message([A-Za-z0-9_-]*)\\.properties$")
   String pathRegex;
+
+  @Inject
+  @Any
+  @ConfigProperty(name = "asosat.message.source.packages", defaultValue = "org.asosat")
+  String pathPackages;
 
   @Inject
   @Any
@@ -117,18 +126,24 @@ public class PropertyMessageResource implements MessageResource {
         if (!this.init) {
           try {
             this.destroy();
-            PropertyResourceBundle
-                .getBundles(new PatternFileSelector(
-                    Pattern.compile(this.pathRegex, Pattern.CASE_INSENSITIVE)))
-                .forEach((s, res) -> {
-                  this.logger.info(
-                      () -> String.format("Find message resource, the path is %s, use pattern [%s]",
-                          s, this.pathRegex));
-                  Map<String, MessageFormat> localeMap = res.dump().entrySet().stream().collect(
-                      Collectors.toMap(k -> k.getKey(), v -> new MessageFormat(v.getValue())));
-                  this.holder.computeIfAbsent(res.getLocale(), (k) -> new ConcurrentHashMap<>())
-                      .putAll(localeMap);
-                });
+            Set<String> pkgs = asSet(split(this.pathPackages, ";"));
+            pkgs.add("org.asosat");
+            pkgs.stream().filter(MyStrUtils::isNotBlank).forEach(pkg -> {
+              PropertyResourceBundle
+                  .getBundles(pkg,
+                      new PatternFileSelector(
+                          Pattern.compile(this.pathRegex, Pattern.CASE_INSENSITIVE)))
+                  .forEach((s, res) -> {
+                    this.logger.info(() -> String.format(
+                        "Find message resource, the path is %s, use pattern [%s]", s,
+                        this.pathRegex));
+                    Map<String, MessageFormat> localeMap = res.dump().entrySet().stream().collect(
+                        Collectors.toMap(k -> k.getKey(), v -> new MessageFormat(v.getValue())));
+                    this.holder.computeIfAbsent(res.getLocale(), (k) -> new ConcurrentHashMap<>())
+                        .putAll(localeMap);
+                  });
+            });
+
           } finally {
             this.init = true;
           }

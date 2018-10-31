@@ -38,11 +38,11 @@ public class PropertyResourceBundle extends ResourceBundle {
 
   public static final String LOCALE_SPT = "_";
 
-  public static Map<String, PropertyResourceBundle> getBundles(FileSelector fs) {
+  public static Map<String, PropertyResourceBundle> getBundles(String classPath, FileSelector fs) {
     Map<String, PropertyResourceBundle> map = new HashMap<>();
-    MultiClassPathFiles.select(fs).forEach((s, fo) -> {
+    MultiClassPathFiles.select(classPath, fs).forEach((fo) -> {
       try {
-        map.putIfAbsent(s, new PropertyResourceBundle(fo));
+        map.putIfAbsent(fo.getPublicURIString(), new PropertyResourceBundle(fo));
       } catch (IOException e) {
       }
     });

@@ -14,13 +14,9 @@
 package org.asosat.thorntail.provider;
 
 import static org.asosat.kernel.util.MyClsUtils.getClassPathPackageClassNames;
-import static org.asosat.kernel.util.Preconditions.requireNotBlank;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Properties;
-import org.apache.commons.vfs2.FileExtensionSelector;
-import org.asosat.kernel.resource.GlobalMessageCodes;
-import org.asosat.kernel.resource.MultiClassPathFiles;
 import org.asosat.kernel.util.JpaUtils;
 import org.hibernate.boot.model.TypeContributor;
 import org.hibernate.cfg.AvailableSettings;
@@ -57,15 +53,7 @@ public class HibernateSchemaUtils {
   }
 
   public static void stdoutPersistJpaOrmXml(String pkg) {
-    String packageNameToUse =
-        requireNotBlank(pkg, GlobalMessageCodes.ERR_PARAM).replaceAll("\\.", "/");
-    MultiClassPathFiles.select(new FileExtensionSelector("xml")).keySet().stream()
-        .sorted(String::compareTo).forEach(s -> {
-          if (s.contains(packageNameToUse) && s.endsWith("JpaOrm.xml")) {
-            System.out.println(new StringBuilder().append("<mapping-file>")
-                .append(s.substring(s.indexOf(packageNameToUse))).append("</mapping-file>"));
-          }
-        });
+    JpaUtils.stdoutPersistJpaOrmXml(pkg);
   }
 
   public static void stdoutRebuildSchema(String pu, String pkg, TypeContributor... contributors) {
@@ -92,7 +80,7 @@ public class HibernateSchemaUtils {
   public static void validateNamedQuery(String pu, String pkg, String mappingResource) {
     out(false);
     EntityManagerFactoryBuilderImpl builder = genEntityManagerFactoryBuilder(pu, mappingResource);
-    SessionFactoryImplementor sf = ((SessionFactoryImplementor) builder.build());
+    SessionFactoryImplementor sf = (SessionFactoryImplementor) builder.build();
     sf.getNamedQueryRepository().checkNamedQueries(sf.getQueryPlanCache());
     out(true);
   }

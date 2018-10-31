@@ -14,6 +14,7 @@
 package org.asosat.kernel.util;
 
 import static org.asosat.kernel.util.Preconditions.requireNotBlank;
+import static org.asosat.kernel.util.VFSUtils.getPathFileName;
 import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URL;
@@ -95,15 +96,16 @@ public class MyClsUtils {
     List<String> classNames = new ArrayList<>();
     String packageNameToUse =
         requireNotBlank(packageName, GlobalMessageCodes.ERR_PARAM).replaceAll("\\.", "/");
-    MultiClassPathFiles.select(new FileExtensionSelector("class")).forEach((s, fo) -> {
-      if (s.contains(packageNameToUse)) {
-        String className = (s.substring(s.indexOf(packageNameToUse), s.lastIndexOf(".class")))
-            .replaceAll("/", ".");
-        if (!classNames.contains(className)) {
-          classNames.add(className);
-        }
-      }
-    });
+    MultiClassPathFiles.select(packageName, new FileExtensionSelector("class")).stream()
+        .map(f -> getPathFileName(f)).filter(MyObjUtils::isNonNull).forEach((s) -> {
+          if (s.contains(packageNameToUse)) {
+            String className = s.substring(s.indexOf(packageNameToUse), s.lastIndexOf(".class"))
+                .replaceAll("/", ".");
+            if (!classNames.contains(className)) {
+              classNames.add(className);
+            }
+          }
+        });
     classNames.sort(String::compareTo);
     return classNames;
   }
@@ -135,7 +137,7 @@ public class MyClsUtils {
   }
 
   public static boolean isPrimitiveArray(Class<?> clazz) {
-    return (clazz.isArray() && clazz.getComponentType().isPrimitive());
+    return clazz.isArray() && clazz.getComponentType().isPrimitive();
   }
 
   public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
@@ -147,7 +149,7 @@ public class MyClsUtils {
   }
 
   public static boolean isPrimitiveWrapperArray(Class<?> clazz) {
-    return (clazz.isArray() && ClassUtils.isPrimitiveWrapper(clazz.getComponentType()));
+    return clazz.isArray() && ClassUtils.isPrimitiveWrapper(clazz.getComponentType());
   }
 
   public static boolean isSimpleClass(Class<?> clazz) {

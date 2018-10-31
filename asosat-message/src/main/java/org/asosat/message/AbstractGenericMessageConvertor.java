@@ -87,6 +87,7 @@ public abstract class AbstractGenericMessageConvertor<P, A> implements MessageCo
   protected synchronized void enable() {
     Set<String> pkgs = asSet(split(this.localMsgClsPath, MSG_QUE_SPT));
     pkgs.addAll(asSet(split(this.msgClsPath, MSG_QUE_SPT)));
+    pkgs.add("org.asosat");
     for (String path : pkgs) {
       if (isNotBlank(path)) {
         getClassPathPackageClassNames(path).forEach(clz -> {

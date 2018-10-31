@@ -92,7 +92,6 @@ public class MultiClassPathFiles {
     final String path = classPath == null ? "" : classPath.replaceAll("\\.", "/");
     ClassLoader classLoader = defaultClassLoader();
     try {
-      FileSystemManager vfs = VFS.getManager();
       Enumeration<URL> currPathUrls = classLoader != null ? classLoader.getResources(path)
           : ClassLoader.getSystemResources(path);
       while (currPathUrls.hasMoreElements()) {
@@ -101,7 +100,7 @@ public class MultiClassPathFiles {
         logger.info(String.format(
             "Select file from class path use [defaultClassLoader().getResources('%s')], url is %s.",
             path, us));
-        for (FileObject sf : select(vfs.resolveFile(u), fs)) {
+        for (FileObject sf : select(u, fs)) {
           if (!result.contains(sf)) {
             result.add(sf);
           }
@@ -109,7 +108,7 @@ public class MultiClassPathFiles {
         // append other resources META-INF...
         String usx = us.substring(0, us.lastIndexOf(path));
         usx = usx.endsWith(JAR_URL_SEPARATOR) ? usx : usx + JAR_URL_SEPARATOR;
-        for (FileObject sf : select(vfs.resolveFile(usx), fs)) {
+        for (FileObject sf : select(new URL(usx), fs)) {
           if (!result.contains(sf)) {
             result.add(sf);
           }
@@ -124,6 +123,17 @@ public class MultiClassPathFiles {
       traverseSelect(classLoader, fs, result);
     }
     return result;
+  }
+
+  public static List<FileObject> select(URL url, FileSelector fs) {
+    List<FileObject> list = new ArrayList<>();
+    try {
+      list = select(VFSUtils.getFileSystemManager().resolveFile(url), fs);
+    } catch (FileSystemException e) {
+      logger.warn(
+          String.format("Select %s occurred error, the error message is %s", url, e.getMessage()));
+    }
+    return list;
   }
 
   public static FileObject single(String classPath, FileSelector fs) {
@@ -187,17 +197,15 @@ public class MultiClassPathFiles {
 
   public static void traverseSelect(ClassLoader classLoader, FileSelector fs,
       List<FileObject> result) {
-    FileSystemManager fsm = VFSUtils.getFileSystemManager();
     if (classLoader instanceof URLClassLoader) {
       for (URL u : URLClassLoader.class.cast(classLoader).getURLs()) {
         try {
-          for (FileObject fo : select(
-              fsm.resolveFile(new URL(JAR_URL_PREFIX + u + JAR_URL_SEPARATOR)), fs)) {
+          for (FileObject fo : select(new URL(JAR_URL_PREFIX + u + JAR_URL_SEPARATOR), fs)) {
             if (!result.contains(fo)) {
               result.add(fo);
             }
           }
-        } catch (FileSystemException | MalformedURLException e) {
+        } catch (MalformedURLException e) {
           logger.debug(() -> String.format(
               "Traverse select class path files with URLClassLoader error, the error message is %s.",
               e.getMessage()));
@@ -208,15 +216,14 @@ public class MultiClassPathFiles {
       for (String cp : split(System.getProperty("java.class.path"),
           System.getProperty("path.separator"))) {
         String filePath = new File(cp).getAbsolutePath();
-        URL cpUrl;
         try {
-          cpUrl = new URL(JAR_URL_PREFIX + FILE_URL_PREFIX + filePath + JAR_URL_SEPARATOR);
-          for (FileObject fo : select(fsm.resolveFile(cpUrl), fs)) {
+          for (FileObject fo : select(
+              new URL(JAR_URL_PREFIX + FILE_URL_PREFIX + filePath + JAR_URL_SEPARATOR), fs)) {
             if (!result.contains(fo)) {
               result.add(fo);
             }
           }
-        } catch (MalformedURLException | FileSystemException e) {
+        } catch (MalformedURLException e) {
           logger.debug(() -> String.format(
               "Traverse select class path files with SystemClassLoader, the error message is %s",
               e.getMessage()));

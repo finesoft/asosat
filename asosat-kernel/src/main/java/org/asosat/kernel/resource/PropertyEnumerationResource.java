@@ -71,6 +71,11 @@ public class PropertyEnumerationResource implements EnumerationResource {
 
   @Inject
   @Any
+  @ConfigProperty(name = "asosat.source.packages", defaultValue = "org.asosat")
+  String packages;
+
+  @Inject
+  @Any
   @ConfigProperty(name = "asosat.enum.source.load.way", defaultValue = "false")
   volatile boolean lazyLoad = false;
 
@@ -117,6 +122,7 @@ public class PropertyEnumerationResource implements EnumerationResource {
           try {
             this.destroy();
             Set<String> pkgs = asSet(split(this.pathPackages, ";"));
+            pkgs.addAll(asSet(split(this.packages, ";")));
             pkgs.add("org.asosat");
             pkgs.stream().filter(MyStrUtils::isNotBlank).forEach(pkg -> {
               PropertyResourceBundle

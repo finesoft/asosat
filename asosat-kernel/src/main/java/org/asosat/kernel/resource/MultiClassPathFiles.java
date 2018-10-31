@@ -67,23 +67,26 @@ public class MultiClassPathFiles {
 
   public static List<FileObject> select(FileObject fo, FileSelector fs) {
     List<FileObject> list = new ArrayList<>();
-    final DefaultFileSelectorInfo info = new DefaultFileSelectorInfo();
-    int level = 0;
-    info.baseFolder(fo).depth(level).file(fo);
-    traverse(fo, level, (f, l) -> {
-      try {
-        info.file(f).depth(l);
-        boolean traverse = fs.traverseDescendents(info);
-        if (traverse && fs.includeFile(info)) {
-          list.add(f);
+    if (fo != null) {
+      logger.info(String.format("Select file from uri %s.", fo.getPublicURIString()));
+      final DefaultFileSelectorInfo info = new DefaultFileSelectorInfo();
+      int level = 0;
+      info.baseFolder(fo).depth(level).file(fo);
+      traverse(fo, level, (f, l) -> {
+        try {
+          info.file(f).depth(l);
+          boolean traverse = fs.traverseDescendents(info);
+          if (traverse && fs.includeFile(info)) {
+            list.add(f);
+          }
+          return traverse;
+        } catch (Exception e) {
+          logger.warn(String.format("Visit %s occurred error, the error message is %s",
+              f.getPublicURIString(), e.getMessage()));
+          return false;
         }
-        return traverse;
-      } catch (Exception e) {
-        logger.warn(String.format("Visit %s occurred error, the error message is %s",
-            f.getPublicURIString(), e.getMessage()));
-        return false;
-      }
-    });
+      });
+    }
     return list;
   }
 
@@ -97,9 +100,7 @@ public class MultiClassPathFiles {
       while (currPathUrls.hasMoreElements()) {
         URL u = currPathUrls.nextElement();
         String us = u.toExternalForm();
-        logger.info(String.format(
-            "Select file from class path use [defaultClassLoader().getResources('%s')], url is %s.",
-            path, us));
+        logger.info(String.format("Select file from class path '%s', url is %s.", path, us));
         for (FileObject sf : select(u, fs)) {
           if (!result.contains(sf)) {
             result.add(sf);
@@ -108,6 +109,7 @@ public class MultiClassPathFiles {
         // append other resources META-INF...
         String usx = us.substring(0, us.lastIndexOf(path));
         usx = usx.endsWith(JAR_URL_SEPARATOR) ? usx : usx + JAR_URL_SEPARATOR;
+        logger.info(String.format("Select append file from class path '%s', url is %s.", path, us));
         for (FileObject sf : select(new URL(usx), fs)) {
           if (!result.contains(sf)) {
             result.add(sf);
@@ -115,11 +117,11 @@ public class MultiClassPathFiles {
         }
       }
     } catch (IOException e) {
-      logger.warn(() -> String.format(
-          "Select file from class path use [defaultClassLoader().getResources('%s')], the error message is %s.",
-          path, e.getMessage()));
+      logger
+          .warn(String.format("Select file from class path '%s' error, %s.", path, e.getMessage()));
     }
     if ("".equals(path)) {
+      logger.info(String.format("Select all file from class path '%s'.", path));
       traverseSelect(classLoader, fs, result);
     }
     return result;

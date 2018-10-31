@@ -69,6 +69,11 @@ public class PropertyMessageResource implements MessageResource {
 
   @Inject
   @Any
+  @ConfigProperty(name = "asosat.source.packages", defaultValue = "org.asosat")
+  String packages;
+
+  @Inject
+  @Any
   @ConfigProperty(name = "asosat.message.source.load.way", defaultValue = "false")
   volatile boolean lazyLoad = false;
 
@@ -127,6 +132,7 @@ public class PropertyMessageResource implements MessageResource {
           try {
             this.destroy();
             Set<String> pkgs = asSet(split(this.pathPackages, ";"));
+            pkgs.addAll(asSet(split(this.packages, ";")));
             pkgs.add("org.asosat");
             pkgs.stream().filter(MyStrUtils::isNotBlank).forEach(pkg -> {
               PropertyResourceBundle

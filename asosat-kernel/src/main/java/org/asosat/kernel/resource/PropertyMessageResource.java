@@ -69,7 +69,7 @@ public class PropertyMessageResource implements MessageResource {
 
   @Inject
   @Any
-  @ConfigProperty(name = "asosat.source.packages", defaultValue = "org.asosat")
+  @ConfigProperty(name = "asosat.app.packages", defaultValue = "org.asosat")
   String packages;
 
   @Inject

@@ -14,6 +14,7 @@
 package org.asosat.query.mapping;
 
 import static org.asosat.kernel.util.MyObjUtils.isEquals;
+import static org.asosat.kernel.util.MyStrUtils.defaultString;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,28 +48,34 @@ public class QueryMappingService {
   @ConfigProperty(name = "asosat.query.mapping-files-packages", defaultValue = "org.asosat")
   String queryPackages;
 
+  @Inject
+  @Any
+  @ConfigProperty(name = "asosat.app.packages", defaultValue = "org.asosat")
+  String packages;
+
   public Query getQuery(String name) {
     return this.queries.get(name);
   }
 
   @PostConstruct
   public void init() {
-    new QueryParser().parse(this.queryPackages, this.queryFilePathRegex).forEach(m -> {
-      List<String> brokens = m.selfValidate();
-      if (!brokens.isEmpty()) {
-        throw new QueryRuntimeException(String.join("\n", brokens.toArray(new String[0])));
-      }
-      m.getQueries().forEach(q -> {
-        q.getParamMappings().putAll(m.getParaMapping());// copy
-        if (this.queries.containsKey(q.getVersionedName())) {
-          throw new QueryRuntimeException(
-              String.format("The 'name' [%s] of query element in query file [%s] can not repeat!",
+    new QueryParser().parse(defaultString(this.queryPackages) + ";" + defaultString(this.packages),
+        this.queryFilePathRegex).forEach(m -> {
+          List<String> brokens = m.selfValidate();
+          if (!brokens.isEmpty()) {
+            throw new QueryRuntimeException(String.join("\n", brokens.toArray(new String[0])));
+          }
+          m.getQueries().forEach(q -> {
+            q.getParamMappings().putAll(m.getParaMapping());// copy
+            if (this.queries.containsKey(q.getVersionedName())) {
+              throw new QueryRuntimeException(String.format(
+                  "The 'name' [%s] of query element in query file [%s] can not repeat!",
                   q.getVersionedName(), m.getUrl()));
-        } else {
-          this.queries.put(q.getVersionedName(), q);
-        }
-      });
-    });
+            } else {
+              this.queries.put(q.getVersionedName(), q);
+            }
+          });
+        });
     this.queries.keySet().forEach(q -> {
       List<String> refs = new LinkedList<>();
       List<String> tmp = new LinkedList<>(this.queries.get(q).getVersionedFetchQueryNames());

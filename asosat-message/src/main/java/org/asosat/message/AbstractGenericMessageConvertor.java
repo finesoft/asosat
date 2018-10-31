@@ -13,17 +13,22 @@
  */
 package org.asosat.message;
 
+import static org.asosat.kernel.util.MyBagUtils.asSet;
 import static org.asosat.kernel.util.MyClsUtils.getClassPathPackageClassNames;
 import static org.asosat.kernel.util.MyClsUtils.tryToLoadClassForName;
+import static org.asosat.kernel.util.MyStrUtils.isNotBlank;
+import static org.asosat.kernel.util.MyStrUtils.split;
 import static org.asosat.kernel.util.Preconditions.requireNotEmpty;
 import static org.asosat.kernel.util.Preconditions.requireNull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.asosat.kernel.abstraction.Message.ExchangedMessage;
@@ -44,8 +49,14 @@ public abstract class AbstractGenericMessageConvertor<P, A> implements MessageCo
   public static final String MSG_QUE_SPT = ";";
 
   @Inject
-  @ConfigProperty(name = "asosat.message.class.package", defaultValue = "com.;cn.")
+  @Any
+  @ConfigProperty(name = "asosat.message.class.packages", defaultValue = "com.;cn.")
   protected String localMsgClsPath;
+
+  @Inject
+  @Any
+  @ConfigProperty(name = "asosat.app.packages", defaultValue = "com.;cn.")
+  protected String msgClsPath;
 
   protected final Map<String, Constructor<AbstractGenericMessage<P, A>>> constructors =
       new HashMap<>();
@@ -74,22 +85,26 @@ public abstract class AbstractGenericMessageConvertor<P, A> implements MessageCo
   @PostConstruct
   @SuppressWarnings("unchecked")
   protected synchronized void enable() {
-    for (String path : this.localMsgClsPath.split(MSG_QUE_SPT)) {
-      getClassPathPackageClassNames(path).forEach(clz -> {
-        Class<?> cls = tryToLoadClassForName(clz);
-        if (cls != null && AbstractGenericMessage.class.isAssignableFrom(cls)
-            && JpaUtils.isPersistenceClass(cls)) {// only support JPA
-          Class<AbstractGenericMessage<P, A>> msgCls = (Class<AbstractGenericMessage<P, A>>) cls;
-          Constructor<AbstractGenericMessage<P, A>> match = this.findConstructor(msgCls);
-          if (match != null) {
-            requireNotEmpty(MessageUtils.extractMessageQueues(cls),
-                PkgMsgCds.ERR_MSG_CFG_QUEUE_NULL, cls.getName()).forEach(queue -> {
-                  requireNull(this.constructors.put(queue, match), PkgMsgCds.ERR_MSG_CFG_QUEUE_DUP,
-                      queue);
-                });
+    Set<String> pkgs = asSet(split(this.localMsgClsPath, MSG_QUE_SPT));
+    pkgs.addAll(asSet(split(this.msgClsPath, MSG_QUE_SPT)));
+    for (String path : pkgs) {
+      if (isNotBlank(path)) {
+        getClassPathPackageClassNames(path).forEach(clz -> {
+          Class<?> cls = tryToLoadClassForName(clz);
+          if (cls != null && AbstractGenericMessage.class.isAssignableFrom(cls)
+              && JpaUtils.isPersistenceClass(cls)) {// only support JPA
+            Class<AbstractGenericMessage<P, A>> msgCls = (Class<AbstractGenericMessage<P, A>>) cls;
+            Constructor<AbstractGenericMessage<P, A>> match = this.findConstructor(msgCls);
+            if (match != null) {
+              requireNotEmpty(MessageUtils.extractMessageQueues(cls),
+                  PkgMsgCds.ERR_MSG_CFG_QUEUE_NULL, cls.getName()).forEach(queue -> {
+                    requireNull(this.constructors.put(queue, match),
+                        PkgMsgCds.ERR_MSG_CFG_QUEUE_DUP, queue);
+                  });
+            }
           }
-        }
-      });
+        });
+      }
     }
   }
 

@@ -13,24 +13,26 @@
  */
 package org.asosat.query.mapping;
 
+import static org.asosat.kernel.util.MyBagUtils.asSet;
 import static org.asosat.kernel.util.MyStrUtils.split;
 import static org.asosat.kernel.util.VFSUtils.getPathFileName;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.PatternFileSelector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.resource.MultiClassPathFiles;
+import org.asosat.kernel.util.MyStrUtils;
 import org.asosat.kernel.util.VFSUtils;
+import org.asosat.kernel.util.VFSUtils.MultiPatternFileSelector;
 import org.asosat.query.QueryRuntimeException;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
@@ -87,10 +89,11 @@ public class QueryParser {
 
   Map<String, FileObject> getQueryMappingFiles(String classPath, String queryFilePathRegex) {
     Map<String, FileObject> map = new HashMap<>();
-    Arrays.stream(split(classPath, ";")).forEach(pkg -> {
-      Arrays.stream(queryFilePathRegex.split(";"))
-          .forEach(regex -> MultiClassPathFiles.select(pkg, new PatternFileSelector(regex))
-              .forEach(f -> map.put(getPathFileName(f), f)));
+    asSet(split(classPath, ";")).stream().filter(MyStrUtils::isNotBlank).forEach(pkg -> {
+      MultiClassPathFiles
+          .select(pkg,
+              new MultiPatternFileSelector(Pattern.CASE_INSENSITIVE, queryFilePathRegex.split(";")))
+          .forEach(f -> map.put(getPathFileName(f), f));
     });
 
     return map;

@@ -16,6 +16,7 @@ package org.asosat.query.mapping;
 import static org.asosat.kernel.util.MyBagUtils.asSet;
 import static org.asosat.kernel.util.MyStrUtils.split;
 import static org.asosat.kernel.util.VFSUtils.getPathFileName;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,11 +28,11 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asosat.kernel.resource.MultiClassPathFiles;
 import org.asosat.kernel.util.MyStrUtils;
-import org.asosat.kernel.util.VFSUtils;
 import org.asosat.kernel.util.VFSUtils.MultiPatternFileSelector;
 import org.asosat.query.QueryRuntimeException;
 import org.xml.sax.ErrorHandler;
@@ -48,14 +49,13 @@ import org.xml.sax.XMLReader;
  */
 public class QueryParser {
 
-  public static final String SCHEMA_URL = "org/asosat/query/mapping";
+  public static final String SCHEMA_URL = "org/asosat/query/mapping/nqms_1_0.xsd";
 
   static Logger logger = LogManager.getLogger(QueryParser.class);
 
-  public static void main(String... strings) {
-    new QueryParser().parse("", ".*Query.*\\.xml").forEach(m -> {
-      m.selfValidate().forEach(System.out::println);
-    });
+  public void main() throws FileSystemException, IOException {
+    FileObject fo = MultiClassPathFiles.single(SCHEMA_URL);
+    fo.getContent().write(System.out);
   }
 
   public List<QueryMapping> parse(String classPath, String queryFilePathRegex) {
@@ -102,11 +102,7 @@ public class QueryParser {
   Schema getSchema() {
     try {
       return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
-          .newSchema(MultiClassPathFiles
-              .single(SCHEMA_URL,
-                  VFSUtils.buildSelector(
-                      (fs) -> fs.getFile().getName().getBaseName().equals("nqms_1_0.xsd")))
-              .getURL());
+          .newSchema(MultiClassPathFiles.single(SCHEMA_URL).getURL());
     } catch (Exception e) {
       String errMsg = String.format("Build query mapping xml schema [%s] error!", SCHEMA_URL);
       throw new QueryRuntimeException(errMsg, e);

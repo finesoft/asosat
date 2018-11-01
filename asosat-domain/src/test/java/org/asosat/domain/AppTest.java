@@ -1,38 +1,27 @@
 package org.asosat.domain;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import javax.inject.Inject;
+import org.apache.logging.log4j.Logger;
+import org.asosat.kernel.normal.conversion.ConversionService;
+import org.asosat.kernel.util.LogFactory;
+import org.jboss.weld.junit5.auto.AddPackages;
+import org.jboss.weld.junit5.auto.EnableAutoWeld;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for simple App.
  */
-public class AppTest 
-    extends TestCase
-{
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest( String testName )
-    {
-        super( testName );
-    }
+@EnableAutoWeld
+@AddPackages({ConversionService.class, Logger.class, LogFactory.class})
+public class AppTest {
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( AppTest.class );
-    }
+  @Inject
+  ConversionService service;
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
-    }
+  @Inject
+  Logger logger;
+
+  @Test
+  public void test() {}
+
 }

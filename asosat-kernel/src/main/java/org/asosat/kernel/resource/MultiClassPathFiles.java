@@ -92,13 +92,17 @@ public class MultiClassPathFiles {
 
   public static List<FileObject> select(String classPath, FileSelector fs) {
     final List<FileObject> result = new ArrayList<>();
-    final String path = classPath == null ? "" : classPath.replaceAll("\\.", "/");
+    String path = classPath == null ? "" : classPath.replaceAll("\\.", "/");
+    boolean append = path.endsWith("*");
+    if (append) {
+      path = path.substring(1);
+    }
     ClassLoader classLoader = defaultClassLoader();
     try {
-      Enumeration<URL> currPathUrls = classLoader != null ? classLoader.getResources(path)
+      Enumeration<URL> urls = classLoader != null ? classLoader.getResources(path)
           : ClassLoader.getSystemResources(path);
-      while (currPathUrls.hasMoreElements()) {
-        URL u = currPathUrls.nextElement();
+      while (urls.hasMoreElements()) {
+        URL u = urls.nextElement();
         String us = u.toExternalForm();
         logger.info(String.format("Select file from class path '%s', url is %s.", path, us));
         for (FileObject sf : select(u, fs)) {
@@ -107,12 +111,29 @@ public class MultiClassPathFiles {
           }
         }
         // append other resources META-INF...
-        String usx = us.substring(0, us.lastIndexOf(path));
-        usx = usx.endsWith(JAR_URL_SEPARATOR) ? usx : usx + JAR_URL_SEPARATOR;
-        logger.info(String.format("Select append file from class path '%s', url is %s.", path, us));
-        for (FileObject sf : select(new URL(usx), fs)) {
-          if (!result.contains(sf)) {
-            result.add(sf);
+        if (append) {
+          String urlPrefix = schemeWithPrefix(us) + ":";
+          if (JAR_URL_PREFIX.equals(urlPrefix)) {
+            String jarusx = us.substring(0, us.lastIndexOf(path));
+            jarusx = jarusx.endsWith(JAR_URL_SEPARATOR) ? jarusx : jarusx + JAR_URL_SEPARATOR;
+            // this is jar
+            logger.info(
+                String.format("Select append file from class path '%s', url is %s.", path, jarusx));
+            for (FileObject sf : select(new URL(jarusx), fs)) {
+              if (!result.contains(sf)) {
+                result.add(sf);
+              }
+            }
+          } else if (FILE_URL_PREFIX.equalsIgnoreCase(urlPrefix)) {
+            // this is file
+            String fileusx = us.substring(0, us.lastIndexOf(path));
+            logger.info(
+                String.format("Select append file from class path '%s', url is %s.", path, us));
+            for (FileObject sf : select(new URL(fileusx), fs)) {
+              if (!result.contains(sf)) {
+                result.add(sf);
+              }
+            }
           }
         }
       }
@@ -138,12 +159,36 @@ public class MultiClassPathFiles {
     return list;
   }
 
+  public static FileObject single(String path) {
+    if (path != null) {
+      String pathToUse = path;
+      if (path.startsWith("classpath:")) {
+        pathToUse = path.substring("classpath:".length());
+      }
+      ClassLoader classLoader = defaultClassLoader();
+      URL url = classLoader.getResource(pathToUse);
+      if (url == null) {
+        url = classLoader.getResource("META-INF/" + pathToUse);
+      }
+      if (url != null) {
+        try {
+          return VFSUtils.getFileSystemManager().resolveFile(url);
+        } catch (FileSystemException e) {
+          logger
+              .warn(() -> String.format("Find single file with path %s error, %s", e.getMessage()));
+        }
+      }
+    }
+    throw new IllegalArgumentException("Single file cannot be determined!");
+  }
+
   public static FileObject single(String classPath, FileSelector fs) {
     List<FileObject> list = select(classPath, fs);
     if (list.size() == 1) {
       return list.get(0);
+    } else if (!list.isEmpty()) {
+      logger.warn(() -> String.format("Found multi files with path [%s]", classPath));
     }
-    logger.warn(() -> String.format("Found multi files with path [%s]", classPath));
     throw new IllegalArgumentException("Single file cannot be determined!");
   }
 

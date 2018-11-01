@@ -93,7 +93,7 @@ public class MultiClassPathFiles {
   public static List<FileObject> select(String classPath, FileSelector fs) {
     final List<FileObject> result = new ArrayList<>();
     String path = classPath == null ? "" : classPath.replaceAll("\\.", "/");
-    boolean append = path.endsWith("*");
+    boolean append = path.startsWith("*");
     if (append) {
       path = path.substring(1);
     }

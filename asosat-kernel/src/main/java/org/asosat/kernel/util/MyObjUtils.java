@@ -27,8 +27,6 @@ public class MyObjUtils {
 
   protected static final Object[] EMPTY_ARGS = new Object[0];
 
-  protected MyObjUtils() {}
-
   public static <T> int compare(T a, T b, Comparator<? super T> c) {
     return Objects.compare(a, b, c);
   }
@@ -63,7 +61,7 @@ public class MyObjUtils {
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   public static <T extends Number & Comparable> boolean isEquals(T a, T b) {
-    return (a == b) || (a != null && b != null && a.compareTo(b) == 0);
+    return a == b || a != null && b != null && a.compareTo(b) == 0;
   }
 
   public static boolean isNonNull(Object obj) {
@@ -82,10 +80,10 @@ public class MyObjUtils {
     return a.compareTo(b) < 0 ? a : b;
   }
 
-
   public static <T> T nullSafe(T obj, T safe) {
     return obj == null ? safe : obj;
   }
+
 
   public static String toString(Object o) {
     return Objects.toString(o);
@@ -114,4 +112,13 @@ public class MyObjUtils {
       return new String[0];
     }
   }
+
+  public static <T> T tryCast(Object o, Class<T> cls) {
+    if (o != null && cls.isInstance(o)) {
+      return cls.cast(o);
+    }
+    return null;
+  }
+
+  protected MyObjUtils() {}
 }

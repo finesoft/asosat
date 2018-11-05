@@ -123,7 +123,7 @@ public class PropertyEnumerationResource implements EnumerationResource {
             this.destroy();
             Set<String> pkgs = asSet(split(this.pathPackages, ";"));
             pkgs.addAll(asSet(split(this.packages, ";")));
-            pkgs.add("org.asosat");
+            pkgs.add("*org.asosat");
             pkgs.stream().filter(MyStrUtils::isNotBlank).forEach(pkg -> {
               PropertyResourceBundle
                   .getBundles(pkg,

@@ -50,7 +50,7 @@ public class QueryMappingService {
 
   @Inject
   @Any
-  @ConfigProperty(name = "asosat.app.packages", defaultValue = "org.asosat")
+  @ConfigProperty(name = "asosat.app.packages", defaultValue = "*org.asosat")
   String packages;
 
   public Query getQuery(String name) {

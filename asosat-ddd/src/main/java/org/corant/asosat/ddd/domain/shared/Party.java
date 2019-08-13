@@ -17,151 +17,150 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+
 import org.corant.suites.ddd.model.Entity;
 
 /**
  * @author bingo 下午7:22:18
- *
  */
 public interface Party extends Nameable, Entity {
 
-  /**
-   * 委托关系列表
-   *
-   * @param predicate 条件限定
-   * @param includeHierarchy 是否罗列所有关系
-   * @return
-   */
-  List<? extends Party> getEntrustingParties(Predicate<PartyAccountability> predicate,
-      boolean includeHierarchy);
-
-  /**
-   * 根法人组织
-   *
-   * @return
-   */
-  Party getHierarchyParty();
-
-  /**
-   * 责任关系列表
-   *
-   * @param predicate 条件限定
-   * @param includeHierarchy 是否罗列所有关系
-   * @return
-   */
-  List<? extends Party> getResponsibleParties(Predicate<PartyAccountability> predicate,
-      boolean includeHierarchy);
-
-  /**
-   * 法人
-   *
-   * @author bingo 2016年9月21日
-   * @since
-   */
-  public interface Corporation extends Party {
+    /**
+     * 委托关系列表
+     *
+     * @param predicate        条件限定
+     * @param includeHierarchy 是否罗列所有关系
+     * @return
+     */
+    List<? extends Party> getEntrustingParties(Predicate<PartyAccountability> predicate,
+                                               boolean includeHierarchy);
 
     /**
-     * 法人经营业务范围
+     * 根法人组织
      *
      * @return
      */
-    default Set<?> getRealms() {
-      return Collections.emptySet();
+    Party getHierarchyParty();
+
+    /**
+     * 责任关系列表
+     *
+     * @param predicate        条件限定
+     * @param includeHierarchy 是否罗列所有关系
+     * @return
+     */
+    List<? extends Party> getResponsibleParties(Predicate<PartyAccountability> predicate,
+                                                boolean includeHierarchy);
+
+    default Participator toParticipator() {
+        return new Participator(getId().toString(), getName());
     }
-  }
-
-  /**
-   * 用户
-   *
-   * @author bingo 2016年6月13日
-   * @since
-   */
-  public interface Individual extends Party {
-  }
-
-  public interface PartyAccountability {
 
     /**
-     * 委托方
+     * 法人
      *
-     * @return getEntrustingParty
+     * @author bingo 2016年9月21日
+     * @since
      */
-    Party getEntrustingParty();
+    public interface Corporation extends Party {
+
+        /**
+         * 法人经营业务范围
+         *
+         * @return
+         */
+        default Set<?> getRealms() {
+            return Collections.emptySet();
+        }
+    }
 
     /**
-     * 责任方
+     * 用户
      *
-     * @return
+     * @author bingo 2016年6月13日
+     * @since
      */
-    Party getResponsibleParty();
+    public interface Individual extends Party {
+    }
+
+    public interface PartyAccountability {
+
+        /**
+         * 委托方
+         *
+         * @return getEntrustingParty
+         */
+        Party getEntrustingParty();
+
+        /**
+         * 责任方
+         *
+         * @return
+         */
+        Party getResponsibleParty();
+
+        /**
+         * 责任类型
+         *
+         * @return getType
+         */
+        PartyAccountabilityType getType();
+
+    }
 
     /**
-     * 责任类型
-     *
-     * @return getType
+     * @author bingo 下午7:23:43
      */
-    PartyAccountabilityType getType();
+    public interface PartyAccountabilityType extends Nameable {
 
-  }
+        /**
+         * @param entrustingParty
+         * @param entrustingPartyRole
+         * @param responsibleParty
+         * @param responsiblePartyRole
+         * @return buildAccountability
+         */
+        PartyAccountability buildAccountability(final Party entrustingParty,
+                                                final PartyRole entrustingPartyRole, final Party responsibleParty,
+                                                final PartyRole responsiblePartyRole);
 
-  /**
-   *
-   * @author bingo 下午7:23:43
-   *
-   */
-  public interface PartyAccountabilityType extends Nameable {
+        /**
+         * 是否含有该类型的委托责任关系
+         *
+         * @param entrustingParty
+         * @param responsibleParty
+         * @return
+         */
+        boolean hasConnection(final Party entrustingParty, final Party responsibleParty);
+
+        /**
+         * 检查是否可以建立委托责任关系
+         *
+         * @param entrustingParty
+         * @param responsibleParty
+         */
+        void verifyConnection(final Party entrustingParty, final PartyRole entrustingPartyRole,
+                              final Party responsibleParty, final PartyRole responsiblePartyRole);
+    }
 
     /**
+     * 业务类型
      *
-     *
-     * @param entrustingParty
-     * @param entrustingPartyRole
-     * @param responsibleParty
-     * @param responsiblePartyRole
-     * @return buildAccountability
+     * @author bingo 2016年9月20日
+     * @since
      */
-    PartyAccountability buildAccountability(final Party entrustingParty,
-        final PartyRole entrustingPartyRole, final Party responsibleParty,
-        final PartyRole responsiblePartyRole);
+    public interface PartyRealm extends Nameable {
+
+    }
 
     /**
-     * 是否含有该类型的委托责任关系
+     * 业务角色
+     * <p>
+     * corant-asosat-ddd
      *
-     * @param entrustingParty
-     * @param responsibleParty
-     * @return
+     * @author bingo 下午3:54:56
      */
-    boolean hasConnection(final Party entrustingParty, final Party responsibleParty);
+    public interface PartyRole extends Nameable {
 
-    /**
-     * 检查是否可以建立委托责任关系
-     *
-     * @param entrustingParty
-     * @param responsibleParty
-     */
-    void verifyConnection(final Party entrustingParty, final PartyRole entrustingPartyRole,
-        final Party responsibleParty, final PartyRole responsiblePartyRole);
-  }
-
-  /**
-   * 业务类型
-   *
-   * @author bingo 2016年9月20日
-   * @since
-   */
-  public interface PartyRealm extends Nameable {
-
-  }
-
-  /**
-   * 业务角色
-   *
-   * corant-asosat-ddd
-   *
-   * @author bingo 下午3:54:56
-   *
-   */
-  public interface PartyRole extends Nameable {
-
-  }
+    }
 }

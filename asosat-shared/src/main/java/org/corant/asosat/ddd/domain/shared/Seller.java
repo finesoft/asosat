@@ -18,35 +18,30 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.MappedSuperclass;
+import java.util.Map;
 
 @Embeddable
 @MappedSuperclass
 @AttributeOverrides(
-    value = {@AttributeOverride(column = @Column(name = "buyerOrgId", length = 36), name = "id"),
-        @AttributeOverride(column = @Column(name = "buyerOrgName"), name = "name")})
-public class BuyerOrg extends Participator {
+    value = {@AttributeOverride(column = @Column(name = "sellerId", length = 36), name = "id"),
+        @AttributeOverride(column = @Column(name = "sellerName"), name = "name")})
+public class Seller extends Participator {
 
   private static final long serialVersionUID = 2482047799269041296L;
 
-  /**
-   * @param obj
-   */
-  public BuyerOrg(Object obj) {
-    super(obj);
+  public Seller(Map<?, ?> mapObj) {
+    super(mapObj);
   }
 
-  /**
-   * @param id
-   * @param name
-   */
-  public BuyerOrg(String id, String name) {
+  public Seller(Participator other) {
+    super(other);
+  }
+
+  public Seller(String id, String name) {
     super(id, name);
   }
 
-  /**
-   *
-   */
-  protected BuyerOrg() {
+  protected Seller() {
     super();
   }
 
@@ -59,5 +54,4 @@ public class BuyerOrg extends Participator {
   protected void setName(String name) {
     super.setName(name);
   }
-
 }

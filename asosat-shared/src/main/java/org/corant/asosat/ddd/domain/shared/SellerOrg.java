@@ -18,6 +18,7 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.MappedSuperclass;
+import java.util.Map;
 
 @Embeddable
 @MappedSuperclass
@@ -28,17 +29,14 @@ public class SellerOrg extends Participator {
 
   private static final long serialVersionUID = 2482047799269041296L;
 
-  /**
-   * @param obj
-   */
-  public SellerOrg(Object obj) {
-    super(obj);
+  public SellerOrg(Map<?, ?> mapObj) {
+    super(mapObj);
   }
 
-  /**
-   * @param id
-   * @param name
-   */
+  public SellerOrg(Participator other) {
+    super(other);
+  }
+
   public SellerOrg(String id, String name) {
     super(id, name);
   }

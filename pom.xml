@@ -13,216 +13,61 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.corant>0.0.1-SNAPSHOT</version.corant>
+        <runner-class></runner-class>
+    </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.corant</groupId>
+                <artifactId>corant-boms</artifactId>
+                <version>${version.corant}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+    <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
 
-		<xversion.asosat>0.0.1-SNAPSHOT</xversion.asosat>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.corant</groupId>
+                    <artifactId>corant-devops-maven-jandex</artifactId>
+                    <version>${version.corant}</version>
+                    <executions>
+                        <execution>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>jandex</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
-		<!-- Standard JEE -->
-		<xversion.jee>7.0</xversion.jee>
-		<xversion.jms>2.0.1</xversion.jms>
-		<xversion.cdi-api>2.0</xversion.cdi-api>
-
-		<!-- Testing -->
-		<xversion.junit>4.12</xversion.junit>
-		<xversion.weld-junit>1.3.0.Final</xversion.weld-junit>
-		<xversion.junit.jupiter.version>5.1.1</xversion.junit.jupiter.version>
-		<xversion.junit.platform.version>1.1.1</xversion.junit.platform.version>
-
-		<!-- Open source integration -->
-		<xversion.commons-lang3>3.8</xversion.commons-lang3>
-		<xversion.commons-io>2.6</xversion.commons-io>
-		<xversion.commons-beanutils>1.9.3</xversion.commons-beanutils>
-		<xversion.commons-collections4>4.2</xversion.commons-collections4>
-		<xversion.commons-codec>1.11</xversion.commons-codec>
-		<xversion.commons-vfs2>2.2</xversion.commons-vfs2>
-		<xversion.log4j2>2.11.1</xversion.log4j2>
-
-		<!-- MicroProfile integration -->
-		<xversion.microprofile-config-api>1.3</xversion.microprofile-config-api>
-		<xversion.microprofile-rest-client-api>1.0.1</xversion.microprofile-rest-client-api>
-		<xversion.microprofile-openapi-api>1.0.1</xversion.microprofile-openapi-api>
-		<xversion.microprofile-metrics-api>1.1</xversion.microprofile-metrics-api>
-		<xversion.microprofile-opentracing-api>1.1</xversion.microprofile-opentracing-api>
-		<xversion.microprofile-fault-tolerance-api>1.0</xversion.microprofile-fault-tolerance-api>
-		<xversion.microprofile-health-api>1.0</xversion.microprofile-health-api>
-		<xversion.microprofile-jwt-auth-api>1.1</xversion.microprofile-jwt-auth-api>
-
-	</properties>
-
-	<dependencyManagement>
-
-		<dependencies>
-			<!-- Open source integration -->
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				<version>${xversion.commons-lang3}</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-io</groupId>
-				<artifactId>commons-io</artifactId>
-				<version>${xversion.commons-io}</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-beanutils</groupId>
-				<artifactId>commons-beanutils</artifactId>
-				<version>${xversion.commons-beanutils}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-collections4</artifactId>
-				<version>${xversion.commons-collections4}</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-codec</groupId>
-				<artifactId>commons-codec</artifactId>
-				<version>${xversion.commons-codec}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-vfs2</artifactId>
-				<version>${xversion.commons-vfs2}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-api</artifactId>
-				<version>${xversion.log4j2}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-core</artifactId>
-				<version>${xversion.log4j2}</version>
-			</dependency>
-
-			<!-- MicroProfile integration -->
-			<dependency>
-				<groupId>org.eclipse.microprofile.config</groupId>
-				<artifactId>microprofile-config-api</artifactId>
-				<version>${xversion.microprofile-config-api}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.microprofile.opentracing</groupId>
-				<artifactId>microprofile-opentracing-api</artifactId>
-				<version>${xversion.microprofile-opentracing-api}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.microprofile.fault-tolerance</groupId>
-				<artifactId>microprofile-fault-tolerance-api</artifactId>
-				<version>${xversion.microprofile-fault-tolerance-api}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.microprofile.health</groupId>
-				<artifactId>microprofile-health-api</artifactId>
-				<version>${xversion.microprofile-health-api}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.microprofile.jwt</groupId>
-				<artifactId>microprofile-jwt-auth-api</artifactId>
-				<version>${xversion.microprofile-jwt-auth-api}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.microprofile.metrics</groupId>
-				<artifactId>microprofile-metrics-api</artifactId>
-				<version>${xversion.microprofile-metrics-api}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.microprofile.openapi</groupId>
-				<artifactId>microprofile-openapi-api</artifactId>
-				<version>${xversion.microprofile-openapi-api}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.microprofile.rest.client</groupId>
-				<artifactId>microprofile-rest-client-api</artifactId>
-				<version>${xversion.microprofile-rest-client-api}</version>
-			</dependency>
-		</dependencies>
-
-	</dependencyManagement>
-
-	<dependencies>
-
-		<!-- Standard JEE -->
-		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
-			<version>${xversion.cdi-api}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>${xversion.jee}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.jms</groupId>
-			<artifactId>javax.jms-api</artifactId>
-			<version>${xversion.jms}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- LOGGING -->
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-		</dependency>
-
-		<!-- CDI Testing -->
-		<dependency>
-			<groupId>org.jboss.weld</groupId>
-			<artifactId>weld-junit5</artifactId>
-			<version>${xversion.weld-junit}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<version>${xversion.junit.jupiter.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.platform</groupId>
-			<artifactId>junit-platform-runner</artifactId>
-			<version>${xversion.junit.platform.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-	</dependencies>
-
-	<description>A series of skills and technology (asosat) for enterprise system development.</description>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
-	<modules>
-		<module>asosat-kernel</module>
-		<module>asosat-domain</module>
-		<module>asosat-interact</module>
-		<module>asosat-message</module>
-		<module>asosat-indices</module>
-		<module>asosat-query</module>
-		<module>asosat-migrate</module>
-		<!-- <module>asosat-thorntail</module> -->
-
-	</modules>
+    <dependencies>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
 	<distributionManagement>
 		<repository>

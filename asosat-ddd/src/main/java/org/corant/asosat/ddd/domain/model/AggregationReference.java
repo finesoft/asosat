@@ -59,6 +59,7 @@ public interface AggregationReference<T extends AbstractGenericAggregation> exte
         throw new GeneralRuntimeException(ERR_PARAM);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default T retrieve() {
         Class<T> resolveClass = null;

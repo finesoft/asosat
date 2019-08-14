@@ -21,12 +21,12 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.corant</groupId>
+                <groupId>org.asosat</groupId>
                 <artifactId>asosat-shared</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.corant</groupId>
+                <groupId>org.asosat</groupId>
                 <artifactId>asosat-ddd</artifactId>
                 <version>${project.version}</version>
             </dependency>

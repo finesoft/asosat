@@ -44,7 +44,7 @@ public class Participator implements Principal, ValueObject {
     @Column(name = "participatorName")
     private String name;
 
-    public Participator(Map<?, ?> mapObj) {
+    public <K, V> Participator(Map<K, V> mapObj) {
         this(getMapString(mapObj, "id"), getMapString(mapObj, "name"));
     }
 
@@ -61,21 +61,21 @@ public class Participator implements Principal, ValueObject {
         return EMPTY_INST;
     }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Participator that = (Participator) o;
-    return Objects.equals(id, that.id) &&
-            Objects.equals(name, that.name);
-  }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Participator that = (Participator) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name);
+    }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, name);
-  }
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
 
-  public String getId() {
+    public String getId() {
         return id;
     }
 
@@ -83,7 +83,6 @@ public class Participator implements Principal, ValueObject {
     public String getName() {
         return name;
     }
-
 
 
     protected void setId(String id) {

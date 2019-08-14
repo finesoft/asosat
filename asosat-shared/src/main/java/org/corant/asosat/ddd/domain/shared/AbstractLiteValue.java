@@ -13,6 +13,9 @@
  */
 package org.corant.asosat.ddd.domain.shared;
 
+import org.corant.shared.util.Assertions;
+
+import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.MapUtils.getMapLong;
 
 import java.util.Map;
@@ -30,16 +33,6 @@ public abstract class AbstractLiteValue implements ValueObject {
 
     protected AbstractLiteValue(Long id) {
         setId(id);
-    }
-
-    public AbstractLiteValue(Object obj) {
-        if (obj instanceof Map) {
-            Map<?, ?> mapObj = Map.class.cast(obj);
-            setId(getMapLong(mapObj, "id"));
-        } else if (obj instanceof AbstractLiteValue) {
-            AbstractLiteValue other = AbstractLiteValue.class.cast(obj);
-            setId(other.getId());
-        }
     }
 
     protected AbstractLiteValue() {
@@ -85,6 +78,6 @@ public abstract class AbstractLiteValue implements ValueObject {
     }
 
     protected void setId(Long id) {
-        this.id = id;
+        this.id = shouldNotNull(id);
     }
 }

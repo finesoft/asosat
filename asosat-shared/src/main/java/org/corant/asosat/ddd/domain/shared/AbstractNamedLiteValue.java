@@ -17,6 +17,7 @@ import static org.corant.shared.util.MapUtils.getMapLong;
 import static org.corant.shared.util.MapUtils.getMapString;
 
 import java.util.Map;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
@@ -26,49 +27,44 @@ public abstract class AbstractNamedLiteValue extends AbstractLiteValue implement
 
     private static final long serialVersionUID = -8160589662074054451L;
 
+    @Column(name = "referenceVn")
+    private Long vn;
+
     @Column(name = "referenceName")
     private String name;
 
-    public AbstractNamedLiteValue(Long id, String name) {
+    protected AbstractNamedLiteValue(Long id, Long vn, String name) {
         super(id);
+        setVn(vn);
         setName(name);
     }
 
-    public AbstractNamedLiteValue(Object obj) {
-        if (obj instanceof Map) {
-            Map<?, ?> mapObj = Map.class.cast(obj);// FIXME MSG
-            setId(getMapLong(mapObj, "id"));
-            setName(getMapString(mapObj, "name"));
-        } else if (obj instanceof AbstractNamedLiteValue) {
-            AbstractNamedLiteValue other = AbstractNamedLiteValue.class.cast(obj);
-            setId(other.getId());
-            setName(other.getName());
-        }
+    protected AbstractNamedLiteValue(Map<?,?> mapObj) {
+        super(getMapLong(mapObj, "id"));
+        setVn(getMapLong(mapObj, "vn"));
+        setName(getMapString(mapObj, "name"));
     }
 
     protected AbstractNamedLiteValue() {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AbstractNamedLiteValue other = (AbstractNamedLiteValue) obj;
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        AbstractNamedLiteValue that = (AbstractNamedLiteValue) o;
+        return Objects.equals(vn, that.vn) &&
+                Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), vn, name);
+    }
+
+    public Long getVn() {
+        return vn;
     }
 
     @Override
@@ -77,16 +73,12 @@ public abstract class AbstractNamedLiteValue extends AbstractLiteValue implement
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + (name == null ? 0 : name.hashCode());
-        return result;
-    }
-
-    @Override
     protected void setId(Long id) {
         super.setId(id);
+    }
+
+    protected void setVn(Long vn) {
+        this.vn = vn;
     }
 
     protected void setName(String name) {

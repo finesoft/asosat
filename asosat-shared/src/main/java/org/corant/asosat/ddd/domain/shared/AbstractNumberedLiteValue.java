@@ -17,6 +17,7 @@ import static org.corant.shared.util.MapUtils.getMapLong;
 import static org.corant.shared.util.MapUtils.getMapString;
 
 import java.util.Map;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
@@ -26,49 +27,39 @@ public abstract class AbstractNumberedLiteValue extends AbstractLiteValue implem
 
     private static final long serialVersionUID = -8160589662074054451L;
 
+    @Column(name = "referenceVn")
+    private Long vn;
+
     @Column(name = "referenceNumber")
     private String number;
 
-    public AbstractNumberedLiteValue(Long id, String number) {
+    protected AbstractNumberedLiteValue(Long id, String number) {
         super(id);
         setNumber(number);
     }
 
-    public AbstractNumberedLiteValue(Object obj) {
-        if (obj instanceof Map) {
-            Map<?, ?> mapObj = Map.class.cast(obj);
-            setId(getMapLong(mapObj, "id"));
-            setNumber(getMapString(mapObj, "number"));
-        } else if (obj instanceof AbstractNumberedLiteValue) {
-            AbstractNumberedLiteValue other = AbstractNumberedLiteValue.class.cast(obj);
-            setId(other.getId());
-            setNumber(other.getNumber());
-        }
+    protected AbstractNumberedLiteValue(Map mapObj) {
+        super(getMapLong(mapObj, "id"));
+        setVn(getMapLong(mapObj, "vn"));
+        setNumber(getMapString(mapObj, "number"));
     }
 
     protected AbstractNumberedLiteValue() {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AbstractNumberedLiteValue other = (AbstractNumberedLiteValue) obj;
-        if (number == null) {
-            if (other.number != null) {
-                return false;
-            }
-        } else if (!number.equals(other.number)) {
-            return false;
-        }
-        return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        AbstractNumberedLiteValue that = (AbstractNumberedLiteValue) o;
+        return Objects.equals(vn, that.vn) &&
+                Objects.equals(number, that.number);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), vn, number);
     }
 
     @Override
@@ -76,17 +67,19 @@ public abstract class AbstractNumberedLiteValue extends AbstractLiteValue implem
         return number;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + (number == null ? 0 : number.hashCode());
-        return result;
+    public Long getVn() {
+        return vn;
     }
+
 
     @Override
     protected void setId(Long id) {
         super.setId(id);
+    }
+
+
+    protected void setVn(Long vn) {
+        this.vn = vn;
     }
 
     protected void setNumber(String number) {

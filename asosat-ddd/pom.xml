@@ -25,7 +25,7 @@
         <dependency>
             <groupId>org.asosat</groupId>
             <artifactId>asosat-shared</artifactId>
-            <version>${project.version}</version><!--FIXME DON-->
+            <version>0.0.1-SNAPSHOT</version><!--FIXME DON-->
         </dependency>
 
         <dependency>

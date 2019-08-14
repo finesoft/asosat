@@ -17,6 +17,7 @@ import static org.corant.shared.util.MapUtils.getMapLong;
 import static org.corant.shared.util.MapUtils.getMapString;
 
 import java.util.Map;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
@@ -26,62 +27,56 @@ public abstract class AbstractPPTLiteValue extends AbstractLiteValue implements 
 
     private static final long serialVersionUID = -8160589662074054451L;
 
+    @Column(name = "referenceVn")
+    private Long vn;
+
     @Column(name = "referenceName")
     private String name;
 
     @Column(name = "referenceNumber")
     private String number;
 
-    public AbstractPPTLiteValue(Long id,  String name, String number) {
-        setId(id);
+    protected AbstractPPTLiteValue(Long id, Long vn, String name, String number) {
+        super(id);
+        setVn(vn);
         setName(name);
         setNumber(number);
     }
 
-    public AbstractPPTLiteValue(Object obj) {
-        if (obj instanceof Map) {
-            Map<?, ?> mapObj = Map.class.cast(obj);
-            setId(getMapLong(mapObj, "id"));
-            setName(getMapString(mapObj, "name"));
-            setNumber(getMapString(mapObj, "number"));
-        } else if (obj instanceof AbstractPPTLiteValue) {
-            AbstractPPTLiteValue other = AbstractPPTLiteValue.class.cast(obj);
-            setId(other.getId());
-            setName(other.getName());
-            setNumber(other.getNumber());
-        }
+    protected AbstractPPTLiteValue(Map mapObj) {
+        super(getMapLong(mapObj, "id"));
+        setVn(getMapLong(mapObj, "vn"));
+        setName(getMapString(mapObj, "name"));
+        setNumber(getMapString(mapObj, "number"));
     }
 
     protected AbstractPPTLiteValue() {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AbstractPPTLiteValue other = (AbstractPPTLiteValue) obj;
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (number == null) {
-            if (other.number != null) {
-                return false;
-            }
-        } else if (!number.equals(other.number)) {
-            return false;
-        }
-        return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        AbstractPPTLiteValue that = (AbstractPPTLiteValue) o;
+        return Objects.equals(vn, that.vn) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(number, that.number);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), vn, name, number);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("AbstractPPTLiteValue{");
+        sb.append("vn=").append(vn);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", number='").append(number).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 
     @Override
@@ -94,23 +89,18 @@ public abstract class AbstractPPTLiteValue extends AbstractLiteValue implements 
         return number;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + (name == null ? 0 : name.hashCode());
-        result = prime * result + (number == null ? 0 : number.hashCode());
-        return result;
+    public Long getVn() {
+        return vn;
     }
 
-    @Override
-    public String toString() {
-        return "AbstractPPTReference [name=" + name + ", number=" + number + ", getId()=" + getId() + "]";
-    }
 
     @Override
     protected void setId(Long id) {
         super.setId(id);
+    }
+
+    protected void setVn(Long vn) {
+        this.vn = vn;
     }
 
     protected void setName(String name) {

@@ -86,7 +86,7 @@ public class Measurables {
     @Embeddable
     @MappedSuperclass
     public static abstract class MeasuredInfo<T extends MeasuredInfo<T>>
-            implements Measured<T>, ValueObject {
+            implements Measured<T>, Value {
 
         private static final long serialVersionUID = 6145301734319644562L;
 

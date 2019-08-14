@@ -33,10 +33,6 @@ public class SellerOrg extends Participator {
     super(mapObj);
   }
 
-  public SellerOrg(Participator other) {
-    super(other);
-  }
-
   public SellerOrg(String id, String name) {
     super(id, name);
   }

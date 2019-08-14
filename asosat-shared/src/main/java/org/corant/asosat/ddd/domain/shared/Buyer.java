@@ -33,10 +33,6 @@ public class Buyer extends Participator {
     super(mapObj);
   }
 
-  public Buyer(Participator other) {
-    super(other);
-  }
-
   /**
    * @param id
    * @param name

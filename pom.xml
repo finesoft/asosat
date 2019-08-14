@@ -6,18 +6,15 @@
     <packaging>pom</packaging>
     <groupId>org.asosat</groupId>
     <artifactId>asosat-root</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <modules>
         <module>asosat-boms</module>
         <module>asosat-shared</module>
         <module>asosat-ddd</module>
     </modules>
-
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.corant>0.0.1-SNAPSHOT</version.corant>
+        <version.corant>1.0.0-SNAPSHOT</version.corant>
     </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -30,24 +27,12 @@
         </dependencies>
     </dependencyManagement>
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.corant</groupId>
-                    <artifactId>corant-devops-maven-jandex</artifactId>
-                    <version>${version.corant}</version>
-                    <executions>
-                        <execution>
-                            <phase>prepare-package</phase>
-                            <goals>
-                                <goal>jandex</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.corant</groupId>
+                <artifactId>corant-devops-maven-jandex</artifactId>
+                <version>${version.corant}</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -56,8 +41,6 @@
                         <id>attach-sources</id>
                         <goals>
                             <goal>jar</goal>
-                            <!--<goal>jar-no-fork</goal>
-                            <goal>test-jar-no-fork</goal>-->
                         </goals>
                     </execution>
                 </executions>

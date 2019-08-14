@@ -6,15 +6,11 @@
     <parent>
         <artifactId>asosat-root</artifactId>
         <groupId>org.asosat</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
     <packaging>pom</packaging>
     <artifactId>asosat-boms</artifactId>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.corant>0.0.1-SNAPSHOT</version.corant>
-    </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -26,12 +22,12 @@
             </dependency>
             <dependency>
                 <groupId>org.corant</groupId>
-                <artifactId>asosat-ddd</artifactId>
+                <artifactId>asosat-shared</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.corant</groupId>
-                <artifactId>asosat-shared</artifactId>
+                <artifactId>asosat-ddd</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

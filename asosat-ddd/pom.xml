@@ -20,14 +20,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.corant</groupId>
-                <artifactId>corant-devops-maven-jandex</artifactId>
-            </plugin>
-        </plugins>
-    </build>
     <dependencies>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

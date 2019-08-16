@@ -17,6 +17,7 @@ import static org.corant.shared.util.MapUtils.mapOf;
 import java.io.Serializable;
 import java.util.Map;
 import org.corant.asosat.ddd.domain.shared.DynamicAttributes.DynamicAttributeMap;
+import org.corant.asosat.ddd.security.SecurityContextHolder;
 
 /**
  * @author bingo 下午2:02:31
@@ -32,7 +33,7 @@ public class Param implements Serializable {
 
   private final DynamicAttributeMap attributes = new DynamicAttributeMap();
 
-  private Participator operator = null;//FIXME DON 考虑 //Participator.currentUser();
+  private Participator operator = SecurityContextHolder.currentUser();//FIXME DON
 
   protected Param() {}
 

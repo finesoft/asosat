@@ -13,14 +13,10 @@
  */
 package org.corant.asosat.ddd.domain.shared;
 
-import org.corant.shared.util.Assertions;
-
-import static org.corant.shared.util.Assertions.shouldNotNull;
-import static org.corant.shared.util.MapUtils.getMapLong;
-
-import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+
+import static org.corant.shared.util.Assertions.shouldNotNull;
 
 
 @MappedSuperclass

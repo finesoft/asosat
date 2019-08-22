@@ -37,6 +37,10 @@ public class SellerOrg extends Participator {
     super(id, name);
   }
 
+  public SellerOrg(Participator participator) {
+    this(participator.getId(), participator.getName());
+  }
+
   /**
    *
    */

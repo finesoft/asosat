@@ -41,6 +41,11 @@ public class Buyer extends Participator {
     super(id, name);
   }
 
+  public Buyer(Participator participator) {
+    this(participator.getId(), participator.getName());
+  }
+
+
   /**
    *
    */

@@ -84,7 +84,6 @@ public class Participator implements Principal, ValueObject {
         return name;
     }
 
-
     protected void setId(String id) {
         this.id = id;
     }
@@ -92,5 +91,4 @@ public class Participator implements Principal, ValueObject {
     protected void setName(String name) {
         this.name = name;
     }
-
 }

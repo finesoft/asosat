@@ -16,7 +16,6 @@ package org.corant.asosat.ddd.domain.shared;
 import java.beans.Transient;
 import java.time.Instant;
 
-import org.corant.asosat.ddd.domain.enums.ConfirmationStatus;
 import org.corant.shared.exception.NotSupportedException;
 import org.corant.suites.ddd.model.Aggregation;
 import org.corant.suites.ddd.model.Aggregation.AggregationHandlerAdapter;
@@ -94,6 +93,17 @@ public interface Confirmable<P, T extends Confirmable<P, T>> {
    */
   default T revokeConfirm(P cmd, RevokeConfirmHandler<P, T> handler) {
     throw new NotSupportedException();
+  }
+
+  enum ConfirmationStatus {
+
+    UNCONFIRM(0), APPROVED(1), DISAPPROVED(2);
+
+    int sign;
+
+    private ConfirmationStatus(int sign) {
+      this.sign = sign;
+    }
   }
 
   /**

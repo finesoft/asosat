@@ -13,7 +13,7 @@
  */
 package org.corant.asosat.ddd.domain.shared;
 
-import org.corant.asosat.ddd.domain.enums.ConfirmationStatus;
+import org.corant.asosat.ddd.domain.shared.Confirmable.ConfirmationStatus;
 import org.corant.suites.bundle.GlobalMessageCodes;
 
 import javax.persistence.*;

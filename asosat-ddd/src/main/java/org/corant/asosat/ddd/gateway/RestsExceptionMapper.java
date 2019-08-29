@@ -14,7 +14,9 @@
 package org.corant.asosat.ddd.gateway;
 
 import static org.corant.shared.util.MapUtils.mapOf;
+
 import java.util.Locale;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
@@ -22,10 +24,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+
 import org.apache.logging.log4j.Logger;
+import org.corant.kernel.api.MessageResolver;
+import org.corant.kernel.api.MessageResolver.MessageSource;
 import org.corant.kernel.exception.GeneralRuntimeException;
-import org.corant.kernel.exception.GeneralRuntimeExceptionMessager;
-import org.corant.suites.bundle.GlobalMessageCodes;
 import org.corant.suites.ddd.annotation.stereotype.ApplicationServices;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -44,7 +47,7 @@ public class RestsExceptionMapper implements ExceptionMapper<Exception> {
   Logger logger;
 
   @Inject
-  GeneralRuntimeExceptionMessager exceptionMessager;
+  MessageResolver messageResolver;
 
   @Inject
   @ConfigProperty(name = "gateway.exprose-error-cause", defaultValue = "true")
@@ -58,17 +61,17 @@ public class RestsExceptionMapper implements ExceptionMapper<Exception> {
     if (exception instanceof GeneralRuntimeException) {
       GeneralRuntimeException gre = GeneralRuntimeException.class.cast(exception);
       return Response.serverError()
-          .entity(mapOf("message", gre.getLocalizedMessage(locale, exceptionMessager), "attributes",
-              gre.getAttributes(), "code", GlobalMessageCodes.genMessageCode(gre)))
+          .entity(mapOf("message", messageResolver.getMessage(locale, gre), "attributes",
+              gre.getAttributes(), "code", gre.getCodes()))
           .type(MediaType.APPLICATION_JSON).build();
     } else if (exception instanceof WebApplicationException) {
       return WebApplicationException.class.cast(exception).getResponse();
     } else {
       Object res = exproseErrorCause
-          ? mapOf("message", exceptionMessager.getUnknowErrorMessage(locale), "cause",
+          ? mapOf("message", messageResolver.getMessage(locale,MessageSource.UNKNOW_ERR_CODE), "cause",
               mapOf("exception:", exception.getClass().getName(), "message",
                   exception.getLocalizedMessage()))
-          : mapOf("message", exceptionMessager.getUnknowErrorMessage(locale));
+          : mapOf("message", messageResolver.getMessage(locale,MessageSource.UNKNOW_ERR_CODE));
       return Response.serverError().entity(res).type(MediaType.APPLICATION_JSON).build();
     }
   }

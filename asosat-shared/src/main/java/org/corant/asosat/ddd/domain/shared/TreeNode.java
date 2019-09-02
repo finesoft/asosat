@@ -24,7 +24,7 @@ package org.corant.asosat.ddd.domain.shared;
 public interface TreeNode {
   int FIRST_LEVEL = 1;
   String FIRST_TREE_PATH = "";
-  String TREE_PATHINFO_SEPARATOR = ";";
+  String TREE_PATHINFO_SEPARATOR = ",";
 
   /**
    * 子对象

@@ -48,11 +48,19 @@ public class Participator implements Principal, ValueObject {
         this(getMapString(mapObj, "id"), getMapString(mapObj, "name"));
     }
 
+    @Deprecated
     public Participator(String id, String name) {
         super();
         setId(id);
         setName(name);
     }
+
+    public Participator(Long id, String name) {
+        super();
+        setId(id.toString());
+        setName(name);
+    }
+
 
     protected Participator() {
     }

@@ -1,7 +1,6 @@
 package org.corant.asosat.ddd.domain.model;
 
 import org.corant.Corant;
-import org.corant.asosat.ddd.domain.model.AbstractGenericAggregation;
 import org.corant.kernel.exception.GeneralRuntimeException;
 import org.corant.suites.ddd.model.Entity.EntityReference;
 import org.corant.suites.ddd.model.EntityLifecycleManager;
@@ -10,6 +9,7 @@ import org.corant.suites.ddd.repository.JPARepository;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
@@ -65,11 +65,19 @@ public interface AggregationReference<T extends AbstractGenericAggregation> exte
         Class<T> resolveClass = null;
         Class<?> t = this.getClass();
         do {
-            if (t.getGenericSuperclass() instanceof ParameterizedType) {
-                resolveClass = (Class<T>) ((ParameterizedType) t.getGenericSuperclass()).getActualTypeArguments()[0];
-                break;
+            Type[] genericInterfaces = t.getGenericInterfaces();
+            if (genericInterfaces != null) {
+                for (Type type : genericInterfaces) {
+                    if (type instanceof ParameterizedType) {
+                        ParameterizedType parameterizedType = ((ParameterizedType) type);
+                        if (parameterizedType.getRawType() == AggregationReference.class) {
+                            resolveClass = (Class<T>) parameterizedType.getActualTypeArguments()[0];
+                            break;
+                        }
+                    }
+                }
             }
-        } while ((t = t.getSuperclass()) != null);
+        } while (resolveClass == null && (t = t.getSuperclass()) != null);
         return retrieve(getId(), resolveClass);
     }
 }

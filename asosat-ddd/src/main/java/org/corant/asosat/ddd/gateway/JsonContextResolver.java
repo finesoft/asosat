@@ -37,18 +37,12 @@ public class JsonContextResolver implements ContextResolver<ObjectMapper> {
 
     private final ObjectMapper objectMapperJs = JsonUtils.copyMapperForJs();
 
-    private final ObjectMapper objectMapperRpc = JsonUtils.copyMapperForRpc();
-
     @Inject
     @Any
     Instance<JsonContextResolverConfigurator> configurator;
 
     @Override
     public ObjectMapper getContext(Class<?> objectType) {
-        //FIXME DON 临时判断
-        if (objectType != null && objectType.getName().endsWith("DTO")) {
-            return objectMapperRpc;
-        }
         return objectMapperJs;
     }
 

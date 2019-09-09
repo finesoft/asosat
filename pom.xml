@@ -6,16 +6,20 @@
     <packaging>pom</packaging>
     <groupId>org.asosat</groupId>
     <artifactId>asosat-root</artifactId>
+    <version>${revision}</version>
     <parent>
         <groupId>org.corant</groupId>
         <artifactId>corant-root</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <modules>
         <module>asosat-boms</module>
         <module>asosat-shared</module>
         <module>asosat-ddd</module>
     </modules>
+    <properties>
+        <revision>1.0.0-SNAPSHOT</revision>
+    </properties>
     <build>
         <plugins>
             <plugin>

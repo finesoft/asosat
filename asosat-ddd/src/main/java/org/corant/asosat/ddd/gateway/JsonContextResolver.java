@@ -18,12 +18,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
-import org.corant.suites.json.JsonUtils;
+import org.corant.asosat.ddd.util.ObjectMappers;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -33,9 +35,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ApplicationScoped
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class JsonContextResolver implements ContextResolver<ObjectMapper> {
 
-    private final ObjectMapper objectMapperJs = JsonUtils.copyMapperForJs();
+    private final ObjectMapper objectMapper = ObjectMappers.copyMapper();
 
     @Inject
     @Any
@@ -43,13 +46,13 @@ public class JsonContextResolver implements ContextResolver<ObjectMapper> {
 
     @Override
     public ObjectMapper getContext(Class<?> objectType) {
-        return objectMapperJs;
+        return objectMapper;
     }
 
     @PostConstruct
     void onPostConstruct() {
         if (!configurator.isUnsatisfied()) {
-            configurator.forEach(cfg -> cfg.config(objectMapperJs));
+            configurator.forEach(cfg -> cfg.config(objectMapper));
         }
     }
 }

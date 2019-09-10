@@ -6,7 +6,7 @@
     <parent>
         <artifactId>asosat-root</artifactId>
         <groupId>org.asosat</groupId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>asosat-ddd</artifactId>
     <dependencyManagement>
@@ -56,15 +56,15 @@
         </dependency>
         <dependency>
             <groupId>org.corant</groupId>
-            <artifactId>corant-suites-mp-config</artifactId>
+            <artifactId>corant-microprofile-config</artifactId>
         </dependency>
         <dependency>
             <groupId>org.corant</groupId>
-            <artifactId>corant-suites-mp-restclient</artifactId>
+            <artifactId>corant-microprofile-restclient</artifactId>
         </dependency>
         <dependency>
             <groupId>org.corant</groupId>
-            <artifactId>corant-suites-mp-jwt</artifactId>
+            <artifactId>corant-microprofile-jwt</artifactId>
         </dependency>
         <dependency>
             <groupId>org.corant</groupId>

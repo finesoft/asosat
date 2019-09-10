@@ -6,7 +6,7 @@
     <parent>
         <artifactId>asosat-root</artifactId>
         <groupId>org.asosat</groupId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>asosat-shared</artifactId>
     <dependencyManagement>

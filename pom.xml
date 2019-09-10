@@ -18,7 +18,7 @@
         <module>asosat-ddd</module>
     </modules>
     <properties>
-        <revision>1.0.0-SNAPSHOT</revision>
+        <revision>1.0.5-SNAPSHOT</revision>
     </properties>
     <build>
         <plugins>

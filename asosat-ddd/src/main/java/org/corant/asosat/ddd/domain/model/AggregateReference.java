@@ -92,14 +92,20 @@ public interface AggregateReference<T extends AbstractGenericAggregate> extends 
     Class<T> resolveClass = null;
     Class<?> t = getClass();
     do {
-      Type[] genericInterfaces = t.getGenericInterfaces();
-      if (genericInterfaces != null) {
-        for (Type type : genericInterfaces) {
-          if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            if (parameterizedType.getRawType() == AggregateReference.class) {
-              resolveClass = (Class<T>) parameterizedType.getActualTypeArguments()[0];
-              break;
+      if (t.getGenericSuperclass() instanceof ParameterizedType) {
+        resolveClass =
+            (Class<T>) ((ParameterizedType) t.getGenericSuperclass()).getActualTypeArguments()[0];
+        break;
+      } else {
+        Type[] genericInterfaces = t.getGenericInterfaces();
+        if (genericInterfaces != null) {
+          for (Type type : genericInterfaces) {
+            if (type instanceof ParameterizedType) {
+              ParameterizedType parameterizedType = (ParameterizedType) type;
+              if (parameterizedType.getRawType() == AggregateReference.class) {
+                resolveClass = (Class<T>) parameterizedType.getActualTypeArguments()[0];
+                break;
+              }
             }
           }
         }

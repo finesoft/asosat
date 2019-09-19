@@ -43,7 +43,7 @@ import org.corant.suites.bundle.EnumerationBundle;
 import org.corant.suites.bundle.MessageBundle;
 
 /**
- * corant-asosat-ddd
+ * asosat-ddd
  *
  * @author bingo 下午3:42:51
  *
@@ -81,8 +81,8 @@ public class Bundles extends AbstractRests {
         Map<String, Map<String, Object>> items =
             result.computeIfAbsent(cls.getName(), (k) -> new LinkedHashMap<>());
         for (Enum e : cls.getEnumConstants()) {
-          items.put(e.name(),
-              linkedHashMapOf("ordinal", e.ordinal(), "literal", bundle.getEnumItemLiteral(e, locale)));
+          items.put(e.name(), linkedHashMapOf("ordinal", e.ordinal(), "literal",
+              bundle.getEnumItemLiteral(e, locale)));
         }
       });
       return ok(result);

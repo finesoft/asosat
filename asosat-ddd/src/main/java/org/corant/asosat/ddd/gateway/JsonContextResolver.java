@@ -23,13 +23,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
-
-import org.corant.asosat.ddd.util.ObjectMappers;
-
+import org.corant.suites.json.JsonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * corant-asosat-ddd
+ *
  * @author bingo 下午4:49:32
  */
 @ApplicationScoped
@@ -38,21 +37,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Consumes(MediaType.APPLICATION_JSON)
 public class JsonContextResolver implements ContextResolver<ObjectMapper> {
 
-    private final ObjectMapper objectMapper = ObjectMappers.copyMapper();
+  private final ObjectMapper objectMapper = JsonUtils.copyMapper();
 
-    @Inject
-    @Any
-    Instance<JsonContextResolverConfigurator> configurator;
+  @Inject
+  @Any
+  Instance<JsonContextResolverConfigurator> configurator;
 
-    @Override
-    public ObjectMapper getContext(Class<?> objectType) {
-        return objectMapper;
+  @Override
+  public ObjectMapper getContext(Class<?> objectType) {
+    return objectMapper;
+  }
+
+  @PostConstruct
+  void onPostConstruct() {
+    if (!configurator.isUnsatisfied()) {
+      configurator.forEach(cfg -> cfg.config(objectMapper));
     }
-
-    @PostConstruct
-    void onPostConstruct() {
-        if (!configurator.isUnsatisfied()) {
-            configurator.forEach(cfg -> cfg.config(objectMapper));
-        }
-    }
+  }
 }

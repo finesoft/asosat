@@ -13,7 +13,6 @@
  */
 package org.corant.asosat.ddd.service;
 
-import static org.corant.kernel.util.Instances.resolveApply;
 import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.CollectionUtils.immutableSetOf;
 import static org.corant.shared.util.ObjectUtils.asString;
@@ -30,7 +29,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.transaction.Transactional;
 import org.corant.Corant;
-import org.corant.asosat.ddd.domain.model.SimpleAggregationIdentifier;
+import org.corant.asosat.ddd.domain.SimpleAggregateIdentifier;
 import org.corant.kernel.event.PostContainerStartedEvent;
 import org.corant.shared.conversion.ConversionException;
 import org.corant.shared.conversion.Converter;
@@ -39,8 +38,8 @@ import org.corant.shared.conversion.ConverterRegistry;
 import org.corant.shared.conversion.ConverterType;
 import org.corant.suites.ddd.annotation.stereotype.InfrastructureServices;
 import org.corant.suites.ddd.model.Entity;
-import org.corant.suites.ddd.model.EntityLifecycleManager;
 import org.corant.suites.ddd.repository.JPARepository;
+import org.corant.suites.ddd.repository.JPARepositoryExtension;
 import org.corant.suites.jpa.shared.JPAUtils;
 
 /**
@@ -59,6 +58,31 @@ public class IdentifierEntityConverterFactory implements ConverterFactory<Object
       immutableSetOf(Long.class, Long.TYPE, String.class, Entity.class);
 
   final Logger logger = Logger.getLogger(this.getClass().getName());
+
+  @Transactional
+  protected <T extends Entity> T convert(Object value, Class<T> targetClass, Map<String, ?> hints) {
+    if (value == null) {
+      return null;
+    }
+    Long id = null;
+    if (value instanceof Long || value.getClass().equals(Long.TYPE)) {
+      id = Long.class.cast(value);
+    } else if (value instanceof String) {
+      id = Long.valueOf(value.toString());
+    } else if (value instanceof SimpleAggregateIdentifier) {
+      id = SimpleAggregateIdentifier.class.cast(value).getId();
+    }
+    T entity = null;
+    if (id != null) {
+      Instance<JPARepository> repos =
+          Corant.instance().select(JPARepository.class, resolveQualifier(targetClass));
+      if (repos.isResolvable()) {
+        entity = repos.get().get(targetClass, id);
+      }
+    }
+    return shouldNotNull(entity, "Can not convert %s to %s!", value.toString(),
+        targetClass.getSimpleName());
+  }
 
   @Override
   public Converter<Object, Entity> create(Class<Entity> targetClass, Entity defaultValue,
@@ -90,31 +114,6 @@ public class IdentifierEntityConverterFactory implements ConverterFactory<Object
         t -> Entity.class.isAssignableFrom(t) && JPAUtils.isPersistenceClass(t));
   }
 
-  @Transactional
-  protected <T extends Entity> T convert(Object value, Class<T> targetClass, Map<String, ?> hints) {
-    if (value == null) {
-      return null;
-    }
-    Long id = null;
-    if (value instanceof Long || value.getClass().equals(Long.TYPE)) {
-      id = Long.class.cast(value);
-    } else if (value instanceof String) {
-      id = Long.valueOf(value.toString());
-    } else if (value instanceof SimpleAggregationIdentifier) {
-      id = SimpleAggregationIdentifier.class.cast(value).getId();
-    }
-    T entity = null;
-    if (id != null) {
-      Instance<JPARepository> repos =
-          Corant.instance().select(JPARepository.class, resolveQualifier(targetClass));
-      if (repos.isResolvable()) {
-        entity = repos.get().get(targetClass, id);
-      }
-    }
-    return shouldNotNull(entity, "Can not convert %s to %s!", value.toString(),
-        targetClass.getSimpleName());
-  }
-
   @PostConstruct
   void onPostConstruct() {
     ConverterRegistry.register(this);
@@ -130,7 +129,7 @@ public class IdentifierEntityConverterFactory implements ConverterFactory<Object
 
   Annotation[] resolveQualifier(Class<?> cls) {
     return puqCached.computeIfAbsent(cls, (c) -> {
-      return resolveApply(EntityLifecycleManager.class, b -> b.persistenceQualifiers(cls));
+      return JPARepositoryExtension.resolveQualifiers(cls);
     });
   }
 }

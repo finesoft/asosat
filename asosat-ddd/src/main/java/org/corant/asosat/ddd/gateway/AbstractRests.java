@@ -1,16 +1,3 @@
-/*
- * Copyright (c) 2013-2018, Bingo.Chen (finesoft@gmail.com).
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- */
 package org.corant.asosat.ddd.gateway;
 
 import static org.corant.shared.util.Empties.isEmpty;
@@ -37,7 +24,6 @@ import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 
 /**
  * @author bingo 下午5:51:09
- *
  */
 @ApplicationScoped
 @ApplicationServices
@@ -113,11 +99,25 @@ public abstract class AbstractRests {
     return Response.ok(obj).type(MediaType.APPLICATION_JSON).build();
   }
 
+  /**
+   * 解析上传文件名
+   *
+   * @param headers
+   * @return parseMpFileName
+   */
   protected String parseMpFileName(MultivaluedMap<String, String> headers) {
     ContentDisposition cd = ContentDispositions.parse(headers.getFirst("Content-Disposition"));
     return defaultObject(cd.getFilename(), "unnamed-" + System.currentTimeMillis());
   }
 
+  /**
+   * 解析 multipart/form-data 字段
+   *
+   * @param uploadForm
+   * @param fieldNames
+   * @return
+   * @throws IOException parseMpFormFields
+   */
   protected Map<String, Object> parseMpFormFields(Map<String, List<InputPart>> uploadForm,
       String... fieldNames) throws IOException {
     if (isEmpty(uploadForm) || isEmpty(fieldNames)) {

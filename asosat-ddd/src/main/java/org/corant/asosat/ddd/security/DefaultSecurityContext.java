@@ -17,7 +17,8 @@ import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.core.SecurityContext;
-import org.corant.asosat.ddd.domain.shared.Participator;
+
+import org.asosat.shared.Participator;
 
 /**
  * corant-asosat-ddd
@@ -28,7 +29,7 @@ import org.corant.asosat.ddd.domain.shared.Participator;
 public class DefaultSecurityContext implements SecurityContext {
 
   public static final DefaultSecurityContext EMPTY_INST = new DefaultSecurityContext(null, null,
-      null, Participator.empty(), Participator.empty(), false, null, null);
+      null, null, null, false, null, null);
 
   private final Principal userPrincipal;
   private final Participator currentUser;

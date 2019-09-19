@@ -1,34 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <artifactId>asosat-root</artifactId>
-        <groupId>org.asosat</groupId>
-        <version>${revision}</version>
-    </parent>
-    <artifactId>asosat-shared</artifactId>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.asosat</groupId>
-                <artifactId>asosat-boms</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.corant</groupId>
-            <artifactId>corant-shared</artifactId>
-        </dependency>
-    </dependencies>
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>asosat-root</artifactId>
+		<groupId>org.asosat</groupId>
+		<version>${revision}</version>
+	</parent>
+	<artifactId>asosat-shared</artifactId>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.asosat</groupId>
+				<artifactId>asosat-boms</artifactId>
+				<version>${project.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>org.corant</groupId>
+			<artifactId>corant-shared</artifactId>
+		</dependency>
+		<!-- Test -->
+		<dependency>
+			<groupId>org.corant</groupId>
+			<artifactId>corant-devops-test-unit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
 </project>

@@ -18,7 +18,8 @@ import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import org.corant.asosat.ddd.domain.shared.Participator;
+
+import org.asosat.shared.Participator;
 import org.corant.shared.util.ConversionUtils;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.weld.manager.api.WeldManager;
@@ -42,8 +43,8 @@ public class DefaultSecurityContextProducer implements SecurityContextProducer {
       Optional<JsonWebToken> jwto = resolve(JsonWebToken.class);
       if (jwto.isPresent()) {
         JsonWebToken jwt = jwto.get();
-        Participator currentUser = Participator.empty();
-        Participator currentOrg = Participator.empty();
+        Participator currentUser = null;
+        Participator currentOrg = null;
         if (jwt.containsClaim("userId")) {
           String userId = ConversionUtils.toString(jwt.getClaim("userId"));
           String userName = ConversionUtils.toString(jwt.getClaim("preferred_username"));

@@ -27,6 +27,11 @@
             </dependency>
             <dependency>
                 <groupId>org.asosat</groupId>
+                <artifactId>asosat-ubiquity</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.asosat</groupId>
                 <artifactId>asosat-ddd</artifactId>
                 <version>${project.version}</version>
             </dependency>

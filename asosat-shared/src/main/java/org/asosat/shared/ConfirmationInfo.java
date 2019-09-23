@@ -13,11 +13,8 @@
  */
 package org.asosat.shared;
 
-
 import static org.corant.shared.util.Assertions.shouldNotNull;
-
 import java.time.Instant;
-
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
@@ -28,7 +25,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.MappedSuperclass;
-
 import org.asosat.shared.Confirmable.ConfirmationStatus;
 
 /**
@@ -38,147 +34,147 @@ import org.asosat.shared.Confirmable.ConfirmationStatus;
 @Embeddable
 public class ConfirmationInfo implements MaintainInfo {
 
-    static final ConfirmationInfo EMPTY_INST = new ConfirmationInfo();
-    public static final String KEY_CFM_TIME = "confirmedTime";
-    public static final String KEY_CFM_STA = "confirmStatus";
-    public static final String KEY_CFM_LOG = "confirmLog";
-    public static final String KEY_CFMORID = "confirmorId";
-    public static final String KEY_CFMORNME = "confirmorName";
+  static final ConfirmationInfo EMPTY_INST = new ConfirmationInfo();
+  public static final String KEY_CFM_TIME = "confirmedTime";
+  public static final String KEY_CFM_STA = "confirmationStatus";
+  public static final String KEY_CFM_LOG = "confirmLog";
+  public static final String KEY_CFMORID = "confirmorId";
+  public static final String KEY_CFMORNME = "confirmorName";
 
-    private static final long serialVersionUID = 8588019473110866431L;
+  private static final long serialVersionUID = 8588019473110866431L;
 
-    @Embedded
-    @AttributeOverrides(value = {
-            @AttributeOverride(column = @Column(name = "confirmorId", length = 36), name = "id"),
-            @AttributeOverride(column = @Column(name = "confirmorName", length = 320), name = "name")})
-    private Participator confirmor;
+  public static ConfirmationInfo empty() {
+    return EMPTY_INST;
+  }
 
-    /**
-     * 是否经过确认
-     */
-    @Column(name = "confirmStatus", length = 32)
-    @Enumerated(EnumType.STRING)
-    private ConfirmationStatus status = ConfirmationStatus.UNCONFIRM;
+  @Embedded
+  @AttributeOverrides(value = {
+      @AttributeOverride(column = @Column(name = "confirmorId", length = 36), name = "id"),
+      @AttributeOverride(column = @Column(name = "confirmorName", length = 320), name = "name")})
+  private Participator confirmor;
 
-    /**
-     * 确认时间
-     */
-    @Column(name = "confirmedTime")
-    private Instant confirmedTime;
+  /**
+   * 是否经过确认
+   */
+  @Column(name = "confirmStatus", length = 32)
+  @Enumerated(EnumType.STRING)
+  private ConfirmationStatus status = ConfirmationStatus.UNCONFIRM;
 
-    /**
-     * 确认备注
-     */
-    @Column(name = "confirmLog", length = 2048)
-    @Basic(fetch = FetchType.LAZY)
-    private String confirmLog;
+  /**
+   * 确认时间
+   */
+  @Column(name = "confirmedTime")
+  private Instant confirmedTime;
 
-    public ConfirmationInfo() {
+  /**
+   * 确认备注
+   */
+  @Column(name = "confirmLog", length = 2048)
+  @Basic(fetch = FetchType.LAZY)
+  private String confirmLog;
 
+  public ConfirmationInfo() {
+
+  }
+
+  public ConfirmationInfo(ConfirmationStatus confirmStatus) {
+    super();
+    status = shouldNotNull(confirmStatus);
+    if (confirmStatus == ConfirmationStatus.APPROVED
+        || confirmStatus == ConfirmationStatus.DISAPPROVED) {
+      confirmedTime = Instant.now();
     }
+  }
 
-    public ConfirmationInfo(ConfirmationStatus confirmStatus) {
-        super();
-        status = shouldNotNull(confirmStatus);
-        if (confirmStatus == ConfirmationStatus.APPROVED
-                || confirmStatus == ConfirmationStatus.DISAPPROVED) {
-            confirmedTime = Instant.now();
-        }
-    }
+  public ConfirmationInfo(Param param) {
+    this(param.getOperator(), param.getAttributes().getEnum(KEY_CFM_STA, ConfirmationStatus.class),
+        param.getAttributes().getInstant(KEY_CFM_TIME, Instant.now()),
+        param.getAttributes().getString(KEY_CFM_LOG));
+  }
 
-    public ConfirmationInfo(Param param) {
-        this(param.getOperator(), param.getAttributes().getEnum(KEY_CFM_STA, ConfirmationStatus.class),
-                param.getAttributes().getInstant(KEY_CFM_TIME, Instant.now()),
-                param.getAttributes().getString(KEY_CFM_LOG));
-    }
+  public ConfirmationInfo(Participator confirmor, ConfirmationStatus confirmStatus) {
+    this(confirmStatus);
+    this.confirmor = confirmor;
+  }
 
-    public ConfirmationInfo(Participator confirmor, ConfirmationStatus confirmStatus) {
-        this(confirmStatus);
-        this.confirmor = confirmor;
-    }
+  public ConfirmationInfo(Participator confirmor, ConfirmationStatus confirmStatus,
+      Instant confirmedTime, String confirmLog) {
+    super();
+    this.confirmor = confirmor;
+    status = shouldNotNull(confirmStatus);
+    this.confirmedTime = confirmedTime;
+    this.confirmLog = confirmLog;
+  }
 
-    public ConfirmationInfo(Participator confirmor, ConfirmationStatus confirmStatus,
-                            Instant confirmedTime, String confirmLog) {
-        super();
-        this.confirmor = confirmor;
-        status = shouldNotNull(confirmStatus);
-        this.confirmedTime = confirmedTime;
-        this.confirmLog = confirmLog;
-    }
+  /**
+   * @return the confirmedTime
+   */
+  public Instant getConfirmedTime() {
+    return confirmedTime;
+  }
 
-    public static ConfirmationInfo empty() {
-        return EMPTY_INST;
-    }
+  /**
+   * @return the info
+   */
+  public String getConfirmLog() {
+    return confirmLog;
+  }
 
-    /**
-     * @return the confirmedTime
-     */
-    public Instant getConfirmedTime() {
-        return confirmedTime;
-    }
+  public Participator getConfirmor() {
+    return confirmor == null ? null : confirmor;
+  }
 
-    /**
-     * @return the info
-     */
-    public String getConfirmLog() {
-        return confirmLog;
-    }
+  public ConfirmationStatus getStatus() {
+    return status;
+  }
 
-    public Participator getConfirmor() {
-        return confirmor == null ? null : confirmor;
-    }
+  /**
+   * 是否已经确认过，表示已经确认通过或者已经确认不通过
+   *
+   * @return
+   */
+  public boolean hasConfirmed() {
+    return isApproved() || isDisapproved();
+  }
 
-    public ConfirmationStatus getStatus() {
-        return status;
-    }
+  void init(Participator confirmor, ConfirmationStatus confirmStatus, Instant confirmedTime,
+      String confirmLog) {
+    this.confirmor = confirmor;
+    status = shouldNotNull(confirmStatus);
+    this.confirmedTime = confirmedTime;
+    this.confirmLog = confirmLog;
+  }
 
-    /**
-     * 是否已经确认过，表示已经确认通过或者已经确认不通过
-     *
-     * @return
-     */
-    public boolean hasConfirmed() {
-        return isApproved() || isDisapproved();
-    }
+  /**
+   * 是否确认同意
+   *
+   * @return the confirmed
+   */
+  public boolean isApproved() {
+    return status == ConfirmationStatus.APPROVED;
+  }
 
-    /**
-     * 是否确认同意
-     *
-     * @return the confirmed
-     */
-    public boolean isApproved() {
-        return status == ConfirmationStatus.APPROVED;
-    }
+  /**
+   * 是否确认不同意
+   *
+   * @return
+   */
+  public boolean isDisapproved() {
+    return status == ConfirmationStatus.DISAPPROVED;
+  }
 
-    /**
-     * 是否确认不同意
-     *
-     * @return
-     */
-    public boolean isDisapproved() {
-        return status == ConfirmationStatus.DISAPPROVED;
-    }
+  public boolean isDone() {
+    return confirmedTime != null;
+  }
 
-    public boolean isDone() {
-        return confirmedTime != null;
-    }
+  @Override
+  public Instant obtainOperatedTime() {
+    return getConfirmedTime();
+  }
 
-    @Override
-    public Instant obtainOperatedTime() {
-        return getConfirmedTime();
-    }
-
-    @Override
-    public Long obtainOperatorId() {
-        return getConfirmor().getId();
-    }
-
-    void init(Participator confirmor, ConfirmationStatus confirmStatus, Instant confirmedTime,
-              String confirmLog) {
-        this.confirmor = confirmor;
-        status = shouldNotNull(confirmStatus);
-        this.confirmedTime = confirmedTime;
-        this.confirmLog = confirmLog;
-    }
+  @Override
+  public Long obtainOperatorId() {
+    return getConfirmor().getId();
+  }
 
 }

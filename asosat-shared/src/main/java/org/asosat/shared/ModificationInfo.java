@@ -28,90 +28,83 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public class ModificationInfo implements MaintainInfo {
 
-    private static final long serialVersionUID = -5680557426023292137L;
+  private static final long serialVersionUID = -5680557426023292137L;
 
-    static final ModificationInfo EMPTY_INST = new ModificationInfo();
+  @Embedded
+  @AttributeOverrides(
+      value = {@AttributeOverride(column = @Column(name = "modifierId", length = 36), name = "id"),
+          @AttributeOverride(column = @Column(name = "modifierName", length = 320), name = "name")})
+  private Participator modifier;
 
-    @Embedded
-    @AttributeOverrides(
-            value = {@AttributeOverride(column = @Column(name = "modifierId", length = 36), name = "id"),
-                    @AttributeOverride(column = @Column(name = "modifierName", length = 320), name = "name")})
-    private Participator modifier;
+  @Column(name = "modifiedTime")
+  private Instant modifiedTime;
 
-    @Column(name = "modifiedTime")
-    private Instant modifiedTime;
+  protected ModificationInfo() {}
 
-    public ModificationInfo(Participator modifier) {
-        this(modifier, Instant.now());
+  public ModificationInfo(Participator modifier) {
+    this(modifier, Instant.now());
+  }
+
+  public ModificationInfo(Participator modifier, Instant modifiedTime) {
+    super();
+    this.modifier = modifier;
+    this.modifiedTime = modifiedTime;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public ModificationInfo(Participator modifier, Instant modifiedTime) {
-        super();
-        this.modifier = modifier;
-        this.modifiedTime = modifiedTime;
+    if (obj == null) {
+      return false;
     }
-
-    protected ModificationInfo() {
+    if (this.getClass() != obj.getClass()) {
+      return false;
     }
-
-    public static ModificationInfo empty() {
-        return EMPTY_INST;
+    ModificationInfo other = (ModificationInfo) obj;
+    if (modifiedTime == null) {
+      if (other.modifiedTime != null) {
+        return false;
+      }
+    } else if (!modifiedTime.equals(other.modifiedTime)) {
+      return false;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (this.getClass() != obj.getClass()) {
-            return false;
-        }
-        ModificationInfo other = (ModificationInfo) obj;
-        if (modifiedTime == null) {
-            if (other.modifiedTime != null) {
-                return false;
-            }
-        } else if (!modifiedTime.equals(other.modifiedTime)) {
-            return false;
-        }
-        if (modifier == null) {
-            if (other.modifier != null) {
-                return false;
-            }
-        } else if (!modifier.equals(other.modifier)) {
-            return false;
-        }
-        return true;
+    if (modifier == null) {
+      if (other.modifier != null) {
+        return false;
+      }
+    } else if (!modifier.equals(other.modifier)) {
+      return false;
     }
+    return true;
+  }
 
-    public Instant getModifiedTime() {
-        return modifiedTime;
-    }
+  public Instant getModifiedTime() {
+    return modifiedTime;
+  }
 
-    public Participator getModifier() {
-        return modifier == null ? null : modifier;
-    }
+  public Participator getModifier() {
+    return modifier == null ? null : modifier;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (modifiedTime == null ? 0 : modifiedTime.hashCode());
-        result = prime * result + (modifier == null ? 0 : modifier.hashCode());
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + (modifiedTime == null ? 0 : modifiedTime.hashCode());
+    result = prime * result + (modifier == null ? 0 : modifier.hashCode());
+    return result;
+  }
 
-    @Override
-    public Instant obtainOperatedTime() {
-        return getModifiedTime();
-    }
+  @Override
+  public Instant obtainOperatedTime() {
+    return getModifiedTime();
+  }
 
-    @Override
-    public Long obtainOperatorId() {
-        return getModifier().getId();
-    }
+  @Override
+  public Long obtainOperatorId() {
+    return getModifier().getId();
+  }
 
 }

@@ -21,7 +21,6 @@ import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.MappedSuperclass;
 
-
 /**
  * @author bingo 下午7:52:57
  */
@@ -29,92 +28,85 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public class CreationInfo implements MaintainInfo {
 
-    private static final long serialVersionUID = 8168649121736024097L;
+  private static final long serialVersionUID = 8168649121736024097L;
 
-    static final CreationInfo EMPTY_INST = new CreationInfo();
+  @Embedded
+  @AttributeOverrides(value = {
+      @AttributeOverride(column = @Column(name = "creatorId", length = 36, updatable = false),
+          name = "id"),
+      @AttributeOverride(column = @Column(name = "creatorName", length = 320, updatable = false),
+          name = "name")})
+  private Participator creator;
 
-    @Embedded
-    @AttributeOverrides(value = {
-            @AttributeOverride(column = @Column(name = "creatorId", length = 36, updatable = false),
-                    name = "id"),
-            @AttributeOverride(column = @Column(name = "creatorName", length = 320, updatable = false),
-                    name = "name")})
-    private Participator creator;
+  @Column(name = "createdTime", updatable = false)
+  private Instant createdTime;
 
-    @Column(name = "createdTime", updatable = false)
-    private Instant createdTime;
+  protected CreationInfo() {}
 
-    public CreationInfo(Participator creator) {
-        this(creator, Instant.now());
+  public CreationInfo(Participator creator) {
+    this(creator, Instant.now());
+  }
+
+  public CreationInfo(Participator creator, Instant createdTime) {
+    super();
+    this.creator = creator;
+    this.createdTime = createdTime;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public CreationInfo(Participator creator, Instant createdTime) {
-        super();
-        this.creator = creator;
-        this.createdTime = createdTime;
+    if (obj == null) {
+      return false;
     }
-
-    protected CreationInfo() {
+    if (this.getClass() != obj.getClass()) {
+      return false;
     }
-
-    public static CreationInfo empty() {
-        return EMPTY_INST;
+    CreationInfo other = (CreationInfo) obj;
+    if (createdTime == null) {
+      if (other.createdTime != null) {
+        return false;
+      }
+    } else if (!createdTime.equals(other.createdTime)) {
+      return false;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (this.getClass() != obj.getClass()) {
-            return false;
-        }
-        CreationInfo other = (CreationInfo) obj;
-        if (createdTime == null) {
-            if (other.createdTime != null) {
-                return false;
-            }
-        } else if (!createdTime.equals(other.createdTime)) {
-            return false;
-        }
-        if (creator == null) {
-            if (other.creator != null) {
-                return false;
-            }
-        } else if (!creator.equals(other.creator)) {
-            return false;
-        }
-        return true;
+    if (creator == null) {
+      if (other.creator != null) {
+        return false;
+      }
+    } else if (!creator.equals(other.creator)) {
+      return false;
     }
+    return true;
+  }
 
-    public Instant getCreatedTime() {
-        return createdTime;
-    }
+  public Instant getCreatedTime() {
+    return createdTime;
+  }
 
-    public Participator getCreator() {
-        return creator == null ? null : creator;
-    }
+  public Participator getCreator() {
+    return creator == null ? null : creator;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (createdTime == null ? 0 : createdTime.hashCode());
-        result = prime * result + (creator == null ? 0 : creator.hashCode());
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + (createdTime == null ? 0 : createdTime.hashCode());
+    result = prime * result + (creator == null ? 0 : creator.hashCode());
+    return result;
+  }
 
-    @Override
-    public Instant obtainOperatedTime() {
-        return getCreatedTime();
-    }
+  @Override
+  public Instant obtainOperatedTime() {
+    return getCreatedTime();
+  }
 
-    @Override
-    public Long obtainOperatorId() {
-        return getCreator().getId();
-    }
+  @Override
+  public Long obtainOperatorId() {
+    return getCreator().getId();
+  }
 
 }

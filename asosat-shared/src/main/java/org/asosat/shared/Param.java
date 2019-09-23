@@ -14,10 +14,8 @@
 package org.asosat.shared;
 
 import static org.corant.shared.util.MapUtils.mapOf;
-
 import java.io.Serializable;
 import java.util.Map;
-
 import org.asosat.shared.DynamicAttributes.DynamicAttributeMap;
 
 /**
@@ -26,11 +24,25 @@ import org.asosat.shared.DynamicAttributes.DynamicAttributeMap;
  */
 public class Param implements Serializable {
 
-  public static final String AT_CFM_STATUS_KEY = "confirmationStatus";
-
   static final Param EMPTY_INST = new Param();
 
   private static final long serialVersionUID = -3517537674124343136L;
+
+  public static Param empty() {
+    return EMPTY_INST;
+  }
+
+  public static Param of(DynamicAttributeMap attributes) {
+    return new Param(null, attributes);
+  }
+
+  public static Param of(Participator operator) {
+    return new Param(operator, null);
+  }
+
+  public static Param of(Participator operator, DynamicAttributeMap attributes) {
+    return new Param(operator, attributes);
+  }
 
   private final DynamicAttributeMap attributes = new DynamicAttributeMap();
 
@@ -43,22 +55,6 @@ public class Param implements Serializable {
       this.attributes.putAll(attributes);
     }
     this.operator = operator;
-  }
-
-  public static Param empty() {
-    return EMPTY_INST;
-  }
-
-  public static Param of(DynamicAttributeMap attributes) {
-    return new Param(null,attributes);
-  }
-
-  public static Param of(Participator operator) {
-    return new Param(operator,null);
-  }
-
-  public static Param of(Participator operator, DynamicAttributeMap attributes) {
-    return new Param(operator, attributes);
   }
 
   public Param clearAttributes(String name) {

@@ -17,7 +17,6 @@ import java.time.Instant;
 import javax.persistence.Embedded;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
-
 import org.asosat.shared.CreationInfo;
 import org.asosat.shared.Manned;
 import org.asosat.shared.ModificationInfo;
@@ -37,10 +36,10 @@ public abstract class AbstractMannedAggregate<P, T extends AbstractMannedAggrega
   private static final long serialVersionUID = 4296767808160742486L;
 
   @Embedded
-  private CreationInfo creationInfo = CreationInfo.empty();
+  private CreationInfo creationInfo;
 
   @Embedded
-  private ModificationInfo modificationInfo = ModificationInfo.empty();
+  private ModificationInfo modificationInfo;
 
   public AbstractMannedAggregate() {}
 
@@ -49,34 +48,23 @@ public abstract class AbstractMannedAggregate<P, T extends AbstractMannedAggrega
   }
 
   @Override
-  public T preserve(P param, PreservingHandler<P, T> handler) {
-    return super.preserve(param, handler);
-  }
-
-  @Override
   public Instant getCreatedTime() {
-    return this.obtainCreationInfo().getCreatedTime();
+    return obtainCreationInfo() == null ? null : obtainCreationInfo().getCreatedTime();
   }
 
   @Override
   public Participator getCreator() {
-    return this.obtainCreationInfo().getCreator();
+    return obtainCreationInfo() == null ? null : obtainCreationInfo().getCreator();
   }
 
   @Override
   public Instant getModifiedTime() {
-    return this.obtainModificationInfo().getModifiedTime();
+    return obtainModificationInfo() == null ? null : obtainModificationInfo().getModifiedTime();
   }
 
   @Override
   public Participator getModifier() {
-    return this.obtainModificationInfo().getModifier();
-  }
-
-  @SuppressWarnings("unchecked")
-  public T withModificationInfo(Participator modifier) {
-    this.initModificationInfo(modifier);
-    return (T) this;
+    return obtainModificationInfo() == null ? null : obtainModificationInfo().getModifier();
   }
 
   protected void initCreationInfo(Participator creator) {
@@ -96,16 +84,21 @@ public abstract class AbstractMannedAggregate<P, T extends AbstractMannedAggrega
   }
 
   protected CreationInfo obtainCreationInfo() {
-    if (this.creationInfo == null) {
-      this.creationInfo = CreationInfo.empty();
-    }
     return this.creationInfo;
   }
 
   protected ModificationInfo obtainModificationInfo() {
-    if (this.modificationInfo == null) {
-      this.modificationInfo = ModificationInfo.empty();
-    }
     return this.modificationInfo;
+  }
+
+  @Override
+  public T preserve(P param, PreservingHandler<P, T> handler) {
+    return super.preserve(param, handler);
+  }
+
+  @SuppressWarnings("unchecked")
+  public T withModificationInfo(Participator modifier) {
+    this.initModificationInfo(modifier);
+    return (T) this;
   }
 }

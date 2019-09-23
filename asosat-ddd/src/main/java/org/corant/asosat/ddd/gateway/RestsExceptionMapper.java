@@ -14,9 +14,7 @@
 package org.corant.asosat.ddd.gateway;
 
 import static org.corant.shared.util.MapUtils.mapOf;
-
 import java.util.Locale;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
@@ -24,7 +22,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-
 import org.apache.logging.log4j.Logger;
 import org.corant.kernel.api.MessageResolver;
 import org.corant.kernel.api.MessageResolver.MessageSource;
@@ -57,22 +54,27 @@ public class RestsExceptionMapper implements ExceptionMapper<Exception> {
 
   @Override
   public Response toResponse(Exception exception) {
-    logger.error(exception.getLocalizedMessage(), exception);
     if (exception instanceof GeneralRuntimeException) {
+      logger.error(exception.getLocalizedMessage(), exception);
       GeneralRuntimeException gre = GeneralRuntimeException.class.cast(exception);
       return Response.serverError()
           .entity(mapOf("message", messageResolver.getMessage(locale, gre), "attributes",
               gre.getAttributes(), "code", gre.getCodes()))
           .type(MediaType.APPLICATION_JSON).build();
-    } else if (exception instanceof WebApplicationException) {
-      return WebApplicationException.class.cast(exception).getResponse();
     } else {
-      Object res = exproseErrorCause
-          ? mapOf("message", messageResolver.getMessage(locale,MessageSource.UNKNOW_ERR_CODE), "cause",
-              mapOf("exception:", exception.getClass().getName(), "message",
-                  exception.getLocalizedMessage()))
-          : mapOf("message", messageResolver.getMessage(locale,MessageSource.UNKNOW_ERR_CODE));
-      return Response.serverError().entity(res).type(MediaType.APPLICATION_JSON).build();
+      logger.error(() -> exception.getMessage(), exception);
+      if (exception instanceof WebApplicationException) {
+        return WebApplicationException.class.cast(exception).getResponse();
+      } else {
+        Object res = exproseErrorCause
+            ? mapOf(
+                "message", messageResolver.getMessage(locale, MessageSource.UNKNOW_ERR_CODE),
+                "cause",
+                mapOf("exception:", exception.getClass().getName(), "message",
+                    exception.getLocalizedMessage()))
+            : mapOf("message", messageResolver.getMessage(locale, MessageSource.UNKNOW_ERR_CODE));
+        return Response.serverError().entity(res).type(MediaType.APPLICATION_JSON).build();
+      }
     }
   }
 

@@ -14,7 +14,6 @@
 package org.asosat.shared;
 
 import java.time.Instant;
-
 import org.corant.shared.exception.NotSupportedException;
 
 /**

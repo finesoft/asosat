@@ -17,7 +17,6 @@ import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.core.SecurityContext;
-
 import org.asosat.shared.Participator;
 
 /**
@@ -28,8 +27,8 @@ import org.asosat.shared.Participator;
  */
 public class DefaultSecurityContext implements SecurityContext {
 
-  public static final DefaultSecurityContext EMPTY_INST = new DefaultSecurityContext(null, null,
-      null, null, null, false, null, null);
+  public static final DefaultSecurityContext EMPTY_INST =
+      new DefaultSecurityContext(null, null, null, null, null, false, null, null);
 
   private final Principal userPrincipal;
   private final Participator currentUser;

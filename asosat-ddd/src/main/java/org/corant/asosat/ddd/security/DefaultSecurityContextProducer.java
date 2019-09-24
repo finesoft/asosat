@@ -18,7 +18,6 @@ import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-
 import org.asosat.shared.Participator;
 import org.corant.shared.util.ConversionUtils;
 import org.eclipse.microprofile.jwt.JsonWebToken;

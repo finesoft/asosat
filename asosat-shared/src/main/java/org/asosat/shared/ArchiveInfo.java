@@ -49,7 +49,7 @@ public class ArchiveInfo implements MaintainInfo {
 
   @Embedded
   @AttributeOverrides(value = {
-      @AttributeOverride(column = @Column(name = "archivistId", length = 36), name = "id"),
+      @AttributeOverride(column = @Column(name = "archivistId"), name = "id"),
       @AttributeOverride(column = @Column(name = "archivistName", length = 320), name = "name")})
   private Participator archivist;
 

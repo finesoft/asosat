@@ -49,7 +49,7 @@ public class ConfirmationInfo implements MaintainInfo {
 
   @Embedded
   @AttributeOverrides(value = {
-      @AttributeOverride(column = @Column(name = "confirmorId", length = 36), name = "id"),
+      @AttributeOverride(column = @Column(name = "confirmorId"), name = "id"),
       @AttributeOverride(column = @Column(name = "confirmorName", length = 320), name = "name")})
   private Participator confirmor;
 

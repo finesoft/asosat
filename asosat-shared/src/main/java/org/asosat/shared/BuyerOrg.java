@@ -13,36 +13,35 @@
  */
 package org.asosat.shared;
 
+import java.util.Map;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.MappedSuperclass;
-import java.util.Map;
 
 @Embeddable
 @MappedSuperclass
-@AttributeOverrides({@AttributeOverride(column = @Column(name = "buyerOrgId", length = 36), name = "id"),
-        @AttributeOverride(column = @Column(name = "buyerOrgName"), name = "name")})
+@AttributeOverrides({@AttributeOverride(column = @Column(name = "buyerOrgId"), name = "id"),
+    @AttributeOverride(column = @Column(name = "buyerOrgName"), name = "name")})
 public class BuyerOrg extends Participator {
 
   private static final long serialVersionUID = 2482047799269041296L;
 
-
-  public BuyerOrg(Map<?, ?> mapObj) {
-    super(mapObj);
+  protected BuyerOrg() {
+    super();
   }
 
   public BuyerOrg(Long id, String name) {
     super(id, name);
   }
 
-  public BuyerOrg(Participator participator) {
-    this(participator.getId(), participator.getName());
+  public BuyerOrg(Map<?, ?> mapObj) {
+    super(mapObj);
   }
 
-  protected BuyerOrg() {
-    super();
+  public BuyerOrg(Participator participator) {
+    this(participator.getId(), participator.getName());
   }
 
   @Override

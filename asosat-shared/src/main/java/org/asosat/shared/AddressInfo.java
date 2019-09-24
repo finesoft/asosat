@@ -20,62 +20,62 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public class AddressInfo implements ValueObject {
 
-    private static final long serialVersionUID = -9085295280837794048L;
+  private static final long serialVersionUID = -9085295280837794048L;
 
-    private Long locationId;
+  private Long locationId;
 
-    private long locationVn;
+  private long locationVn;
 
-    private String locationName;
+  private String locationName;
 
-    private String description;
+  private String description;
 
-    protected AddressInfo() {
-        super();
-    }
+  protected AddressInfo() {
+    super();
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public Long getLocationId() {
-        return locationId;
-    }
+  public Long getLocationId() {
+    return locationId;
+  }
 
-    public String getLocationName() {
-        return locationName;
-    }
+  public String getLocationName() {
+    return locationName;
+  }
 
-    public long getLocationVn() {
-        return locationVn;
-    }
+  public long getLocationVn() {
+    return locationVn;
+  }
 
-    /**
-     * @param description the description to set
-     */
-    protected void setDescription(String description) {
-        this.description = description;
-    }
+  /**
+   * @param description the description to set
+   */
+  protected void setDescription(String description) {
+    this.description = description;
+  }
 
-    /**
-     * @param locationId the locationId to set
-     */
-    protected void setLocationId(Long locationId) {
-        this.locationId = locationId;
-    }
+  /**
+   * @param locationId the locationId to set
+   */
+  protected void setLocationId(Long locationId) {
+    this.locationId = locationId;
+  }
 
-    /**
-     * @param locationName the locationName to set
-     */
-    protected void setLocationName(String locationName) {
-        this.locationName = locationName;
-    }
+  /**
+   * @param locationName the locationName to set
+   */
+  protected void setLocationName(String locationName) {
+    this.locationName = locationName;
+  }
 
-    /**
-     * @param locationVn the locationVn to set
-     */
-    protected void setLocationVn(long locationVn) {
-        this.locationVn = locationVn;
-    }
+  /**
+   * @param locationVn the locationVn to set
+   */
+  protected void setLocationVn(long locationVn) {
+    this.locationVn = locationVn;
+  }
 
 }

@@ -15,7 +15,6 @@ package org.asosat.shared;
 
 import java.beans.Transient;
 import java.time.Instant;
-
 import org.corant.shared.exception.NotSupportedException;
 
 /**
@@ -119,8 +118,6 @@ public interface Confirmable<P, T extends Confirmable<P, T>> {
     }
 
   }
-
-
 
   /**
    * 确认处理器，可以用于是否能够确认，或者确认之后做什么之类的处理。<br/>

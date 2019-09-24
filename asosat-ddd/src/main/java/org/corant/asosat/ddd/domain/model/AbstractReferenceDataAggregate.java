@@ -18,7 +18,6 @@ import static org.corant.shared.util.StringUtils.trim;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.MappedSuperclass;
-
 import org.asosat.shared.Archivable;
 import org.asosat.shared.ArchiveInfo;
 import org.asosat.shared.Nameable;

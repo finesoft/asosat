@@ -14,12 +14,9 @@
 package org.asosat.shared;
 
 import static org.corant.shared.util.Assertions.shouldBeTrue;
-
 import java.math.BigDecimal;
-
 import javax.persistence.Embeddable;
 import javax.persistence.MappedSuperclass;
-
 import org.asosat.shared.Measurables.MeasuredInfo;
 
 @Embeddable

@@ -27,6 +27,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.corant</groupId>
+			<artifactId>corant-microprofile-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.corant</groupId>
+			<artifactId>corant-microprofile-restclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.corant</groupId>
+			<artifactId>corant-microprofile-jwt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.corant</groupId>
 			<artifactId>corant-suites-ddd</artifactId>
 		</dependency>
 		<dependency>
@@ -54,21 +66,13 @@
 			<artifactId>corant-suites-jta-narayana</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.corant</groupId>
+			<artifactId>corant-suites-mongodb</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>io.agroal</groupId>
 			<artifactId>agroal-narayana</artifactId>
 			<optional>false</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.corant</groupId>
-			<artifactId>corant-microprofile-config</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.corant</groupId>
-			<artifactId>corant-microprofile-restclient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.corant</groupId>
-			<artifactId>corant-microprofile-jwt</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.corant</groupId>

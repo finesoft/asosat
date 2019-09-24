@@ -17,9 +17,7 @@ import static org.corant.kernel.util.Preconditions.requireNotBlank;
 import static org.corant.kernel.util.Preconditions.requireNotNull;
 import static org.corant.kernel.util.Preconditions.requireTrue;
 import static org.corant.shared.util.MapUtils.getMapObject;
-
 import java.util.Map;
-
 import org.asosat.shared.Participator;
 import org.corant.asosat.ddd.security.SecurityContextHolder;
 import org.corant.shared.util.Empties;
@@ -41,7 +39,7 @@ public abstract class AbstractApplicationService implements ApplicationService {
   public String getAppVerNum() {
     return null;
   }
-	
+
   protected Participator currentOrg() {
     return SecurityContextHolder.currentOrg();
   }

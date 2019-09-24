@@ -13,8 +13,12 @@
  */
 package org.corant.asosat.ddd.service;
 
+import static org.corant.kernel.util.Instances.resolveAccept;
+import static org.corant.kernel.util.Instances.resolveApply;
 import static org.corant.kernel.util.Instances.resolveNamed;
+import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.ConversionUtils.toLong;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Optional;
@@ -23,7 +27,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.event.TransactionPhase;
 import javax.inject.Inject;
+import org.corant.shared.exception.CorantRuntimeException;
 import org.corant.shared.util.Identifiers;
+import org.corant.shared.util.Resources.Resource;
 import org.corant.suites.ddd.event.AbstractEvent;
 import org.corant.suites.mongodb.AbstractGridFSBucketProvider;
 import org.corant.suites.mongodb.MongoClientExtension;
@@ -39,6 +45,20 @@ import com.mongodb.client.gridfs.GridFSDownloadStream;
  *
  */
 public interface StroageService<S> {
+
+  static void clean(Long id) {
+    resolveAccept(GridFSStroageService.class, t -> t.removeFile(shouldNotNull(id)));
+  }
+
+  static Long store(Resource resource) {
+    try (InputStream is = shouldNotNull(resource).openStream()) {
+      return resolveApply(GridFSStroageService.class,
+          t -> t.putFile(is, resource.getLocation(), resource.getMetadatas()));
+    } catch (IOException e) {
+      throw new CorantRuntimeException(e);
+    }
+
+  }
 
   S getFile(Long id);
 

@@ -28,6 +28,7 @@ import static org.corant.shared.util.StringUtils.trim;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Optional;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -108,7 +109,7 @@ public interface StorageService<S> {
 
     @Inject
     @ConfigProperty(name = "storage.gridfs.database-bucket")
-    protected String qualifier;
+    protected Optional<String> qualifier;
 
     @Inject
     @ConfigProperty(name = "storage.gridfs.identifier.generator.worker-id", defaultValue = "1")
@@ -155,6 +156,7 @@ public interface StorageService<S> {
     void onPostConstruct() {
       String dataBaseName = null;
       String bucketName = null;
+      String qualifier = this.qualifier.get();
       if (isNotBlank(qualifier) && contains(qualifier, Names.NAME_SPACE_SEPARATORS)) {
         int lastDot = qualifier.lastIndexOf(Names.NAME_SPACE_SEPARATOR);
         dataBaseName = trim(left(qualifier, lastDot));

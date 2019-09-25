@@ -107,11 +107,11 @@ public interface StorageService<S> {
     MongoClientExtension extension;
 
     @Inject
-    @ConfigProperty(name = "stroage.gridfs.database-bucket")
+    @ConfigProperty(name = "storage.gridfs.database-bucket")
     protected String qualifier;
 
     @Inject
-    @ConfigProperty(name = "stroage.gridfs.identifier.generator.worker-id", defaultValue = "1")
+    @ConfigProperty(name = "storage.gridfs.identifier.generator.worker-id", defaultValue = "1")
     protected int defaultWorkerId;
 
     protected GridFSBucket bucket;

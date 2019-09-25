@@ -15,6 +15,8 @@ package org.asosat.ddd.application.query;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.corant.suites.query.shared.QueryParameter;
 
 /**
@@ -39,6 +41,7 @@ public class GenericQueryParam<T> implements QueryParameter {
    *
    * @return the context
    */
+  @JsonIgnore
   @Override
   public Map<String, Object> getContext() {
     return context;

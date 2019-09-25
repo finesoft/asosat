@@ -23,7 +23,7 @@ import org.corant.suites.query.shared.QueryParameter;
  * @author bingo 下午7:13:42
  *
  */
-public class QueryParam<T> implements QueryParameter {
+public class GenericQueryParam<T> implements QueryParameter {
 
   private static final long serialVersionUID = 1128730276124512213L;
 
@@ -71,7 +71,7 @@ public class QueryParam<T> implements QueryParameter {
    *
    * @param context the context to set
    */
-  public QueryParam<T> setContext(Map<String, Object> context) {
+  public GenericQueryParam<T> setContext(Map<String, Object> context) {
     this.context = context;
     return this;
   }
@@ -80,7 +80,7 @@ public class QueryParam<T> implements QueryParameter {
    *
    * @param criteria the criteria to set
    */
-  public QueryParam<T> setCriteria(T criteria) {
+  public GenericQueryParam<T> setCriteria(T criteria) {
     this.criteria = criteria;
     return this;
   }
@@ -89,7 +89,7 @@ public class QueryParam<T> implements QueryParameter {
    *
    * @param limit the limit to set
    */
-  public QueryParam<T> setLimit(int limit) {
+  public GenericQueryParam<T> setLimit(int limit) {
     this.limit = limit;
     return this;
   }
@@ -98,7 +98,7 @@ public class QueryParam<T> implements QueryParameter {
    *
    * @param offset the offset to set
    */
-  public QueryParam<T> setOffset(int offset) {
+  public GenericQueryParam<T> setOffset(int offset) {
     this.offset = offset;
     return this;
   }

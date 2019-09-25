@@ -53,15 +53,15 @@ import com.mongodb.client.gridfs.GridFSDownloadStream;
  * @author bingo 上午10:36:11
  *
  */
-public interface StroageService<S> {
+public interface StorageService<S> {
 
   static void clean(Long id) {
-    resolveAccept(GridFSStroageService.class, t -> t.removeFile(shouldNotNull(id)));
+    resolveAccept(GridFSStorageService.class, t -> t.removeFile(shouldNotNull(id)));
   }
 
   static Long store(Resource resource) {
     try (InputStream is = shouldNotNull(resource).openStream()) {
-      return resolveApply(GridFSStroageService.class,
+      return resolveApply(GridFSStorageService.class,
           t -> t.putFile(is, resource.getLocation(), resource.getMetadatas()));
     } catch (IOException e) {
       throw new CorantRuntimeException(e);
@@ -100,8 +100,8 @@ public interface StroageService<S> {
 
   @ApplicationScoped
   @InfrastructureServices
-  public static class GridFSStroageService extends AbstractGridFSBucketProvider
-      implements StroageService<GridFSDownloadStream> {
+  public static class GridFSStorageService extends AbstractGridFSBucketProvider
+      implements StorageService<GridFSDownloadStream> {
 
     @Inject
     MongoClientExtension extension;
@@ -117,19 +117,6 @@ public interface StroageService<S> {
     protected GridFSBucket bucket;
 
     protected MongoDatabase dataBase;
-
-    public static void main(String... strings) {
-      String qualifier = ".xx";
-      String dataBaseName = null;
-      String bucketName = null;
-      if (isNotBlank(qualifier) && contains(qualifier, Names.NAME_SPACE_SEPARATORS)) {
-        int lastDot = qualifier.lastIndexOf(Names.NAME_SPACE_SEPARATOR);
-        dataBaseName = left(qualifier, lastDot);
-        bucketName = right(qualifier, qualifier.length() - lastDot - 1);
-      }
-      System.out.println("d:\t" + dataBaseName);
-      System.out.println("b:\t" + bucketName);
-    }
 
     @Override
     public GridFSBucket getBucket() {

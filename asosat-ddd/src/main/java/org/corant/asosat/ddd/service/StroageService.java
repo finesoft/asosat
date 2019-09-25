@@ -16,26 +16,35 @@ package org.corant.asosat.ddd.service;
 import static org.corant.kernel.util.Instances.resolveAccept;
 import static org.corant.kernel.util.Instances.resolveApply;
 import static org.corant.kernel.util.Instances.resolveNamed;
+import static org.corant.shared.util.Assertions.shouldBeTrue;
 import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.ConversionUtils.toLong;
+import static org.corant.shared.util.StringUtils.contains;
+import static org.corant.shared.util.StringUtils.isNoneBlank;
+import static org.corant.shared.util.StringUtils.isNotBlank;
+import static org.corant.shared.util.StringUtils.left;
+import static org.corant.shared.util.StringUtils.right;
+import static org.corant.shared.util.StringUtils.trim;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-import java.util.Optional;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.event.TransactionPhase;
 import javax.inject.Inject;
+import org.corant.kernel.normal.Names;
 import org.corant.shared.exception.CorantRuntimeException;
 import org.corant.shared.util.Identifiers;
 import org.corant.shared.util.Resources.Resource;
+import org.corant.suites.ddd.annotation.stereotype.InfrastructureServices;
 import org.corant.suites.ddd.event.AbstractEvent;
 import org.corant.suites.mongodb.AbstractGridFSBucketProvider;
 import org.corant.suites.mongodb.MongoClientExtension;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.GridFSBuckets;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
 
 /**
@@ -90,6 +99,7 @@ public interface StroageService<S> {
   }
 
   @ApplicationScoped
+  @InfrastructureServices
   public static class GridFSStroageService extends AbstractGridFSBucketProvider
       implements StroageService<GridFSDownloadStream> {
 
@@ -97,20 +107,29 @@ public interface StroageService<S> {
     MongoClientExtension extension;
 
     @Inject
-    @ConfigProperty(name = "stroage.gridfs.bucket-name")
-    protected Optional<String> bucketName;
+    @ConfigProperty(name = "stroage.gridfs.database-bucket")
+    protected String qualifier;
 
     @Inject
-    @ConfigProperty(name = "stroage.gridfs.database-name")
-    protected Optional<String> dataBaseName;
-
-    @Inject
-    @ConfigProperty(name = "stroage.gridfs.worker-id", defaultValue = "1")
+    @ConfigProperty(name = "stroage.gridfs.identifier.generator.worker-id", defaultValue = "1")
     protected int defaultWorkerId;
 
     protected GridFSBucket bucket;
 
     protected MongoDatabase dataBase;
+
+    public static void main(String... strings) {
+      String qualifier = ".xx";
+      String dataBaseName = null;
+      String bucketName = null;
+      if (isNotBlank(qualifier) && contains(qualifier, Names.NAME_SPACE_SEPARATORS)) {
+        int lastDot = qualifier.lastIndexOf(Names.NAME_SPACE_SEPARATOR);
+        dataBaseName = left(qualifier, lastDot);
+        bucketName = right(qualifier, qualifier.length() - lastDot - 1);
+      }
+      System.out.println("d:\t" + dataBaseName);
+      System.out.println("b:\t" + bucketName);
+    }
 
     @Override
     public GridFSBucket getBucket() {
@@ -147,8 +166,20 @@ public interface StroageService<S> {
 
     @PostConstruct
     void onPostConstruct() {
-      bucket = resolveNamed(GridFSBucket.class, bucketName.orElse("")).get();
-      dataBase = resolveNamed(MongoDatabase.class, bucketName.orElse("")).get();
+      String dataBaseName = null;
+      String bucketName = null;
+      if (isNotBlank(qualifier) && contains(qualifier, Names.NAME_SPACE_SEPARATORS)) {
+        int lastDot = qualifier.lastIndexOf(Names.NAME_SPACE_SEPARATOR);
+        dataBaseName = trim(left(qualifier, lastDot));
+        bucketName = trim(right(qualifier, qualifier.length() - lastDot - 1));
+      }
+      shouldBeTrue(isNoneBlank(dataBaseName, bucketName), "GridFSStroageService initialize error, "
+          + "please check the value of configuration item['stroage.gridfs.database-bucket'], "
+          + "the correct value must contain the database name and bucket name and be connected by '.'");
+      final String dn = dataBaseName;
+      dataBase = resolveNamed(MongoDatabase.class, dataBaseName).orElseThrow(
+          () -> new CorantRuntimeException("Can not find any mongo database by name %s.", dn));
+      bucket = GridFSBuckets.create(dataBase, bucketName);
     }
   }
 }

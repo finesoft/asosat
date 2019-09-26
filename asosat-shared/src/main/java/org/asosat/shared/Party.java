@@ -24,7 +24,7 @@ import java.util.function.Predicate;
  */
 public interface Party extends Nameable {
 
-  Serializable getId();
+  Long getId();
 
   /**
    * 委托关系列表
@@ -54,7 +54,7 @@ public interface Party extends Nameable {
       boolean includeHierarchy);
 
   default Participator toParticipator() {
-    return new Participator(getId().toString(), getName());
+    return new Participator(getId(), getName());
   }
 
   /**

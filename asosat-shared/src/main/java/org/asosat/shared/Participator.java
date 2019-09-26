@@ -14,6 +14,7 @@
 package org.asosat.shared;
 
 import static org.corant.shared.util.ConversionUtils.toLong;
+import static org.corant.shared.util.MapUtils.getMapLong;
 import static org.corant.shared.util.MapUtils.getMapString;
 import java.security.Principal;
 import java.util.Map;
@@ -64,13 +65,7 @@ public class Participator implements Principal, ValueObject {
   }
 
   public <K, V> Participator(Map<K, V> mapObj) {
-    this(getMapString(mapObj, "id"), getMapString(mapObj, "name"));
-  }
-
-  public Participator(String id, String name) {
-    super();
-    setId(toLong(id));
-    setName(name);
+    this(getMapLong(mapObj, "id"), getMapString(mapObj, "name"));
   }
 
   @Override

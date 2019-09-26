@@ -1,1 +1,1 @@
-org.corant.asosat.ddd.service.MpRestClientBuilderListener
+org.corant.microprofile.restclient.MpRestClientBuilderListener

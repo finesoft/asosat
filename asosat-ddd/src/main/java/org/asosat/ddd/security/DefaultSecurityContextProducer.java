@@ -45,12 +45,12 @@ public class DefaultSecurityContextProducer implements SecurityContextProducer {
         Participator currentUser = null;
         Participator currentOrg = null;
         if (jwt.containsClaim("userId")) {
-          String userId = ConversionUtils.toString(jwt.getClaim("userId"));
+          Long userId = ConversionUtils.toLong(jwt.getClaim("userId"));
           String userName = ConversionUtils.toString(jwt.getClaim("preferred_username"));
           currentUser = new Participator(userId, userName);
         }
         if (jwt.containsClaim("orgId")) {
-          String orgId = ConversionUtils.toString(jwt.getClaim("orgId"));
+          Long orgId = ConversionUtils.toLong(jwt.getClaim("orgId"));
           String orgName = ConversionUtils.toString(jwt.getClaim("orgName"));
           currentOrg = new Participator(orgId, orgName);
         }

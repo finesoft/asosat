@@ -1,5 +1,18 @@
 package org.asosat.ddd.domain.model;
 
+import org.corant.kernel.exception.GeneralRuntimeException;
+import org.corant.kernel.util.Instances;
+import org.corant.suites.ddd.model.Entity.EntityReference;
+import org.corant.suites.ddd.repository.JPARepository;
+import org.corant.suites.ddd.repository.JPARepositoryExtension;
+
+import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+
 import static org.apache.commons.lang3.reflect.ConstructorUtils.invokeExactConstructor;
 import static org.corant.shared.util.ConversionUtils.toLong;
 import static org.corant.shared.util.ConversionUtils.toObject;
@@ -8,29 +21,20 @@ import static org.corant.shared.util.ObjectUtils.forceCast;
 import static org.corant.shared.util.StringUtils.isNotBlank;
 import static org.corant.suites.bundle.GlobalMessageCodes.ERR_OBJ_NON_FUD;
 import static org.corant.suites.bundle.GlobalMessageCodes.ERR_PARAM;
-import java.io.Serializable;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import org.corant.kernel.exception.GeneralRuntimeException;
-import org.corant.kernel.util.Instances;
-import org.corant.suites.ddd.model.Entity.EntityReference;
-import org.corant.suites.ddd.repository.JPARepository;
-import org.corant.suites.ddd.repository.JPARepositoryExtension;
 
 @SuppressWarnings("rawtypes")
 public interface AggregateReference<T extends AbstractGenericAggregate> extends EntityReference<T> {
 
-  static <A extends AbstractGenericAggregate, T extends AggregateReference<A>> T of(Object param,
-      Class<T> cls) {
+  static <A extends AbstractGenericAggregate, T extends AggregateReference<A>> T of(
+      Object param, Class<T> cls) {
     if (param == null) {
       return null; // FIXME like c++ reference
     }
     try {
       if (cls.isAssignableFrom(param.getClass())) {
         return forceCast(param);
+      } else if (param instanceof AbstractGenericAggregate) {
+        return invokeExactConstructor(cls, new Object[] {param}, new Class<?>[] {param.getClass()});
       } else {
         Long id = toLong(param);
         if (id != null) {

@@ -34,6 +34,11 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.event.TransactionPhase;
 import javax.inject.Inject;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+import org.asosat.shared.ValueObject;
 import org.corant.kernel.normal.Names;
 import org.corant.shared.exception.CorantRuntimeException;
 import org.corant.shared.util.Identifiers;
@@ -67,7 +72,6 @@ public interface StorageService<S> {
     } catch (IOException e) {
       throw new CorantRuntimeException(e);
     }
-
   }
 
   S getFile(Long id);
@@ -82,13 +86,13 @@ public interface StorageService<S> {
    * @author bingo 下午12:03:06
    *
    */
-  public class FileDeprecated extends AbstractEvent {
+  public static class FileDeprecatedEvent extends AbstractEvent {
 
     private static final long serialVersionUID = -2265993446048435321L;
 
     private final String uri;
 
-    public FileDeprecated(Object source, String uri) {
+    public FileDeprecatedEvent(Object source, String uri) {
       super(source);
       this.uri = uri;
     }
@@ -96,7 +100,33 @@ public interface StorageService<S> {
     public String getUri() {
       return uri;
     }
+  }
 
+  @Embeddable
+  @AttributeOverride(column = @Column(name = "fileUri"), name = "uri")
+  @AttributeOverride(column = @Column(name = "fileName"), name = "name")
+  public static class FileRelevance implements ValueObject {
+    private static final long serialVersionUID = 3204979646451864469L;
+
+    @Column
+    private String uri;
+    @Column
+    private String name;
+
+    public FileRelevance(String uri, String name) {
+      this.uri = uri;
+      this.name = name;
+    }
+    protected FileRelevance() {
+    }
+
+    public String getUri() {
+      return uri;
+    }
+
+    public String getName() {
+      return name;
+    }
   }
 
   @ApplicationScoped
@@ -146,7 +176,7 @@ public interface StorageService<S> {
       super.removeFile(id);
     }
 
-    void onFileDeprecated(@Observes(during = TransactionPhase.AFTER_SUCCESS) FileDeprecated e) {
+    void onFileDeprecated(@Observes(during = TransactionPhase.AFTER_SUCCESS) FileDeprecatedEvent e) {
       if (e.getUri() != null) {
         removeFile(toLong(e.getUri()));
       }

@@ -37,7 +37,6 @@ import javax.inject.Inject;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
 import org.asosat.shared.ValueObject;
 import org.corant.kernel.normal.Names;
 import org.corant.shared.exception.CorantRuntimeException;
@@ -68,7 +67,7 @@ public interface StorageService<S> {
   static Long store(Resource resource) {
     try (InputStream is = shouldNotNull(resource).openStream()) {
       return resolveApply(GridFSStorageService.class,
-          t -> t.putFile(is, resource.getLocation(), resource.getMetadatas()));
+          t -> t.putFile(is, resource.getLocation(), resource.getMetadata()));
     } catch (IOException e) {
       throw new CorantRuntimeException(e);
     }
@@ -117,15 +116,15 @@ public interface StorageService<S> {
       this.uri = uri;
       this.name = name;
     }
-    protected FileRelevance() {
+
+    protected FileRelevance() {}
+
+    public String getName() {
+      return name;
     }
 
     public String getUri() {
       return uri;
-    }
-
-    public String getName() {
-      return name;
     }
   }
 
@@ -176,7 +175,8 @@ public interface StorageService<S> {
       super.removeFile(id);
     }
 
-    void onFileDeprecated(@Observes(during = TransactionPhase.AFTER_SUCCESS) FileDeprecatedEvent e) {
+    void onFileDeprecated(
+        @Observes(during = TransactionPhase.AFTER_SUCCESS) FileDeprecatedEvent e) {
       if (e.getUri() != null) {
         removeFile(toLong(e.getUri()));
       }

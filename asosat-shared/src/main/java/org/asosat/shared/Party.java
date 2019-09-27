@@ -13,7 +13,6 @@
  */
 package org.asosat.shared;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -23,8 +22,6 @@ import java.util.function.Predicate;
  * @author bingo 下午7:22:18
  */
 public interface Party extends Nameable {
-
-  Long getId();
 
   /**
    * 委托关系列表
@@ -42,6 +39,8 @@ public interface Party extends Nameable {
    * @return
    */
   Party getHierarchyParty();
+
+  Long getId();
 
   /**
    * 责任关系列表

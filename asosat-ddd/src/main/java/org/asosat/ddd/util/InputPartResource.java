@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.UUID;
 
+import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
 import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.MapUtils.immutableMapOf;
 import static org.corant.shared.util.ObjectUtils.defaultObject;
@@ -30,8 +31,8 @@ public class InputPartResource implements Resource {
 
     public InputPartResource(InputPart inputPart) {
         this.inputPart = shouldNotNull(inputPart);
-        ContentDisposition cd = ContentDispositions.parse(inputPart.getHeaders().getFirst("Content-Disposition"));
-        this.filename = defaultObject(cd.getFilename(), () -> "unnamed-" + UUID.randomUUID());
+        ContentDisposition disposition = ContentDispositions.parse(inputPart.getHeaders().getFirst(CONTENT_DISPOSITION));
+        this.filename = defaultObject(disposition.getFilename(), () -> "unnamed-" + UUID.randomUUID());
     }
 
     @Override
@@ -59,8 +60,21 @@ public class InputPartResource implements Resource {
         return inputPart.getBody(InputStream.class, null);
     }
 
+    public String getContentType() {
+        return null;//FIXME DON
+    }
+
+    public long contentLength() {
+        return -1;//FIXME DON
+    }
+
+    public long lastModified() {
+        return -1;//FIXME DON
+    }
+
     @Override
     public Map<String, Object> getMetadatas() {
-        return immutableMapOf("location", getLocation(), "sourceType", getSourceType());
+        return immutableMapOf("sourceType", getSourceType(), "fileName", getFilename(),
+                "lastModified", lastModified(), "contentLength", contentLength());
     }
 }

@@ -34,7 +34,6 @@ public abstract class AbstractRests {
   /**
    * 202
    *
-   * @param obj
    * @return accepted
    */
   protected Response accepted() {
@@ -105,6 +104,7 @@ public abstract class AbstractRests {
    * @param headers
    * @return parseMpFileName
    */
+  @Deprecated
   protected String parseMpFileName(MultivaluedMap<String, String> headers) {
     ContentDisposition cd = ContentDispositions.parse(headers.getFirst("Content-Disposition"));
     return defaultObject(cd.getFilename(), "unnamed-" + System.currentTimeMillis());

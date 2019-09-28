@@ -33,14 +33,6 @@ public class InputPartResource implements Resource {
     filename = defaultObject(disposition.getFilename(), () -> "unnamed-" + UUID.randomUUID());
   }
 
-  public long contentLength() {
-    return -1;// FIXME DON
-  }
-
-  public String getContentType() {
-    return null;// FIXME DON
-  }
-
   @Override
   public String getLocation() {
     return filename;
@@ -64,6 +56,14 @@ public class InputPartResource implements Resource {
 
   public long lastModified() {
     return -1;// FIXME DON
+  }
+
+  public long contentLength() {
+    return -1;// FIXME DON
+  }
+
+  public String getContentType() {
+    return inputPart.getMediaType().toString();
   }
 
   @Override

@@ -54,20 +54,20 @@ public class GridFSStorageService extends AbstractGridFSBucketProvider implement
     }
 
     @Override
-    public StorageFile getFile(Long id) {
+    public StorageFile getFile(String id) {
         GridFSDownloadStream stream = super.getFile(id);//GridFSDownloadStream 只要不调用read,都可以不关闭
         return new GridFSStorageFile(stream);
     }
 
     @Override
-    public Long putFile(InputStream is, String filename, Map<String, Object> metadata) {
+    public String putFile(InputStream is, String filename, Map<String, Object> metadata) {
         Long id = nextId();
         super.putFile(id, filename, DFLT_CHUNK_SIZE_BYTES, is, metadata);
-        return id;
+        return id.toString();
     }
 
     @Override
-    public void removeFile(Long id) {
+    public void removeFile(String id) {
         super.removeFile(id);
     }
 

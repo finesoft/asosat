@@ -13,7 +13,6 @@
  */
 package org.asosat.ddd.storage;
 
-import static org.corant.kernel.util.Instances.resolveAccept;
 import static org.corant.kernel.util.Instances.resolveApply;
 import static org.corant.shared.util.Assertions.shouldNotNull;
 import java.io.IOException;
@@ -28,11 +27,11 @@ import org.corant.shared.util.Resources.Resource;
  */
 public interface StorageService {
 
-    static void get(Long id) {
-        resolveAccept(GridFSStorageService.class, t -> t.removeFile(shouldNotNull(id)));
+    static StorageFile get(String id) {
+       return resolveApply(GridFSStorageService.class, t -> t.getFile(shouldNotNull(id)));
     }
 
-    static Long store(Resource resource) {
+    static String store(Resource resource) {
         try (InputStream is = shouldNotNull(resource).openStream()) {
             return resolveApply(GridFSStorageService.class,
                     t -> t.putFile(is, resource.getLocation(), resource.getMetadata()));
@@ -41,11 +40,11 @@ public interface StorageService {
         }
     }
 
-    StorageFile getFile(Long id);
+    StorageFile getFile(String id);
 
-    Long putFile(InputStream is, String filename, Map<String, Object> metadata);
+    String putFile(InputStream is, String filename, Map<String, Object> metadata);
 
-    void removeFile(Long id);
+    void removeFile(String id);
 
     interface StorageFile extends Resource {
 

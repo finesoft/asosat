@@ -15,9 +15,8 @@ package org.asosat.ddd.application.query;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.corant.suites.query.shared.QueryParameter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * asosat-ddd
@@ -31,9 +30,9 @@ public class GenericQueryParam<T> implements QueryParameter {
 
   private Map<String, Object> context = new HashMap<>();
 
-  private int limit = 1;
+  private Integer limit = 1;
 
-  private int offset = 0;
+  private Integer offset = 0;
 
   private T criteria;
 
@@ -57,7 +56,7 @@ public class GenericQueryParam<T> implements QueryParameter {
    * @return the limit
    */
   @Override
-  public int getLimit() {
+  public Integer getLimit() {
     return limit;
   }
 
@@ -66,7 +65,7 @@ public class GenericQueryParam<T> implements QueryParameter {
    * @return the offset
    */
   @Override
-  public int getOffset() {
+  public Integer getOffset() {
     return offset;
   }
 
@@ -92,7 +91,7 @@ public class GenericQueryParam<T> implements QueryParameter {
    *
    * @param limit the limit to set
    */
-  public GenericQueryParam<T> setLimit(int limit) {
+  public GenericQueryParam<T> setLimit(Integer limit) {
     this.limit = limit;
     return this;
   }
@@ -101,7 +100,7 @@ public class GenericQueryParam<T> implements QueryParameter {
    *
    * @param offset the offset to set
    */
-  public GenericQueryParam<T> setOffset(int offset) {
+  public GenericQueryParam<T> setOffset(Integer offset) {
     this.offset = offset;
     return this;
   }

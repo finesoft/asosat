@@ -1,10 +1,22 @@
 package org.asosat.ddd.storage;
 
-import com.mongodb.MongoGridFSException;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.gridfs.GridFSBucket;
-import com.mongodb.client.gridfs.GridFSBuckets;
-import com.mongodb.client.gridfs.GridFSDownloadStream;
+import static org.corant.kernel.util.Instances.resolveNamed;
+import static org.corant.shared.util.Assertions.shouldBeTrue;
+import static org.corant.shared.util.ConversionUtils.toLong;
+import static org.corant.shared.util.StringUtils.contains;
+import static org.corant.shared.util.StringUtils.isNoneBlank;
+import static org.corant.shared.util.StringUtils.isNotBlank;
+import static org.corant.shared.util.StringUtils.left;
+import static org.corant.shared.util.StringUtils.right;
+import static org.corant.shared.util.StringUtils.trim;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Optional;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
+import javax.enterprise.event.TransactionPhase;
+import javax.inject.Inject;
 import org.corant.kernel.normal.Names;
 import org.corant.shared.exception.CorantRuntimeException;
 import org.corant.shared.util.Identifiers;
@@ -12,20 +24,10 @@ import org.corant.suites.ddd.annotation.stereotype.InfrastructureServices;
 import org.corant.suites.mongodb.AbstractGridFSBucketProvider;
 import org.corant.suites.mongodb.MongoClientExtension;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.enterprise.event.TransactionPhase;
-import javax.inject.Inject;
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Optional;
-
-import static org.corant.kernel.util.Instances.resolveNamed;
-import static org.corant.shared.util.Assertions.shouldBeTrue;
-import static org.corant.shared.util.ConversionUtils.toLong;
-import static org.corant.shared.util.StringUtils.*;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.GridFSBuckets;
+import com.mongodb.client.gridfs.GridFSDownloadStream;
 
 @ApplicationScoped
 @InfrastructureServices

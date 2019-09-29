@@ -1,10 +1,9 @@
 package org.asosat.ddd.storage;
 
-import org.asosat.shared.ValueObject;
-
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import org.asosat.shared.ValueObject;
 
 /**
  * @author don

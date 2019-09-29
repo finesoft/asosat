@@ -3,6 +3,7 @@ package org.asosat.ddd.storage;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.MappedSuperclass;
 
 import org.asosat.ddd.storage.StorageService.StorageFile;
 import org.asosat.shared.ValueObject;
@@ -11,6 +12,7 @@ import org.asosat.shared.ValueObject;
  * @author don
  * @date 2019-09-27
  */
+@MappedSuperclass
 @Embeddable
 @AttributeOverride(column = @Column(name = "fileUri"), name = "uri")
 @AttributeOverride(column = @Column(name = "fileName"), name = "name")

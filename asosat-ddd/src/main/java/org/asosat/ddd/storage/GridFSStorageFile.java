@@ -25,8 +25,8 @@ class GridFSStorageFile implements StorageFile {
   }
 
   @Override
-  public Long getId() {
-    return stream.getGridFSFile().getId().asInt64().longValue();
+  public String getId() {
+    return String.valueOf(stream.getGridFSFile().getId().asInt64().longValue());
   }
 
   @Override

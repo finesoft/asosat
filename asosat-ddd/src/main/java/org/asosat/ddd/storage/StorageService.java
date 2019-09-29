@@ -48,7 +48,7 @@ public interface StorageService {
 
     interface StorageFile extends Resource {
 
-        Long getId();
+        String getId();
 
         long getCreatedTime();
 

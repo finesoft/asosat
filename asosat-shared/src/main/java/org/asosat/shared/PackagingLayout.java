@@ -29,6 +29,7 @@ import javax.persistence.MappedSuperclass;
  * @author bingo 上午9:50:07
  *
  */
+@MappedSuperclass
 public class PackagingLayout implements ValueObject {
 
   private static final long serialVersionUID = -5202808097803594548L;

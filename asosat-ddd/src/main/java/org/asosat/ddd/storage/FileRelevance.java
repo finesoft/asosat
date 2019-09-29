@@ -3,6 +3,8 @@ package org.asosat.ddd.storage;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+
+import org.asosat.ddd.storage.StorageService.StorageFile;
 import org.asosat.shared.ValueObject;
 
 /**
@@ -19,6 +21,10 @@ public class FileRelevance implements ValueObject {
     private String uri;
     @Column
     private String name;
+
+    public static FileRelevance of(StorageFile f) {
+        return new FileRelevance(f.getId(), f.getName());
+    }
 
     public FileRelevance(String uri, String name) {
         this.uri = uri;

@@ -28,20 +28,16 @@ public class Seller extends Participator {
 
   private static final long serialVersionUID = 2482047799269041296L;
 
+  public static Seller of(Participator participator) {
+    return new Seller(participator.getId(), participator.getName());
+  }
+
   protected Seller() {
     super();
   }
 
   public Seller(Long id, String name) {
     super(id, name);
-  }
-
-  public Seller(Map<?, ?> mapObj) {
-    super(mapObj);
-  }
-
-  public Seller(Participator participator) {
-    this(participator.getId(), participator.getName());
   }
 
   @Override

@@ -28,6 +28,10 @@ public class Buyer extends Participator {
 
   private static final long serialVersionUID = 2482047799269041296L;
 
+  public static Buyer of(Participator participator) {
+    return new Buyer(participator.getId(), participator.getName());
+  }
+
   protected Buyer() {
     super();
   }
@@ -38,14 +42,6 @@ public class Buyer extends Participator {
    */
   public Buyer(Long id, String name) {
     super(id, name);
-  }
-
-  public Buyer(Map<?, ?> mapObj) {
-    super(mapObj);
-  }
-
-  public Buyer(Participator participator) {
-    this(participator.getId(), participator.getName());
   }
 
   @Override

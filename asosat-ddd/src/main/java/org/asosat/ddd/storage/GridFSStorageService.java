@@ -55,7 +55,7 @@ public class GridFSStorageService extends AbstractGridFSBucketProvider implement
 
     @Override
     public StorageFile getFile(String id) {
-        GridFSDownloadStream stream = super.getFile(id);//GridFSDownloadStream 只要不调用read,都可以不关闭
+        GridFSDownloadStream stream = super.getFile(Long.valueOf(id));//GridFSDownloadStream 只要不调用read,都可以不关闭
         return new GridFSStorageFile(stream);
     }
 
@@ -81,7 +81,7 @@ public class GridFSStorageService extends AbstractGridFSBucketProvider implement
     void onPostConstruct() {
         String dataBaseName = null;
         String bucketName = null;
-        String qualifier = this.qualifier.get();
+        String qualifier = this.qualifier.orElse(null);
         if (isNotBlank(qualifier) && contains(qualifier, Names.NAME_SPACE_SEPARATORS)) {
             int lastDot = qualifier.lastIndexOf(Names.NAME_SPACE_SEPARATOR);
             dataBaseName = trim(left(qualifier, lastDot));

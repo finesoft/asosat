@@ -14,8 +14,6 @@ import org.asosat.shared.ValueObject;
  */
 @MappedSuperclass
 @Embeddable
-@AttributeOverride(column = @Column(name = "fileUri"), name = "uri")
-@AttributeOverride(column = @Column(name = "fileName"), name = "name")
 public class FileRelevance implements ValueObject {
     private static final long serialVersionUID = 3204979646451864469L;
 

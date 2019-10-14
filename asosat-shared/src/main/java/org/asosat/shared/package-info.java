@@ -12,6 +12,3 @@
  * the License.
  */
 package org.asosat.shared;
-
-// FIXME DON 修改包路径为 org.corant.asosat.ddd.shared
-// FIXME DON 将org.corant.asosat.ddd.domain.shared的类移至此包

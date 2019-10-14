@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.asosat.shared.Participator;
 
 /**
- * 获取当前用户信息 FIXME DON 之前代码在Participator里面，先剥离出来
+ * 获取当前用户信息
  * 
  * @author don
  * @create 2019-08-13

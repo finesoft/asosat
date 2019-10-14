@@ -1,9 +1,11 @@
 package org.asosat.ddd.util;
 
 import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.MapUtils.immutableMapOf;
 import static org.corant.shared.util.ObjectUtils.defaultObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -16,7 +18,6 @@ import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 
 /**
  * resteasy InputPart resource
- *
  * @author don
  * @date 2019-09-26
  */
@@ -40,8 +41,7 @@ public class InputPartResource implements Resource {
 
   @Override
   public Map<String, Object> getMetadata() {
-    return immutableMapOf("sourceType", getSourceType(), "fileName", getName(), "lastModified",
-        lastModified(), "contentLength", contentLength());
+    return immutableMapOf(CONTENT_TYPE, getContentType());
   }
 
   @Override
@@ -52,14 +52,6 @@ public class InputPartResource implements Resource {
   @Override
   public SourceType getSourceType() {
     return null;
-  }
-
-  public long lastModified() {
-    return -1;// FIXME DON
-  }
-
-  public long contentLength() {
-    return -1;// FIXME DON
   }
 
   public String getContentType() {

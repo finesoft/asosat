@@ -15,9 +15,10 @@ package org.asosat.ddd.application.query;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
-import org.asosat.shared.Participator;
 import org.asosat.ddd.security.SecurityContextHolder;
+import org.asosat.shared.Participator;
 import org.corant.suites.ddd.annotation.stereotype.InfrastructureServices;
 import org.corant.suites.query.shared.spi.ParameterReviser;
 
@@ -40,6 +41,10 @@ public class SecurityContextParameterReviser implements ParameterReviser {
     Long currentOrgId = SecurityContextHolder.currentOrgId();
     if (currentOrgId != null) {
       securityContext.putIfAbsent(Participator.CURRENT_ORG_ID_KEY, currentOrgId);
+    }
+    Set<String> currentUserRoles = SecurityContextHolder.currentUserRoles();
+    if (currentUserRoles != null) {
+      securityContext.putIfAbsent("_currentUserRoles", currentUserRoles);
     }
     return securityContext;
   }

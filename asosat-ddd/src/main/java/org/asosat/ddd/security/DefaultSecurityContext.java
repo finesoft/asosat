@@ -14,6 +14,7 @@
 package org.asosat.ddd.security;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.core.SecurityContext;
@@ -89,6 +90,10 @@ public class DefaultSecurityContext implements SecurityContext {
   @Override
   public Principal getUserPrincipal() {
     return userPrincipal;
+  }
+
+  public Set<String> getUserRoles() {
+    return Collections.unmodifiableSet(userRoles);
   }
 
   @Override

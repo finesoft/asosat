@@ -15,6 +15,7 @@ package org.asosat.ddd.storage;
 
 import static org.corant.kernel.util.Instances.resolveApply;
 import static org.corant.shared.util.Assertions.shouldNotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -27,34 +28,38 @@ import org.corant.shared.util.Resources.Resource;
  */
 public interface StorageService {
 
-    static StorageFile get(String id) {
-       return resolveApply(GridFSStorageService.class, t -> t.getFile(shouldNotNull(id)));
+  static StorageFile get(String id) {
+    return resolveApply(GridFSStorageService.class, t -> t.getFile(shouldNotNull(id)));
+  }
+
+  static String store(Resource resource) {
+    return resolveApply(GridFSStorageService.class, t -> t.putResource(resource));
+  }
+
+  default String putResource(Resource resource) {
+    shouldNotNull(resource);
+    try (InputStream is = resource.openStream()) {
+      return putFile(is, resource.getLocation(), resource.getMetadata());
+    } catch (IOException e) {
+      throw new CorantRuntimeException(e);
     }
+  }
 
-    static String store(Resource resource) {
-        try (InputStream is = shouldNotNull(resource).openStream()) {
-            return resolveApply(GridFSStorageService.class,
-                    t -> t.putFile(is, resource.getLocation(), resource.getMetadata()));
-        } catch (IOException e) {
-            throw new CorantRuntimeException(e);
-        }
-    }
+  StorageFile getFile(String id);
 
-    StorageFile getFile(String id);
+  String putFile(InputStream is, String filename, Map<String, Object> metadata);
 
-    String putFile(InputStream is, String filename, Map<String, Object> metadata);
+  void removeFile(String id);
 
-    void removeFile(String id);
+  interface StorageFile extends Resource {
 
-    interface StorageFile extends Resource {
+    String getId();
 
-        String getId();
+    long getCreatedTime();
 
-        long getCreatedTime();
+    long getLength();
 
-        long getLength();
-
-        /**获取实际处理类*/
-        <T> T unwrap();
-    }
+    /** 获取实际处理类 */
+    <T> T unwrap();
+  }
 }

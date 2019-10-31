@@ -1,7 +1,7 @@
 package org.asosat.ddd.gateway;
 
 import static org.corant.shared.util.Empties.isEmpty;
-import static org.corant.shared.util.ObjectUtils.defaultObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -14,12 +14,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import org.corant.suites.ddd.annotation.stereotype.ApplicationServices;
 import org.corant.suites.jaxrs.shared.StreamOutputBuilder;
-import org.corant.suites.servlet.abstraction.ContentDispositions;
-import org.corant.suites.servlet.abstraction.ContentDispositions.ContentDisposition;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 
 /**
@@ -96,18 +93,6 @@ public abstract class AbstractRests {
    */
   protected Response ok(Object obj) {
     return Response.ok(obj).type(MediaType.APPLICATION_JSON).build();
-  }
-
-  /**
-   * 解析上传文件名
-   *
-   * @param headers
-   * @return parseMpFileName
-   */
-  @Deprecated
-  protected String parseMpFileName(MultivaluedMap<String, String> headers) {
-    ContentDisposition cd = ContentDispositions.parse(headers.getFirst("Content-Disposition"));
-    return defaultObject(cd.getFilename(), "unnamed-" + System.currentTimeMillis());
   }
 
   /**

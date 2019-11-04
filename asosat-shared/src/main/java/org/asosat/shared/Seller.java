@@ -13,7 +13,6 @@
  */
 package org.asosat.shared;
 
-import java.util.Map;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;

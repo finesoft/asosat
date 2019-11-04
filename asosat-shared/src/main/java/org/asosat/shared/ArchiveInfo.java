@@ -13,6 +13,10 @@
  */
 package org.asosat.shared;
 
+import static org.corant.shared.util.MapUtils.getMapBoolean;
+import static org.corant.shared.util.MapUtils.getMapInstant;
+import static org.corant.shared.util.MapUtils.getMapLong;
+import static org.corant.shared.util.MapUtils.getMapString;
 import java.time.Instant;
 import java.util.Map;
 import javax.persistence.AttributeOverride;
@@ -23,8 +27,6 @@ import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.FetchType;
 import javax.persistence.MappedSuperclass;
-
-import static org.corant.shared.util.MapUtils.*;
 
 /**
  * @author bingo 上午11:14:48

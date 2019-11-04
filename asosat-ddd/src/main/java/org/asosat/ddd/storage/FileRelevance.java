@@ -1,10 +1,8 @@
 package org.asosat.ddd.storage;
 
-import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.MappedSuperclass;
-
 import org.asosat.ddd.storage.StorageService.StorageFile;
 import org.asosat.shared.ValueObject;
 
@@ -15,30 +13,29 @@ import org.asosat.shared.ValueObject;
 @MappedSuperclass
 @Embeddable
 public class FileRelevance implements ValueObject {
-    private static final long serialVersionUID = 3204979646451864469L;
+  private static final long serialVersionUID = 3204979646451864469L;
 
-    @Column
-    private String uri;
-    @Column
-    private String name;
+  @Column
+  private String uri;
+  @Column
+  private String name;
 
-    public static FileRelevance of(StorageFile f) {
-        return new FileRelevance(f.getId(), f.getName());
-    }
+  public FileRelevance(String uri, String name) {
+    this.uri = uri;
+    this.name = name;
+  }
 
-    public FileRelevance(String uri, String name) {
-        this.uri = uri;
-        this.name = name;
-    }
+  protected FileRelevance() {}
 
-    protected FileRelevance() {
-    }
+  public static FileRelevance of(StorageFile f) {
+    return new FileRelevance(f.getId(), f.getName());
+  }
 
-    public String getUri() {
-        return uri;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getUri() {
+    return uri;
+  }
 }

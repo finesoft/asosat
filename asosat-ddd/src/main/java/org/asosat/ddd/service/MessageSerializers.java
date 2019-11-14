@@ -27,12 +27,17 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageFormatRuntimeException;
 import javax.jms.TextMessage;
+import org.corant.kernel.exception.GeneralRuntimeException;
 import org.corant.shared.exception.CorantRuntimeException;
 import org.corant.shared.util.Resources.InputStreamResource;
+import org.corant.suites.bundle.GlobalMessageCodes;
 import org.corant.suites.jms.shared.annotation.MessageSend.SerializationSchema;
 import org.corant.suites.jms.shared.annotation.MessageSerialization;
 import org.corant.suites.jms.shared.context.MessageSerializer;
 import org.corant.suites.json.JsonUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * corant-suites-ddd
@@ -41,6 +46,9 @@ import org.corant.suites.json.JsonUtils;
  *
  */
 public class MessageSerializers {
+
+  static final ObjectMapper jsonObjectMapper =
+      JsonUtils.copyMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
   @ApplicationScoped
   @MessageSerialization(schema = SerializationSchema.BINARY)
@@ -86,7 +94,7 @@ public class MessageSerializers {
       shouldBeTrue(message instanceof TextMessage);
       TextMessage tMsg = (TextMessage) message;
       try {
-        return JsonUtils.fromString(tMsg.getText(), clazz);
+        return from(tMsg.getText(), clazz);
       } catch (JMSException e) {
         throw new CorantRuntimeException(e);
       }
@@ -94,9 +102,26 @@ public class MessageSerializers {
 
     @Override
     public Message serialize(JMSContext jmsContext, Serializable object) {
-      Message message = jmsContext.createTextMessage(JsonUtils.toString(object));
+      Message message = jmsContext.createTextMessage(to(object));
       resolveSchemaProperty(message, SerializationSchema.JSON_STRING);
       return message;
+    }
+
+    <T> T from(String text, Class<T> clazz) {
+      try {
+        return jsonObjectMapper.readValue(text, clazz);
+      } catch (IOException e) {
+        throw new GeneralRuntimeException(e.getCause(), GlobalMessageCodes.ERR_OBJ_SEL, text,
+            clazz.getName());
+      }
+    }
+
+    String to(Serializable message) {
+      try {
+        return jsonObjectMapper.writeValueAsString(message);
+      } catch (JsonProcessingException e) {
+        throw new GeneralRuntimeException(e.getCause(), GlobalMessageCodes.ERR_OBJ_SEL, message);
+      }
     }
   }
 }

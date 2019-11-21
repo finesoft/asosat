@@ -15,7 +15,7 @@ package org.asosat.ddd.storage;
 
 import static org.corant.kernel.util.Instances.resolveApply;
 import static org.corant.shared.util.Assertions.shouldNotNull;
-
+import static org.corant.shared.util.StringUtils.defaultString;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -24,6 +24,7 @@ import org.corant.shared.util.Resources.Resource;
 
 /**
  * asosat-ddd
+ *
  * @author bingo 上午10:36:11
  */
 public interface StorageService {
@@ -36,26 +37,27 @@ public interface StorageService {
     return resolveApply(GridFSStorageService.class, t -> t.putResource(resource));
   }
 
+  StorageFile getFile(String id);
+
+  String putFile(InputStream is, String filename, Map<String, Object> metadata);
+
   default String putResource(Resource resource) {
     shouldNotNull(resource);
     try (InputStream is = resource.openStream()) {
-      return putFile(is, resource.getLocation(), resource.getMetadata());
+      return putFile(is, defaultString(resource.getName(), defaultString(resource.getLocation())),
+          resource.getMetadata());// filename should not null
     } catch (IOException e) {
       throw new CorantRuntimeException(e);
     }
   }
 
-  StorageFile getFile(String id);
-
-  String putFile(InputStream is, String filename, Map<String, Object> metadata);
-
   void removeFile(String id);
 
   interface StorageFile extends Resource {
 
-    String getId();
-
     long getCreatedTime();
+
+    String getId();
 
     long getLength();
 

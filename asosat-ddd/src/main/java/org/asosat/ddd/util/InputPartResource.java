@@ -1,10 +1,13 @@
 package org.asosat.ddd.util;
 
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.MapUtils.immutableMapOf;
 import static org.corant.shared.util.ObjectUtils.defaultObject;
+import static org.corant.shared.util.StringUtils.isNotBlank;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,9 +32,14 @@ public class InputPartResource implements Resource {
 
   public InputPartResource(InputPart inputPart) {
     this.inputPart = shouldNotNull(inputPart);
-    ContentDisposition disposition =
-        ContentDispositions.parse(inputPart.getHeaders().getFirst(CONTENT_DISPOSITION));
-    filename = defaultObject(disposition.getFilename(), () -> "unnamed-" + UUID.randomUUID());
+    ContentDisposition disposition = ContentDispositions.parse(inputPart.getHeaders().getFirst(CONTENT_DISPOSITION));
+    String filename = disposition.getFilename();
+    if (disposition.getCharset() == null && isNotBlank(filename)) {
+      //因为apache mime4j 解析浏览器提交的文件名按ISO_8859_1处理
+      //上传文件断点ContentUtil.decode(ByteSequence byteSequence, int offset, int length)
+      filename = new String(filename.getBytes(ISO_8859_1), UTF_8);
+    }
+    this.filename = defaultObject(filename, () -> "unnamed-" + UUID.randomUUID());
   }
 
   @Override

@@ -13,6 +13,7 @@
  */
 package org.asosat.ddd.service;
 
+import static org.corant.kernel.util.Instances.select;
 import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.CollectionUtils.immutableSetOf;
 import static org.corant.shared.util.ObjectUtils.asString;
@@ -28,9 +29,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.transaction.Transactional;
-
 import org.asosat.ddd.domain.SimpleAggregateIdentifier;
-import org.corant.Corant;
 import org.corant.kernel.event.PostContainerStartedEvent;
 import org.corant.shared.conversion.ConversionException;
 import org.corant.shared.conversion.Converter;
@@ -60,31 +59,6 @@ public class IdentifierEntityConverterFactory implements ConverterFactory<Object
 
   final Logger logger = Logger.getLogger(this.getClass().getName());
 
-  @Transactional
-  protected <T extends Entity> T convert(Object value, Class<T> targetClass, Map<String, ?> hints) {
-    if (value == null) {
-      return null;
-    }
-    Long id = null;
-    if (value instanceof Long || value.getClass().equals(Long.TYPE)) {
-      id = Long.class.cast(value);
-    } else if (value instanceof String) {
-      id = Long.valueOf(value.toString());
-    } else if (value instanceof SimpleAggregateIdentifier) {
-      id = SimpleAggregateIdentifier.class.cast(value).getId();
-    }
-    T entity = null;
-    if (id != null) {
-      Instance<JPARepository> repos =
-          Corant.instance().select(JPARepository.class, resolveQualifier(targetClass));
-      if (repos.isResolvable()) {
-        entity = repos.get().get(targetClass, id);
-      }
-    }
-    return shouldNotNull(entity, "Can not convert %s to %s!", value.toString(),
-        targetClass.getSimpleName());
-  }
-
   @Override
   public Converter<Object, Entity> create(Class<Entity> targetClass, Entity defaultValue,
       boolean throwException) {
@@ -113,6 +87,30 @@ public class IdentifierEntityConverterFactory implements ConverterFactory<Object
   public boolean isSupportTargetClass(Class<?> targetClass) {
     return cached.computeIfAbsent(targetClass,
         t -> Entity.class.isAssignableFrom(t) && JPAUtils.isPersistenceClass(t));
+  }
+
+  @Transactional
+  protected <T extends Entity> T convert(Object value, Class<T> targetClass, Map<String, ?> hints) {
+    if (value == null) {
+      return null;
+    }
+    Long id = null;
+    if (value instanceof Long || value.getClass().equals(Long.TYPE)) {
+      id = Long.class.cast(value);
+    } else if (value instanceof String) {
+      id = Long.valueOf(value.toString());
+    } else if (value instanceof SimpleAggregateIdentifier) {
+      id = SimpleAggregateIdentifier.class.cast(value).getId();
+    }
+    T entity = null;
+    if (id != null) {
+      Instance<JPARepository> repos = select(JPARepository.class, resolveQualifier(targetClass));
+      if (repos.isResolvable()) {
+        entity = repos.get().get(targetClass, id);
+      }
+    }
+    return shouldNotNull(entity, "Can not convert %s to %s!", value.toString(),
+        targetClass.getSimpleName());
   }
 
   @PostConstruct

@@ -108,6 +108,12 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.corant</groupId>
+			<artifactId>corant-suites-redis</artifactId>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- Test -->
 		<dependency>
 			<groupId>org.corant</groupId>

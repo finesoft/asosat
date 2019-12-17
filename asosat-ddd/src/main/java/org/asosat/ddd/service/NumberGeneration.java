@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import org.corant.shared.util.Assertions;
 import org.redisson.api.RAtomicLong;
 import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RLock;
@@ -36,7 +37,14 @@ public class NumberGeneration {
   @Inject
   RedissonClient redisson;
 
+  /**
+   * 生成  业务码+年月日+随机码
+   * @param businessCode  业务码
+   * @param initTailDigit 随机码初始位数
+   * @return
+   */
   public String nextUniqueNoOfDay(int businessCode, int initTailDigit) {
+    Assertions.shouldBeTrue(businessCode > 0 && initTailDigit > 0);
     ZonedDateTime now = ZonedDateTime.now();
     final String today = FORMATTER.format(now);
     final String dataKey = PREFIX_KEY + "data_" + businessCode + "_" + today; //e.g. className:data_1_191216

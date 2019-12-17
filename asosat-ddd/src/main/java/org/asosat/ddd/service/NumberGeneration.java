@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RAtomicLong;
 import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RLock;
@@ -53,8 +52,8 @@ public class NumberGeneration {
     shouldBeTrue(businessCode > 0 && initTailDigit > 0);
     ZonedDateTime now = ZonedDateTime.now();
     final String today = DAILY_FMT.format(now);
-    final String dataKey = PREFIX_KEY + "data_" + businessCode + "_" + today; //e.g. className:data_1_191216
-    final String digitKey = PREFIX_KEY + "digit_" + businessCode + "_" + today; //e.g. className:digit_1_191216
+    final String dataKey = PREFIX_KEY + "randomUniqueNoOfDaily_data_" + businessCode + "_" + today; //e.g. className:data_1_191216
+    final String digitKey = PREFIX_KEY + "randomUniqueNoOfDaily_digit_" + businessCode + "_" + today; //e.g. className:digit_1_191216
     RBlockingQueue<Integer> blockingQueue = redisson.getBlockingQueue(dataKey);
     if (blockingQueue.isEmpty()) {
       RLock rLock = redisson.getLock(digitKey + "_lock");//e.g. className:digit_1_191216_lock
@@ -98,7 +97,7 @@ public class NumberGeneration {
   public String incrementNoOfYear(String fixedCode, int initTailDigit) {
     shouldBeTrue(isNotBlank(fixedCode) && initTailDigit > 0);
     ZonedDateTime now = ZonedDateTime.now();
-    Function<String, String> keyGen = year -> PREFIX_KEY + "increment_" + fixedCode + "_" + year; //e.g. className:increment_TNC_19
+    Function<String, String> keyGen = year -> PREFIX_KEY + "incrementNoOfYear_" + fixedCode + "_" + year; //e.g. className:increment_TNC_19
 
     final String thisYear = YEAR_FMT.format(now), thisKey = keyGen.apply(thisYear);
 
@@ -108,6 +107,6 @@ public class NumberGeneration {
       String lastYear = YEAR_FMT.format(now.minusYears(1)), lastKey = keyGen.apply(lastYear);
       redisson.getKeys().expire(lastKey, 1, TimeUnit.SECONDS);
     }
-    return fixedCode + thisYear + leftPad(String.valueOf(currentNo), initTailDigit);
+    return fixedCode + thisYear + leftPad(String.valueOf(currentNo), initTailDigit, '0');
   }
 }

@@ -4,6 +4,7 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.leftPad;
 import static org.corant.shared.util.Assertions.shouldBeTrue;
+import static org.corant.shared.util.Assertions.shouldNotBlank;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -49,11 +50,23 @@ public class NumberGeneration {
    * @return
    */
   public String nextRandomUniqueNoOfDaily(int businessCode, int initTailDigit) {
-    shouldBeTrue(businessCode > 0 && initTailDigit > 0);
+    shouldBeTrue(businessCode > 0);
+    return nextRandomUniqueNoOfDaily(String.valueOf(businessCode), initTailDigit);
+  }
+
+  /**
+   * 每天随机唯一号  业务码+年月日+随机码
+   * @param codeSegment
+   * @param initTailDigit
+   * @return
+   */
+  public String nextRandomUniqueNoOfDaily(String codeSegment, int initTailDigit) {
+    shouldNotBlank(codeSegment);
+    shouldBeTrue(initTailDigit > 0);
     ZonedDateTime now = ZonedDateTime.now();
     final String today = DAILY_FMT.format(now);
-    final String dataKey = PREFIX_KEY + "randomUniqueNoOfDaily_data_" + businessCode + "_" + today; //e.g. className:data_1_191216
-    final String digitKey = PREFIX_KEY + "randomUniqueNoOfDaily_digit_" + businessCode + "_" + today; //e.g. className:digit_1_191216
+    final String dataKey = PREFIX_KEY + "randomUniqueNoOfDaily_data_" + codeSegment + "_" + today; //e.g. className:data_1_191216
+    final String digitKey = PREFIX_KEY + "randomUniqueNoOfDaily_digit_" + codeSegment + "_" + today; //e.g. className:digit_1_191216
     RBlockingQueue<Integer> blockingQueue = redisson.getBlockingQueue(dataKey);
     if (blockingQueue.isEmpty()) {
       RLock rLock = redisson.getLock(digitKey + "_lock");//e.g. className:digit_1_191216_lock
@@ -85,19 +98,19 @@ public class NumberGeneration {
       }
     }
     Integer currentNo = blockingQueue.remove();
-    return businessCode + today + currentNo;
+    return codeSegment + today + currentNo;
   }
 
   /**
    * 每年递增顺序号 业务符号+年+顺序号
-   * @param fixedCode
+   * @param codeSegment
    * @param initTailDigit
    * @return
    */
-  public String incrementNoOfYear(String fixedCode, int initTailDigit) {
-    shouldBeTrue(isNotBlank(fixedCode) && initTailDigit > 0);
+  public String incrementNoOfYear(String codeSegment, int initTailDigit) {
+    shouldBeTrue(isNotBlank(codeSegment) && initTailDigit > 0);
     ZonedDateTime now = ZonedDateTime.now();
-    Function<String, String> keyGen = year -> PREFIX_KEY + "incrementNoOfYear_" + fixedCode + "_" + year; //e.g. className:increment_TNC_19
+    Function<String, String> keyGen = year -> PREFIX_KEY + "incrementNoOfYear_" + codeSegment + "_" + year; //e.g. className:increment_TC_19
 
     final String thisYear = YEAR_FMT.format(now), thisKey = keyGen.apply(thisYear);
 
@@ -107,6 +120,6 @@ public class NumberGeneration {
       String lastYear = YEAR_FMT.format(now.minusYears(1)), lastKey = keyGen.apply(lastYear);
       redisson.getKeys().expire(lastKey, 1, TimeUnit.SECONDS);
     }
-    return fixedCode + thisYear + leftPad(String.valueOf(currentNo), initTailDigit, '0');
+    return codeSegment + thisYear + leftPad(String.valueOf(currentNo), initTailDigit, '0');
   }
 }

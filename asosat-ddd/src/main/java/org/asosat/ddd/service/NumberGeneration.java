@@ -56,8 +56,8 @@ public class NumberGeneration {
 
   /**
    * 每天随机唯一号  业务码+年月日+随机码
-   * @param codeSegment
-   * @param initTailDigit
+   * @param codeSegment 业务码
+   * @param initTailDigit 随机码初始位数
    * @return
    */
   public String nextRandomUniqueNoOfDaily(String codeSegment, int initTailDigit) {

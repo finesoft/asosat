@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.reflect.ConstructorUtils.invokeExactConst
 import static org.corant.shared.util.ConversionUtils.toLong;
 import static org.corant.shared.util.ConversionUtils.toObject;
 import static org.corant.shared.util.Empties.isEmpty;
+import static org.corant.shared.util.ObjectUtils.asString;
 import static org.corant.shared.util.ObjectUtils.forceCast;
 import static org.corant.shared.util.StringUtils.isNotBlank;
 import static org.corant.suites.bundle.GlobalMessageCodes.ERR_OBJ_NON_FUD;
@@ -30,20 +31,25 @@ public interface AggregateReference<T extends AbstractGenericAggregate> extends 
       return null; // FIXME like c++ reference
     }
     try {
-      if (cls.isAssignableFrom(param.getClass())) {
-        return forceCast(param);
-      } else if (param instanceof AbstractGenericAggregate) {
-        return invokeExactConstructor(cls, new Object[] {param}, new Class<?>[] {param.getClass()});
-      } else {
-        Long id = toLong(param);
-        if (id != null) {
-          return invokeExactConstructor(cls, new Object[] {id}, new Class<?>[] {Long.class});
+      if (cls != null) {
+        if (cls.isAssignableFrom(param.getClass())) {
+          return forceCast(param);
+        } else if (param instanceof AbstractGenericAggregate) {
+          return invokeExactConstructor(cls, new Object[] {param},
+              new Class<?>[] {param.getClass()});
+        } else {
+          Long id = toLong(param);
+          if (id != null) {
+            return invokeExactConstructor(cls, new Object[] {id}, new Class<?>[] {Long.class});
+          }
         }
       }
     } catch (Exception e) {
-      throw new GeneralRuntimeException(e, ERR_OBJ_NON_FUD);
+      throw new GeneralRuntimeException(e, ERR_OBJ_NON_FUD,
+          asString(cls).concat(":").concat(asString(param)));
     }
-    throw new GeneralRuntimeException(ERR_OBJ_NON_FUD);
+    throw new GeneralRuntimeException(ERR_OBJ_NON_FUD,
+        asString(cls).concat(":").concat(asString(param)));
   }
 
   static <X extends Entity> X resolve(Serializable id, Class<X> cls) {

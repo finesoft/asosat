@@ -23,9 +23,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import org.apache.logging.log4j.Logger;
-import org.corant.kernel.api.MessageResolver;
-import org.corant.kernel.api.MessageResolver.MessageSource;
-import org.corant.kernel.exception.GeneralRuntimeException;
+import org.corant.suites.bundle.MessageResolver;
+import org.corant.suites.bundle.MessageResolver.MessageSource;
+import org.corant.suites.bundle.exception.GeneralRuntimeException;
 import org.corant.suites.ddd.annotation.stereotype.ApplicationServices;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 

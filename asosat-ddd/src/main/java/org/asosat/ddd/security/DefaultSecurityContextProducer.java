@@ -13,7 +13,6 @@
  */
 package org.asosat.ddd.security;
 
-import static org.corant.kernel.util.Instances.resolve;
 import static org.corant.shared.util.ConversionUtils.toLong;
 import static org.corant.shared.util.ObjectUtils.defaultObject;
 import java.util.Optional;
@@ -23,6 +22,7 @@ import javax.enterprise.context.spi.Context;
 import javax.inject.Inject;
 import org.asosat.shared.Participator;
 import org.corant.shared.util.ConversionUtils;
+import org.corant.suites.cdi.Instances;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.weld.manager.api.WeldManager;
 
@@ -42,7 +42,7 @@ public class DefaultSecurityContextProducer implements SecurityContextProducer {
   public DefaultSecurityContext get() {
     if (wm.getActiveContexts().stream().map(Context::getScope)
         .anyMatch(c -> c.equals(RequestScoped.class))) {
-      Optional<JsonWebToken> jwto = resolve(JsonWebToken.class);
+      Optional<JsonWebToken> jwto = Instances.find(JsonWebToken.class);
       if (jwto.isPresent()) {
         JsonWebToken jwt = jwto.get();
         Participator currentUser = null;

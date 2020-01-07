@@ -13,12 +13,12 @@
  */
 package org.asosat.ddd.domain.model;
 
-import static org.corant.kernel.util.Preconditions.requireFalse;
-import static org.corant.kernel.util.Preconditions.requireTrue;
 import static org.corant.shared.util.Empties.isEmpty;
 import static org.corant.shared.util.ObjectUtils.forceCast;
 import static org.corant.shared.util.ObjectUtils.isEquals;
 import static org.corant.shared.util.StreamUtils.streamOf;
+import static org.corant.suites.bundle.Preconditions.requireFalse;
+import static org.corant.suites.bundle.Preconditions.requireTrue;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -137,26 +137,6 @@ public abstract class AbstractTreeNodeAggregate<P, T extends AbstractTreeNodeAgg
     return siblings;
   }
 
-  @SuppressWarnings("unchecked")
-  protected void handleParent(T parent) {
-    requireFalse(isEquals(parent, this) || this.isPathParentOf(parent), "");
-    this.handlePathInfo(parent);
-    if (isPhantom() && parent != null) {
-      parent.tmpChilds().add((T) this);
-    }
-    this.getChilds().forEach(child -> child.handleParent(child.getParent()));
-  }
-
-  protected void handlePathInfo(T parent) {
-    if (parent != null) {
-      this.setPathDeep(parent.getPathDeep() + 1);
-      this.setPathIndex(parent.getPathIndex() + parent.getId() + TreeNode.TREE_PATHINFO_SEPARATOR);
-    } else {
-      this.setPathDeep(TreeNode.FIRST_LEVEL);
-      this.setPathIndex(TreeNode.FIRST_TREE_PATH);
-    }
-  }
-
   @Transient
   public boolean isPathChildOf(T obj) {
     return obj == null ? false : obj.isPathParentOf(this);
@@ -184,17 +164,6 @@ public abstract class AbstractTreeNodeAggregate<P, T extends AbstractTreeNodeAgg
 
   @SuppressWarnings("unchecked")
   @Override
-  protected T preserve(boolean immediately) {
-    super.preserve(immediately);
-    T parent = this.getParent();
-    if (parent != null) {
-      parent.tmpChilds().remove(this);
-    }
-    return (T) this;
-  }
-
-  @SuppressWarnings("unchecked")
-  @Override
   public T preserve(P param, PreservingHandler<P, T> handler) {
     if (handler != null) {
       handler.prePreserve(param, (T) this);
@@ -202,8 +171,35 @@ public abstract class AbstractTreeNodeAggregate<P, T extends AbstractTreeNodeAgg
     return (T) super.preserve(false);
   }
 
-  private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-    stream.defaultReadObject();
+  @SuppressWarnings("unchecked")
+  protected void handleParent(T parent) {
+    requireFalse(isEquals(parent, this) || this.isPathParentOf(parent), "");
+    this.handlePathInfo(parent);
+    if (isPhantom() && parent != null) {
+      parent.tmpChilds().add((T) this);
+    }
+    this.getChilds().forEach(child -> child.handleParent(child.getParent()));
+  }
+
+  protected void handlePathInfo(T parent) {
+    if (parent != null) {
+      this.setPathDeep(parent.getPathDeep() + 1);
+      this.setPathIndex(parent.getPathIndex() + parent.getId() + TreeNode.TREE_PATHINFO_SEPARATOR);
+    } else {
+      this.setPathDeep(TreeNode.FIRST_LEVEL);
+      this.setPathIndex(TreeNode.FIRST_TREE_PATH);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  protected T preserve(boolean immediately) {
+    super.preserve(immediately);
+    T parent = this.getParent();
+    if (parent != null) {
+      parent.tmpChilds().remove(this);
+    }
+    return (T) this;
   }
 
   protected void setPathDeep(int pathDeep) {
@@ -221,6 +217,10 @@ public abstract class AbstractTreeNodeAggregate<P, T extends AbstractTreeNodeAgg
   }
 
   protected abstract TreeNodeAggregateReference<T> toReference();
+
+  private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    stream.defaultReadObject();
+  }
 
   private void writeObject(ObjectOutputStream stream) throws IOException {
     stream.defaultWriteObject();

@@ -13,11 +13,11 @@
  */
 package org.asosat.ddd.service;
 
-import static org.corant.kernel.util.Instances.select;
 import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.CollectionUtils.immutableSetOf;
 import static org.corant.shared.util.ObjectUtils.asString;
 import static org.corant.shared.util.ObjectUtils.defaultObject;
+import static org.corant.suites.cdi.Instances.select;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Set;

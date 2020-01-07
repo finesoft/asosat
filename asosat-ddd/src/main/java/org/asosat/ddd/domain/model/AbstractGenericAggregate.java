@@ -13,7 +13,7 @@
  */
 package org.asosat.ddd.domain.model;
 
-import static org.corant.kernel.util.Preconditions.requireNotNull;
+import static org.corant.suites.bundle.Preconditions.requireNotNull;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;

@@ -13,12 +13,11 @@
  */
 package org.asosat.ddd.application.service;
 
-import static org.corant.kernel.util.Preconditions.requireNotBlank;
-import static org.corant.kernel.util.Preconditions.requireNotNull;
-import static org.corant.kernel.util.Preconditions.requireTrue;
 import static org.corant.shared.util.MapUtils.getMapObject;
+import static org.corant.suites.bundle.Preconditions.requireNotBlank;
+import static org.corant.suites.bundle.Preconditions.requireNotNull;
+import static org.corant.suites.bundle.Preconditions.requireTrue;
 import java.util.Map;
-
 import org.asosat.ddd.security.SecurityContextHolder;
 import org.asosat.shared.Participator;
 import org.corant.shared.util.Empties;

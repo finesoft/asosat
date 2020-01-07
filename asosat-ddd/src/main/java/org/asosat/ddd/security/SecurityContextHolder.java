@@ -1,6 +1,6 @@
 package org.asosat.ddd.security;
 
-import static org.corant.kernel.util.Instances.resolve;
+import static org.corant.suites.cdi.Instances.find;
 import java.util.Optional;
 import java.util.Set;
 import org.asosat.shared.Participator;
@@ -14,7 +14,7 @@ import org.asosat.shared.Participator;
 public class SecurityContextHolder {
 
   public static Participator currentOrg() {
-    Optional<SecurityContextProducer> scp = resolve(SecurityContextProducer.class);
+    Optional<SecurityContextProducer> scp = find(SecurityContextProducer.class);
     return (scp.isPresent() ? scp.get().get() : DefaultSecurityContext.EMPTY_INST).getCurrentOrg();
   }
 
@@ -24,7 +24,7 @@ public class SecurityContextHolder {
   }
 
   public static Participator currentUser() {
-    Optional<SecurityContextProducer> scp = resolve(SecurityContextProducer.class);
+    Optional<SecurityContextProducer> scp = find(SecurityContextProducer.class);
     return (scp.isPresent() ? scp.get().get() : DefaultSecurityContext.EMPTY_INST).getCurrentUser();
   }
 
@@ -34,7 +34,7 @@ public class SecurityContextHolder {
   }
 
   public static Set<String> currentUserRoles() {
-    Optional<SecurityContextProducer> scp = resolve(SecurityContextProducer.class);
+    Optional<SecurityContextProducer> scp = find(SecurityContextProducer.class);
     return (scp.isPresent() ? scp.get().get() : DefaultSecurityContext.EMPTY_INST).getUserRoles();
   }
 }

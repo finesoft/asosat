@@ -1,6 +1,5 @@
 package org.asosat.ddd.storage;
 
-import static org.corant.kernel.util.Instances.resolveNamed;
 import static org.corant.shared.util.Assertions.shouldBeTrue;
 import static org.corant.shared.util.ConversionUtils.toLong;
 import static org.corant.shared.util.StringUtils.contains;
@@ -9,6 +8,7 @@ import static org.corant.shared.util.StringUtils.isNotBlank;
 import static org.corant.shared.util.StringUtils.left;
 import static org.corant.shared.util.StringUtils.right;
 import static org.corant.shared.util.StringUtils.trim;
+import static org.corant.suites.cdi.Instances.findNamed;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Optional;
@@ -92,7 +92,7 @@ public class GridFSStorageService extends AbstractGridFSBucketProvider implement
         + "please check the value of configuration item['stroage.gridfs.database-bucket'], "
         + "the correct value must contain the database name and bucket name and be connected by '.'");
     final String dn = dataBaseName;
-    dataBase = resolveNamed(MongoDatabase.class, dataBaseName).orElseThrow(
+    dataBase = findNamed(MongoDatabase.class, dataBaseName).orElseThrow(
         () -> new CorantRuntimeException("Can not find any mongo database by name %s.", dn));
     bucket = GridFSBuckets.create(dataBase, bucketName);
   }

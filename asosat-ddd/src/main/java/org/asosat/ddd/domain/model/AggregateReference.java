@@ -15,8 +15,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
-import org.corant.kernel.exception.GeneralRuntimeException;
-import org.corant.kernel.util.Instances;
+import org.corant.suites.bundle.exception.GeneralRuntimeException;
+import org.corant.suites.cdi.Instances;
 import org.corant.suites.ddd.model.Entity;
 import org.corant.suites.ddd.model.Entity.EntityReference;
 import org.corant.suites.ddd.repository.JPARepository;
@@ -62,7 +62,7 @@ public interface AggregateReference<T extends AbstractGenericAggregate> extends 
   static <X extends Entity> X resolve(String namedQuery, Class<X> cls, Map<Object, Object> params) {
     if (isNotBlank(namedQuery)) {
       Annotation[] quas = JPARepositoryExtension.resolveQualifiers(cls);
-      JPARepository jpar = Instances.resolve(JPARepository.class, quas).get();
+      JPARepository jpar = Instances.resolve(JPARepository.class, quas);
       List<X> list = jpar.select(namedQuery, params);
       if (!isEmpty(list)) {
         if (list.size() > 1) {
@@ -77,7 +77,7 @@ public interface AggregateReference<T extends AbstractGenericAggregate> extends 
   static <X> X resolve(String namedQuery, Class<X> cls, Object... params) {
     if (isNotBlank(namedQuery)) {
       Annotation[] quas = JPARepositoryExtension.resolveQualifiers(cls);
-      JPARepository jpar = Instances.resolve(JPARepository.class, quas).get();
+      JPARepository jpar = Instances.resolve(JPARepository.class, quas);
       List<X> list = jpar.select(namedQuery, params);
       if (!isEmpty(list)) {
         if (list.size() > 1) {
@@ -91,7 +91,7 @@ public interface AggregateReference<T extends AbstractGenericAggregate> extends 
 
   static <X> List<X> resolveList(String namedQuery, Class<X> cls, Object... params) {
     Annotation[] quas = JPARepositoryExtension.resolveQualifiers(cls);
-    JPARepository jpar = Instances.resolve(JPARepository.class, quas).get();
+    JPARepository jpar = Instances.resolve(JPARepository.class, quas);
     return jpar.select(namedQuery, params);
   }
 

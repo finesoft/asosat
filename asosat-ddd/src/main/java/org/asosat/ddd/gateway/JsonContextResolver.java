@@ -13,9 +13,9 @@
  */
 package org.asosat.ddd.gateway;
 
-import static org.corant.kernel.util.Instances.select;
 import static org.corant.shared.util.MapUtils.mapOf;
 import static org.corant.shared.util.ObjectUtils.defaultObject;
+import static org.corant.suites.cdi.Instances.select;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Locale;

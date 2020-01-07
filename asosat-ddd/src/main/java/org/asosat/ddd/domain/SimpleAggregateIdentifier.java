@@ -13,7 +13,7 @@
  */
 package org.asosat.ddd.domain;
 
-import static org.corant.kernel.util.Preconditions.requireNotNull;
+import static org.corant.suites.bundle.Preconditions.requireNotNull;
 import javax.persistence.Embeddable;
 import javax.persistence.MappedSuperclass;
 import org.corant.suites.bundle.GlobalMessageCodes;

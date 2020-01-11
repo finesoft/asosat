@@ -17,6 +17,7 @@ import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.CollectionUtils.immutableSetOf;
 import static org.corant.shared.util.ObjectUtils.asString;
 import static org.corant.shared.util.ObjectUtils.defaultObject;
+import static org.corant.suites.cdi.Instances.resolve;
 import static org.corant.suites.cdi.Instances.select;
 import java.lang.annotation.Annotation;
 import java.util.Map;
@@ -59,13 +60,37 @@ public class IdentifierEntityConverterFactory implements ConverterFactory<Object
 
   final Logger logger = Logger.getLogger(this.getClass().getName());
 
+  @Transactional
+  public <T extends Entity> T convert(Object value, Class<T> targetClass, Map<String, ?> hints) {
+    if (value == null) {
+      return null;
+    }
+    Long id = null;
+    if (value instanceof Long || value.getClass().equals(Long.TYPE)) {
+      id = Long.class.cast(value);
+    } else if (value instanceof String) {
+      id = Long.valueOf(value.toString());
+    } else if (value instanceof SimpleAggregateIdentifier) {
+      id = SimpleAggregateIdentifier.class.cast(value).getId();
+    }
+    T entity = null;
+    if (id != null) {
+      Instance<JPARepository> repos = select(JPARepository.class, resolveQualifier(targetClass));
+      if (repos.isResolvable()) {
+        entity = repos.get().get(targetClass, id);
+      }
+    }
+    return shouldNotNull(entity, "Can not convert %s to %s!", value.toString(),
+        targetClass.getSimpleName());
+  }
+
   @Override
   public Converter<Object, Entity> create(Class<Entity> targetClass, Entity defaultValue,
       boolean throwException) {
     return (t, h) -> {
       Entity result = null;
       try {
-        result = convert(t, targetClass, h);
+        result = resolve(IdentifierEntityConverterFactory.class).convert(t, targetClass, h);
       } catch (Exception e) {
         if (throwException) {
           throw new ConversionException(e);
@@ -87,30 +112,6 @@ public class IdentifierEntityConverterFactory implements ConverterFactory<Object
   public boolean isSupportTargetClass(Class<?> targetClass) {
     return cached.computeIfAbsent(targetClass,
         t -> Entity.class.isAssignableFrom(t) && JPAUtils.isPersistenceClass(t));
-  }
-
-  @Transactional
-  protected <T extends Entity> T convert(Object value, Class<T> targetClass, Map<String, ?> hints) {
-    if (value == null) {
-      return null;
-    }
-    Long id = null;
-    if (value instanceof Long || value.getClass().equals(Long.TYPE)) {
-      id = Long.class.cast(value);
-    } else if (value instanceof String) {
-      id = Long.valueOf(value.toString());
-    } else if (value instanceof SimpleAggregateIdentifier) {
-      id = SimpleAggregateIdentifier.class.cast(value).getId();
-    }
-    T entity = null;
-    if (id != null) {
-      Instance<JPARepository> repos = select(JPARepository.class, resolveQualifier(targetClass));
-      if (repos.isResolvable()) {
-        entity = repos.get().get(targetClass, id);
-      }
-    }
-    return shouldNotNull(entity, "Can not convert %s to %s!", value.toString(),
-        targetClass.getSimpleName());
   }
 
   @PostConstruct

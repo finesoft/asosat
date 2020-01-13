@@ -111,8 +111,7 @@ public class MessageSerializers {
       try {
         return jsonObjectMapper.readValue(text, clazz);
       } catch (IOException e) {
-        throw new GeneralRuntimeException(e.getCause(), GlobalMessageCodes.ERR_OBJ_SEL, text,
-            clazz.getName());
+        throw new GeneralRuntimeException(e, GlobalMessageCodes.ERR_OBJ_SEL, text, clazz.getName());
       }
     }
 
@@ -120,7 +119,7 @@ public class MessageSerializers {
       try {
         return jsonObjectMapper.writeValueAsString(message);
       } catch (JsonProcessingException e) {
-        throw new GeneralRuntimeException(e.getCause(), GlobalMessageCodes.ERR_OBJ_SEL, message);
+        throw new GeneralRuntimeException(e, GlobalMessageCodes.ERR_OBJ_SEL, message);
       }
     }
   }

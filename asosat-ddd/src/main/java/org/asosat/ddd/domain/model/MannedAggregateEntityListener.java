@@ -17,6 +17,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 import org.asosat.ddd.security.SecurityContextHolder;
+import org.asosat.shared.Participator;
 
 /**
  * corant-asosat-ddd
@@ -31,9 +32,11 @@ public class MannedAggregateEntityListener {
   void onPrePersist(Object o) {
     if (o instanceof AbstractMannedAggregate) {
       AbstractMannedAggregate obj = AbstractMannedAggregate.class.cast(o);
+      Participator participator = SecurityContextHolder.currentUser();
       if (obj.getCreator() == null) {
-        obj.initCreationInfo(SecurityContextHolder.currentUser());
+        obj.initCreationInfo(participator);
       }
+      obj.initModificationInfo(participator);
     }
   }
 

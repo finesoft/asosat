@@ -13,14 +13,13 @@
  */
 package org.asosat.ddd.gateway;
 
-import static org.corant.shared.util.MapUtils.mapOf;
-import static org.corant.shared.util.ObjectUtils.defaultObject;
-import static org.corant.suites.cdi.Instances.select;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -31,18 +30,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
-import org.corant.Corant;
-import org.corant.suites.bundle.EnumerationBundle;
 import org.corant.suites.json.JsonUtils;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 /**
  * corant-asosat-ddd
- *
  * @author bingo 下午4:49:32
  */
 @ApplicationScoped
@@ -55,9 +46,9 @@ public class JsonContextResolver implements ContextResolver<ObjectMapper> {
   public final static BigInteger BROWSER_SAFE_BIGINTEGER = BigInteger.valueOf(BROWSER_SAFE_LONG);
 
   private final static ObjectMapper objectMapper;
+
   static {
-    SimpleModule simpleModule = new SimpleModule().addSerializer(new BigIntegerJsonSerializer())
-        .addSerializer(new LongJsonSerializer()).addSerializer(new EnumJsonSerializer());
+    SimpleModule simpleModule = new SimpleModule().addSerializer(new BigIntegerJsonSerializer()).addSerializer(new LongJsonSerializer());
     objectMapper = JsonUtils.copyMapper().registerModules(simpleModule);
   }
 
@@ -78,6 +69,7 @@ public class JsonContextResolver implements ContextResolver<ObjectMapper> {
   }
 
   static final class BigIntegerJsonSerializer extends JsonSerializer<BigInteger> {
+
     @Override
     public Class<BigInteger> handledType() {
       return BigInteger.class;
@@ -94,58 +86,8 @@ public class JsonContextResolver implements ContextResolver<ObjectMapper> {
     }
   }
 
-  @Deprecated
-  @SuppressWarnings("rawtypes")
-  static final class EnumJsonSerializer extends JsonSerializer<Enum> {
-
-    static final Map<Enum, Map<String, Object>> CACHES = new ConcurrentHashMap<>();
-
-    static volatile EnumerationBundle bundle;
-
-    @Override
-    public Class<Enum> handledType() {
-      return Enum.class;
-    }
-
-    @Override
-    public void serialize(Enum value, JsonGenerator gen, SerializerProvider serializers)
-        throws IOException {
-      gen.writeObject(resolveEnumLiteral(value));
-    }
-
-    EnumerationBundle resolveBundle() {
-      if (bundle == null) {
-        synchronized (this) {
-          if (bundle == null && Corant.current().isRuning()
-              && select(EnumerationBundle.class).isResolvable()) {
-            bundle = select(EnumerationBundle.class).get();
-          } else {
-            bundle = new EnumJsonSerializerBundle();
-          }
-        }
-      }
-      return bundle;
-    }
-
-    Map<String, Object> resolveEnumLiteral(Enum value) {
-      return CACHES.computeIfAbsent(value, (v) -> {
-        String literal = resolveBundle().getEnumItemLiteral(value, Locale.getDefault());
-        return mapOf("name", value.name(), "literal", defaultObject(literal, value.name()), "class",
-            value.getDeclaringClass().getName(), "ordinal", value.ordinal());
-      });
-    }
-  }
-
-  @Deprecated
-  @SuppressWarnings("rawtypes")
-  static final class EnumJsonSerializerBundle implements EnumerationBundle {
-    @Override
-    public String getEnumItemLiteral(Enum enumVal, Locale locale) {
-      return enumVal.name();
-    }
-  }
-
   static final class LongJsonSerializer extends JsonSerializer<Long> {
+
     @Override
     public Class<Long> handledType() {
       return Long.class;

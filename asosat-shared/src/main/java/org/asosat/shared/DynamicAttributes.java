@@ -35,7 +35,7 @@ import org.corant.shared.util.MapUtils.WrappedMap;
 public interface DynamicAttributes {
 
   public enum AttributeType {
-    ENUM, STRING, BOOLEAN, NUMBERIC, TEMPORAL, LOCALE, CURRENCY, TIME_ZONE, REFERENCE;
+    ENUM, STRING, BOOLEAN, NUMERIC, TEMPORAL, LOCALE, CURRENCY, TIME_ZONE, REFERENCE;
   }
 
   @Converter

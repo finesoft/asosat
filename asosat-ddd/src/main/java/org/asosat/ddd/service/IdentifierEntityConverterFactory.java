@@ -125,6 +125,7 @@ public class IdentifierEntityConverterFactory implements ConverterFactory<Object
   @PreDestroy
   void onPreDestroy() {
     cached.keySet().forEach(c -> ConverterRegistry.deregister(ConverterType.of(Object.class, c)));
+    ConverterRegistry.deregister(this);
   }
 
   Annotation[] resolveQualifier(Class<?> cls) {

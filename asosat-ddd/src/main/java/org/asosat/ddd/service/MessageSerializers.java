@@ -13,8 +13,11 @@
  */
 package org.asosat.ddd.service;
 
+import static org.asosat.ddd.security.SecurityContextHolder.currentOrg;
+import static org.asosat.ddd.security.SecurityContextHolder.currentUser;
 import static org.corant.shared.util.Assertions.shouldBeTrue;
 import static org.corant.shared.util.StreamUtils.copy;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,6 +30,8 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageFormatRuntimeException;
 import javax.jms.TextMessage;
+import org.asosat.ddd.security.SecurityContextHolder;
+import org.asosat.shared.Participator;
 import org.corant.shared.exception.CorantRuntimeException;
 import org.corant.shared.util.Resources.InputStreamResource;
 import org.corant.suites.bundle.GlobalMessageCodes;
@@ -41,9 +46,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * corant-suites-ddd
- *
  * @author bingo 下午3:43:14
- *
  */
 public class MessageSerializers {
 
@@ -94,6 +97,11 @@ public class MessageSerializers {
       shouldBeTrue(message instanceof TextMessage);
       TextMessage tMsg = (TextMessage) message;
       try {
+        Long userId = message.getLongProperty("SC_USER_ID");//FIXME DON
+        String userName = message.getStringProperty("SC_USER_NAME");
+        Long orgId = message.getLongProperty("SC_ORG_ID");
+        String orgName = message.getStringProperty("SC_ORG_NAME");
+        SecurityContextHolder.propagateSecurityContext(userId, userName, orgId, orgName);
         return from(tMsg.getText(), clazz);
       } catch (JMSException e) {
         throw new CorantRuntimeException(e);
@@ -104,6 +112,15 @@ public class MessageSerializers {
     public Message serialize(JMSContext jmsContext, Serializable object) {
       Message message = jmsContext.createTextMessage(to(object));
       resolveSchemaProperty(message, SerializationSchema.JSON_STRING);
+      try {
+        Participator user = currentUser(), org = currentOrg();
+        message.setLongProperty("SC_USER_ID", user.getId());//FIXME DON
+        message.setStringProperty("SC_USER_NAME", user.getName());
+        message.setLongProperty("SC_ORG_ID", org.getId());
+        message.setStringProperty("SC_ORG_NAME", org.getName());
+      } catch (JMSException e) {
+        throw new CorantRuntimeException(e);
+      }
       return message;
     }
 

@@ -14,7 +14,7 @@
  * the License.
  */
 
-package org.corant;
+package org.asosat.ddd;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;

@@ -62,7 +62,7 @@ public class DefaultSecurityContextProducer implements SecurityContextProducer {
             true, "MP-JWT", jwt.getGroups());
       }
     }
-    return DefaultSecurityContext.EMPTY_INST;
+    return null;
   }
 
 }

@@ -34,13 +34,13 @@ public class SecurityContextParameterReviser implements ParameterReviser {
   @Override
   public Map<String, Object> get() {
     Map<String, Object> securityContext = new HashMap<>();
-    Long currentUserId = SecurityContextHolder.currentUserId();
-    if (currentUserId != null) {
-      securityContext.putIfAbsent(Participator.CURRENT_USER_ID_KEY, currentUserId);
+    Participator currentUser= SecurityContextHolder.currentUser();
+    if (currentUser != null) {
+      securityContext.putIfAbsent(Participator.CURRENT_USER_ID_KEY, currentUser.getId());
     }
-    Long currentOrgId = SecurityContextHolder.currentOrgId();
-    if (currentOrgId != null) {
-      securityContext.putIfAbsent(Participator.CURRENT_ORG_ID_KEY, currentOrgId);
+    Participator currentOrg = SecurityContextHolder.currentOrg();
+    if (currentOrg != null) {
+      securityContext.putIfAbsent(Participator.CURRENT_ORG_ID_KEY, currentOrg.getId());
     }
     Set<String> currentUserRoles = SecurityContextHolder.currentUserRoles();
     if (currentUserRoles != null) {

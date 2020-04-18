@@ -6,6 +6,7 @@
   <packaging>pom</packaging>
   <groupId>org.asosat</groupId>
   <artifactId>asosat-root</artifactId>
+  <name>asosat</name>
   <version>${revision}</version>
   <parent>
     <groupId>org.corant</groupId>

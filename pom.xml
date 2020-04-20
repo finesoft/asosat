@@ -10,7 +10,7 @@
   <version>${revision}</version>
   <parent>
     <groupId>org.corant</groupId>
-    <artifactId>corant-boms</artifactId>
+    <artifactId>corant-parent</artifactId>
     <version>1.2.x-SNAPSHOT</version>
   </parent>
   <properties>
@@ -19,17 +19,13 @@
   <modules>
     <module>asosat-shared</module>
     <module>asosat-ddd</module>
-    <module>asosat-parent</module>
+    <module>asosat-boms</module>
   </modules>
   <build>
     <plugins>
       <plugin>
         <groupId>org.corant</groupId>
         <artifactId>corant-devops-maven-jandex</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>flatten-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

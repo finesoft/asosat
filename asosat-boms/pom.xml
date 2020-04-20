@@ -9,7 +9,7 @@
     <groupId>org.asosat</groupId>
     <version>${revision}</version>
   </parent>
-  <artifactId>asosat-parent</artifactId>
+  <artifactId>asosat-boms</artifactId>
   <properties>
     <docker.image.prefix>192.168.100.200:8083</docker.image.prefix>
     <docker.dockerfile.skip>true</docker.dockerfile.skip>

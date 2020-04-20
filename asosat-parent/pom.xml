@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <packaging>pom</packaging>
   <parent>
-    <artifactId>asosat-flattening</artifactId>
+    <artifactId>asosat-root</artifactId>
     <groupId>org.asosat</groupId>
     <version>${revision}</version>
   </parent>
@@ -15,6 +15,43 @@
     <docker.dockerfile.skip>true</docker.dockerfile.skip>
     <runner-class></runner-class>
   </properties>
+  <profiles>
+    <profile>
+      <id>develop</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <docker.image.tag>${project.version}-ALPHA</docker.image.tag>
+      </properties>
+    </profile>
+    <profile>
+      <id>release</id>
+      <properties>
+        <docker.image.tag>${project.version}-BETA</docker.image.tag>
+      </properties>
+    </profile>
+    <profile>
+      <id>master</id>
+      <properties>
+        <docker.image.tag>${project.version}-GA</docker.image.tag>
+      </properties>
+    </profile>
+  </profiles>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.asosat</groupId>
+        <artifactId>asosat-shared</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.asosat</groupId>
+        <artifactId>asosat-ddd</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <build>
     <pluginManagement>
       <plugins>
@@ -73,30 +110,15 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
+        <inherited>false</inherited><!--不传递-->
+        <configuration>
+          <updatePomFile>true</updatePomFile>
+          <flattenMode>resolveCiFriendliesOnly</flattenMode>
+          <pomElements>
+            <dependencyManagement>expand</dependencyManagement>
+          </pomElements>
+        </configuration>
       </plugin>
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>develop</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <properties>
-        <docker.image.tag>${project.version}-ALPHA</docker.image.tag>
-      </properties>
-    </profile>
-    <profile>
-      <id>release</id>
-      <properties>
-        <docker.image.tag>${project.version}-BETA</docker.image.tag>
-      </properties>
-    </profile>
-    <profile>
-      <id>master</id>
-      <properties>
-        <docker.image.tag>${project.version}-GA</docker.image.tag>
-      </properties>
-    </profile>
-  </profiles>
 </project>

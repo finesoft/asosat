@@ -79,8 +79,12 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
-
     <!-- optional -->
+    <dependency>
+      <groupId>com.aliyun</groupId>
+      <artifactId>aliyun-java-sdk-core</artifactId>
+      <optional>true</optional>
+    </dependency>
     <dependency>
       <groupId>org.corant</groupId>
       <artifactId>corant-suites-redis</artifactId>

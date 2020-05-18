@@ -22,19 +22,19 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <docker.image.tag>${project.version}-ALPHA</docker.image.tag>
+        <docker.image.tag>${project.version}-dev</docker.image.tag>
       </properties>
     </profile>
     <profile>
       <id>release</id>
       <properties>
-        <docker.image.tag>${project.version}-BETA</docker.image.tag>
+        <docker.image.tag>${project.version}-sit</docker.image.tag>
       </properties>
     </profile>
     <profile>
       <id>master</id>
       <properties>
-        <docker.image.tag>${project.version}-GA</docker.image.tag>
+        <docker.image.tag>${project.version}-pro</docker.image.tag>
       </properties>
     </profile>
   </profiles>

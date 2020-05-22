@@ -11,33 +11,11 @@
   </parent>
   <artifactId>asosat-boms</artifactId>
   <properties>
-    <docker.image.prefix>192.168.100.200:8083</docker.image.prefix>
     <docker.dockerfile.skip>true</docker.dockerfile.skip>
+    <docker.image.prefix>192.168.100.200:8083</docker.image.prefix>
+    <docker.image.stage>unkonw</docker.image.stage>
     <runner-class></runner-class>
   </properties>
-  <profiles>
-    <profile><!--FIXME DON-->
-      <id>develop</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <properties>
-        <docker.image.tag>${project.version}-sit</docker.image.tag>
-      </properties>
-    </profile>
-    <profile>
-      <id>release</id>
-      <properties>
-        <docker.image.tag>${project.version}-qas</docker.image.tag>
-      </properties>
-    </profile>
-    <profile>
-      <id>master</id>
-      <properties>
-        <docker.image.tag>${project.version}-pro</docker.image.tag>
-      </properties>
-    </profile>
-  </profiles>
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -95,7 +73,7 @@
             <skipDockerInfo>true</skipDockerInfo>
             <skip>${docker.dockerfile.skip}</skip>
             <repository>${docker.image.prefix}/${project.groupId}/${project.artifactId}</repository>
-            <tag>${docker.image.tag}</tag>
+            <tag>${project.version}-${docker.image.stage}</tag>
             <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
             <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
             <buildArgs>

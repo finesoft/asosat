@@ -16,19 +16,19 @@
     <runner-class></runner-class>
   </properties>
   <profiles>
-    <profile>
+    <profile><!--FIXME DON-->
       <id>develop</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <docker.image.tag>${project.version}-dev</docker.image.tag>
+        <docker.image.tag>${project.version}-sit</docker.image.tag>
       </properties>
     </profile>
     <profile>
       <id>release</id>
       <properties>
-        <docker.image.tag>${project.version}-sit</docker.image.tag>
+        <docker.image.tag>${project.version}-qas</docker.image.tag>
       </properties>
     </profile>
     <profile>

@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 
 /**
  * @author don
@@ -17,15 +16,13 @@ public class CorsPreflightRequest {
 
 
   //FIXME DON
-  @Path("/{path: .*}")
+  @Path("/**")
   @OPTIONS
-  public Response xxx(@Context HttpServletResponse resp) {
+  public void xxx(@Context HttpServletResponse resp) {
     System.out.println("=====================options test=====================");
-    resp.setHeader("Access-Control-Allow-Origin", "*");
-    resp.setHeader("Access-Control-Allow-Headers", "origin, content-type, accept, x-requested-with");
-    resp.setHeader("Access-Control-Allow-Credentials", "false");
-    resp.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    resp.setHeader("Access-Control-Max-Age", "3601");
-    return Response.noContent().build();
+    resp.addHeader("Access-Control-Allow-Origin", "*");
+    resp.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    resp.addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, x-requested-with");
+    resp.addHeader("Access-Control-Max-Age", "3600");
   }
 }

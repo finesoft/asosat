@@ -15,6 +15,8 @@ import javax.ws.rs.core.Response;
 @ApplicationScoped
 public class CorsPreflightRequest {
 
+
+  //FIXME DON
   @Path("/{path: .*}")
   @OPTIONS
   public Response xxx(@Context HttpServletResponse resp) {

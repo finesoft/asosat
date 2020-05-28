@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response;
 @ApplicationScoped
 public class CorsPreflightRequest {
 
-  @Path("/**")
+  @Path("/{path: .*}")
   @OPTIONS
   public Response xxx(@Context HttpServletResponse resp) {
     System.out.println("=====================options test=====================");

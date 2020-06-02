@@ -24,7 +24,7 @@ import java.util.Map;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import org.corant.shared.exception.CorantRuntimeException;
-import org.corant.shared.util.MapUtils.WrappedMap;
+import org.corant.shared.ubiquity.WrappedMap;
 
 /**
  * corant-asosat-ddd

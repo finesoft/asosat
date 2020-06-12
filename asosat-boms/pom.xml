@@ -72,7 +72,7 @@
           <configuration>
             <skipDockerInfo>true</skipDockerInfo>
             <skip>${docker.dockerfile.skip}</skip>
-            <repository>${docker.image.prefix}/${project.groupId}/${project.artifactId}</repository>
+            <repository>${docker.image.prefix}/gsft/${project.artifactId}</repository>
             <tag>${project.version}-${docker.image.stage}</tag>
             <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
             <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>

@@ -12,7 +12,7 @@
   <artifactId>asosat-boms</artifactId>
   <properties>
     <docker.dockerfile.skip>true</docker.dockerfile.skip>
-    <docker.image.prefix>192.168.100.200:8083</docker.image.prefix>
+    <docker.image.prefix>192.168.100.200:8083/gsft</docker.image.prefix>
     <docker.image.stage>unkonw</docker.image.stage>
     <runner-class></runner-class>
   </properties>
@@ -72,7 +72,7 @@
           <configuration>
             <skipDockerInfo>true</skipDockerInfo>
             <skip>${docker.dockerfile.skip}</skip>
-            <repository>${docker.image.prefix}/gsft/${project.artifactId}</repository>
+            <repository>${docker.image.prefix}/${project.artifactId}</repository>
             <tag>${project.version}-${docker.image.stage}</tag>
             <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
             <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>

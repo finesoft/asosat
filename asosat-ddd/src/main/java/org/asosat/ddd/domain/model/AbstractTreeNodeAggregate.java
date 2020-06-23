@@ -14,9 +14,9 @@
 package org.asosat.ddd.domain.model;
 
 import static org.corant.shared.util.Empties.isEmpty;
-import static org.corant.shared.util.ObjectUtils.forceCast;
-import static org.corant.shared.util.ObjectUtils.isEquals;
-import static org.corant.shared.util.StreamUtils.streamOf;
+import static org.corant.shared.util.Objects.areEqual;
+import static org.corant.shared.util.Objects.forceCast;
+import static org.corant.shared.util.Streams.streamOf;
 import static org.corant.suites.bundle.Preconditions.requireFalse;
 import static org.corant.suites.bundle.Preconditions.requireTrue;
 import java.io.IOException;
@@ -31,8 +31,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import org.asosat.shared.Participator;
 import org.asosat.shared.TreeNode;
-import org.corant.shared.util.IterableUtils;
-import org.corant.shared.util.ObjectUtils;
+import org.corant.shared.util.Iterables;
 
 /**
  * corant-asosat-ddd
@@ -94,7 +93,7 @@ public abstract class AbstractTreeNodeAggregate<P, T extends AbstractTreeNodeAgg
   public List<T> getPathChilds() {
     List<T> childs = new ArrayList<>();
     if (!isPhantom()) {
-      Iterator<T> it = IterableUtils.depthIterator(forceCast(this));// FIXME
+      Iterator<T> it = Iterables.depthIterator(forceCast(this));// FIXME
       while (it.hasNext()) {
         T t = it.next();
         childs.add(t);
@@ -131,7 +130,7 @@ public abstract class AbstractTreeNodeAggregate<P, T extends AbstractTreeNodeAgg
   public List<T> getSiblings() {
     List<T> siblings = new ArrayList<>();
     if (!isPhantom()) {
-      streamOf(this.toReference().obtainSiblings()).filter(c -> !ObjectUtils.isEquals(c, this))
+      streamOf(this.toReference().obtainSiblings()).filter(c -> !areEqual(c, this))
           .forEach(siblings::add);
     }
     return siblings;
@@ -151,7 +150,7 @@ public abstract class AbstractTreeNodeAggregate<P, T extends AbstractTreeNodeAgg
 
   public boolean isSameRootWith(T other) {
     return other == null || this.getParent() == null || other.getParent() == null ? false
-        : isEquals(
+        : areEqual(
             this.getPathIndex().substring(0, this.getPathIndex().indexOf(TREE_PATHINFO_SEPARATOR)),
             this.getPathIndex().substring(0,
                 other.getPathIndex().indexOf(TREE_PATHINFO_SEPARATOR)));
@@ -173,7 +172,7 @@ public abstract class AbstractTreeNodeAggregate<P, T extends AbstractTreeNodeAgg
 
   @SuppressWarnings("unchecked")
   protected void handleParent(T parent) {
-    requireFalse(isEquals(parent, this) || this.isPathParentOf(parent), "");
+    requireFalse(areEqual(parent, this) || this.isPathParentOf(parent), "");
     this.handlePathInfo(parent);
     if (isPhantom() && parent != null) {
       parent.tmpChilds().add((T) this);

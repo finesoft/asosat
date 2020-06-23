@@ -14,8 +14,8 @@
 package org.asosat.shared;
 
 import static org.corant.shared.util.Assertions.shouldBeTrue;
-import static org.corant.shared.util.ConversionUtils.toBigDecimal;
-import static org.corant.shared.util.ObjectUtils.asString;
+import static org.corant.shared.util.Conversions.toBigDecimal;
+import static org.corant.shared.util.Objects.asString;
 import java.beans.Transient;
 import java.math.BigDecimal;
 import javax.persistence.Column;
@@ -53,6 +53,12 @@ public class Measurables {
 
     @Transient
     @javax.persistence.Transient
+    default boolean canComparable() {
+      return false;
+    }
+
+    @Transient
+    @javax.persistence.Transient
     default BigDecimal defaultScale(BigDecimal value) {
       return Measurables.defaultScale(value);
     }
@@ -62,12 +68,6 @@ public class Measurables {
     MeasureUnit getUnit();
 
     BigDecimal getValue();
-
-    @Transient
-    @javax.persistence.Transient
-    default boolean canComparable() {
-      return false;
-    }
 
     T multiply(BigDecimal multiplicand);
 
@@ -119,6 +119,11 @@ public class Measurables {
       Measurables.validateComparables(other, this);
       return with(defaultScale(value.add(other.getUnit().convert(other.getValue(), getUnit()))),
           getUnit());
+    }
+
+    @Override
+    public boolean canComparable() {
+      return value != null && getUnit() != null;
     }
 
     @Override
@@ -176,11 +181,6 @@ public class Measurables {
       result = prime * result + (unit == null ? 0 : unit.hashCode());
       result = prime * result + (value == null ? 0 : value.hashCode());
       return result;
-    }
-
-    @Override
-    public boolean canComparable() {
-      return value != null && getUnit() != null;
     }
 
     @Override

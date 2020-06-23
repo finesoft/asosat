@@ -8,10 +8,9 @@ import static org.asosat.ddd.exchange.ExcelMerge.MergeIndicate.START;
 import static org.corant.shared.util.Assertions.shouldNotBlank;
 import static org.corant.shared.util.Assertions.shouldNotEmpty;
 import static org.corant.shared.util.Assertions.shouldNotNull;
-import static org.corant.shared.util.StringUtils.defaultBlank;
-import static org.corant.shared.util.StringUtils.isNotBlank;
+import static org.corant.shared.util.Strings.defaultBlank;
+import static org.corant.shared.util.Strings.isNotBlank;
 import static org.corant.suites.bundle.Preconditions.requireTrue;
-
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -46,9 +45,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.asosat.ddd.MK;
-import org.corant.shared.conversion.Conversions;
+import org.corant.shared.conversion.Conversion;
 import org.corant.shared.exception.CorantRuntimeException;
-import org.corant.shared.util.EncryptUtils;
+import org.corant.shared.util.Encrypts;
 import org.corant.suites.bundle.PropertyEnumerationBundle;
 import org.corant.suites.bundle.exception.GeneralRuntimeException;
 import org.corant.suites.cdi.Instances;
@@ -64,10 +63,11 @@ public class ExcelHelper {
   private static final String RESULT_COLUMN_TITLE = "执行结果";
   private static final String RESULT_SUCCESS_MESSAGE = "执行成功";
 
-  private static final Long EXCEL_MAX_NUMBER = 999999999999999L;//excel只支持15位数字
+  private static final Long EXCEL_MAX_NUMBER = 999999999999999L;// excel只支持15位数字
 
   /**
    * 初始化Excel列
+   * 
    * @param sheet
    * @param voCls
    * @return number of head rows
@@ -85,10 +85,10 @@ public class ExcelHelper {
       Class<?> type = colDesc.field.getType();
       if (type.equals(Instant.class)) {
         format = defaultBlank(format, ExcelColumn.INSTANT_FORMAT);
-        width = (width == DEFAULT_COLUMN_WIDTH) ? 4500 : width;
+        width = width == DEFAULT_COLUMN_WIDTH ? 4500 : width;
       } else if (type.equals(LocalDate.class)) {
         format = defaultBlank(format, ExcelColumn.DATE_FORMAT);
-        width = (width == DEFAULT_COLUMN_WIDTH) ? 3000 : width;
+        width = width == DEFAULT_COLUMN_WIDTH ? 3000 : width;
       }
       sheet.setColumnWidth(colDesc.index, width);
       if (isNotBlank(format)) {
@@ -137,7 +137,113 @@ public class ExcelHelper {
   }
 
   /**
+   * 读取excel行转成vo数据
+   * 
+   * @param row
+   * @param voCls
+   * @param <V>
+   * @return
+   */
+  @SuppressWarnings("unchecked")
+  public static <V> V readRowToVo(Row row, Class<V> voCls) {
+    try {
+      V vo = voCls.getConstructor().newInstance();
+      for (ColumnDesc colDesc : getColumnDesc(voCls)) {
+        ExcelColumn annotation = colDesc.annotation;
+        if (annotation.extract()) {
+          Class<?> type = colDesc.field.getType();
+          Cell cell = row.getCell(colDesc.index, MissingCellPolicy.RETURN_NULL_AND_BLANK);
+          if (cell != null) {
+            try {
+              Object v;
+              switch (cell.getCellType()) {
+                case STRING:
+                  v = cell.getStringCellValue();
+                  if (Enum.class.isAssignableFrom(type) && annotation.enumLiteral()) {// 字符转换枚举
+                    Optional<PropertyEnumerationBundle> opt =
+                        Instances.find(PropertyEnumerationBundle.class);// FIXME DON
+                    if (opt.isPresent()) {
+                      Map<Enum, String> literals =
+                          opt.get().getEnumItemLiterals((Class<Enum>) type, Locale.getDefault());
+                      shouldNotEmpty(literals,
+                          "enum:" + type + " not configured literal properties");
+                      for (Entry<Enum, String> e : literals.entrySet()) {
+                        if (e.getValue().equalsIgnoreCase((String) v)) {
+                          v = e.getKey();
+                          break;
+                        }
+                      }
+                      requireTrue(v instanceof Enum, MK.EXCEL_CELL_ENUM_NOT_MATCH);
+                    }
+                  }
+                  break;
+                case NUMERIC:
+                  if (Temporal.class.isAssignableFrom(type)) {
+                    v = cell.getDateCellValue();
+                  } else {
+                    v = cell.getNumericCellValue();
+                  }
+                  break;
+                case BOOLEAN:
+                  v = cell.getBooleanCellValue();
+                  break;
+                case BLANK:
+                  v = null;
+                  break;
+                default:
+                  throw new CorantRuntimeException(
+                      "excel get cell not support " + cell.getCellType());
+              }
+              colDesc.setter.invoke(vo, Conversion.convert(v, type));
+            } catch (RuntimeException e) {
+              throw new GeneralRuntimeException(e, MK.EXCEL_CELL_ERROR, annotation.alphabet(),
+                  annotation.title());
+            }
+          }
+        }
+      }
+      return vo;
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException
+        | NoSuchMethodException e) {
+      throw new CorantRuntimeException(e);
+    }
+  }
+
+  /**
+   * 将处理结果写入excel最后一列
+   * 
+   * @param row
+   * @param gex
+   */
+  public static void silenceFillResult(Row row, GeneralRuntimeException gex) {
+    Workbook workbook = row.getSheet().getWorkbook();
+    Sheet sheet = row.getSheet();
+    Row headRow = sheet.getRow(0);
+
+    int lastIdx = headRow.getLastCellNum() - 1;
+    Cell lastHeadColumn = headRow.getCell(lastIdx, CREATE_NULL_AS_BLANK);
+    if (!lastHeadColumn.toString().startsWith(RESULT_COLUMN_TITLE)) {
+      lastHeadColumn = headRow.getCell(++lastIdx, CREATE_NULL_AS_BLANK);
+      lastHeadColumn.setCellValue(RESULT_COLUMN_TITLE);
+      sheet.setColumnWidth(lastIdx, 8192);
+
+      CellStyle cellStyle = workbook.createCellStyle();
+      cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+      cellStyle.setFillForegroundColor(IndexedColors.RED1.getIndex());
+      lastHeadColumn.setCellStyle(cellStyle);
+    }
+    Cell lastCell = row.getCell(lastIdx, CREATE_NULL_AS_BLANK);
+    if (gex == null) {
+      lastCell.setCellValue(RESULT_SUCCESS_MESSAGE);
+    } else {
+      lastCell.setCellStyle(lastHeadColumn.getCellStyle());
+      lastCell.setCellValue(gex.getLocalizedMessage());
+    }
+  }
+
+  /**
    * 设置Excel每一数据行的值
+   * 
    * @param row
    * @param vo
    */
@@ -168,8 +274,9 @@ public class ExcelHelper {
       } else if (v instanceof LocalDate) {
         cell.setCellValue((LocalDate) v);
       } else if (v instanceof Enum) {
-        Optional<PropertyEnumerationBundle> opt; //FIXME DON 待提供静态变量后再改进 Instances.resolve
-        if (colDesc.annotation.enumLiteral() && (opt = Instances.find(PropertyEnumerationBundle.class)).isPresent()) {
+        Optional<PropertyEnumerationBundle> opt; // FIXME DON 待提供静态变量后再改进 Instances.resolve
+        if (colDesc.annotation.enumLiteral()
+            && (opt = Instances.find(PropertyEnumerationBundle.class)).isPresent()) {
           String literal = opt.get().getEnumItemLiteral((Enum) v, Locale.getDefault());
           shouldNotBlank(literal, "enum:" + v + " not configured literal properties");
           cell.setCellValue(literal);
@@ -181,103 +288,6 @@ public class ExcelHelper {
       } else {
         throw new CorantRuntimeException("excel set cell not support " + v.getClass());
       }
-    }
-  }
-
-  /**
-   * 读取excel行转成vo数据
-   * @param row
-   * @param voCls
-   * @param <V>
-   * @return
-   */
-  @SuppressWarnings("unchecked")
-  public static <V> V readRowToVo(Row row, Class<V> voCls) {
-    try {
-      V vo = voCls.getConstructor().newInstance();
-      for (ColumnDesc colDesc : getColumnDesc(voCls)) {
-        ExcelColumn annotation = colDesc.annotation;
-        if (annotation.extract()) {
-          Class<?> type = colDesc.field.getType();
-          Cell cell = row.getCell(colDesc.index, MissingCellPolicy.RETURN_NULL_AND_BLANK);
-          if (cell != null) {
-            try {
-              Object v;
-              switch (cell.getCellType()) {
-                case STRING:
-                  v = cell.getStringCellValue();
-                  if (Enum.class.isAssignableFrom(type) && annotation.enumLiteral()) {//字符转换枚举
-                    Optional<PropertyEnumerationBundle> opt = Instances.find(PropertyEnumerationBundle.class);//FIXME DON
-                    if (opt.isPresent()) {
-                      Map<Enum, String> literals = opt.get().getEnumItemLiterals((Class<Enum>) type, Locale.getDefault());
-                      shouldNotEmpty(literals, "enum:" + type + " not configured literal properties");
-                      for (Entry<Enum, String> e : literals.entrySet()) {
-                        if (e.getValue().equalsIgnoreCase((String) v)) {
-                          v = e.getKey();
-                          break;
-                        }
-                      }
-                      requireTrue(v instanceof Enum, MK.EXCEL_CELL_ENUM_NOT_MATCH);
-                    }
-                  }
-                  break;
-                case NUMERIC:
-                  if (Temporal.class.isAssignableFrom(type)) {
-                    v = cell.getDateCellValue();
-                  } else {
-                    v = cell.getNumericCellValue();
-                  }
-                  break;
-                case BOOLEAN:
-                  v = cell.getBooleanCellValue();
-                  break;
-                case BLANK:
-                  v = null;
-                  break;
-                default:
-                  throw new CorantRuntimeException("excel get cell not support " + cell.getCellType());
-              }
-              colDesc.setter.invoke(vo, Conversions.convert(v, type));
-            } catch (RuntimeException e) {
-              throw new GeneralRuntimeException(e, MK.EXCEL_CELL_ERROR, annotation.alphabet(), annotation.title());
-            }
-          }
-        }
-      }
-      return vo;
-    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      throw new CorantRuntimeException(e);
-    }
-  }
-
-  /**
-   * 将处理结果写入excel最后一列
-   * @param row
-   * @param gex
-   */
-  public static void silenceFillResult(Row row, GeneralRuntimeException gex) {
-    Workbook workbook = row.getSheet().getWorkbook();
-    Sheet sheet = row.getSheet();
-    Row headRow = sheet.getRow(0);
-
-    int lastIdx = headRow.getLastCellNum() - 1;
-    Cell lastHeadColumn = headRow.getCell(lastIdx, CREATE_NULL_AS_BLANK);
-    if (!lastHeadColumn.toString().startsWith(RESULT_COLUMN_TITLE)) {
-      lastHeadColumn = headRow.getCell(++lastIdx, CREATE_NULL_AS_BLANK);
-      lastHeadColumn.setCellValue(RESULT_COLUMN_TITLE);
-      sheet.setColumnWidth(lastIdx, 8192);
-
-      CellStyle cellStyle = workbook.createCellStyle();
-      cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-      cellStyle.setFillForegroundColor(IndexedColors.RED1.getIndex());
-      lastHeadColumn.setCellStyle(cellStyle);
-    }
-    Cell lastCell = row.getCell(lastIdx, CREATE_NULL_AS_BLANK);
-    if (gex == null) {
-      lastCell.setCellValue(RESULT_SUCCESS_MESSAGE);
-    } else {
-      lastCell.setCellStyle(lastHeadColumn.getCellStyle());
-      lastCell.setCellValue(gex.getLocalizedMessage());
     }
   }
 
@@ -323,9 +333,9 @@ public class ExcelHelper {
     private final Method setter;
 
     public ColumnDesc(ExcelColumn annotation, Field field, Method getter, Method setter) {
-      this.index = EncryptUtils.alphabetToIntScale(annotation.alphabet()) - 1;
+      index = Encrypts.alphabetToIntScale(annotation.alphabet()) - 1;
       this.annotation = annotation;
-      this.mergeAnnotation = field.getAnnotation(ExcelMerge.class);
+      mergeAnnotation = field.getAnnotation(ExcelMerge.class);
       this.field = field;
       this.getter = getter;
       this.setter = setter;

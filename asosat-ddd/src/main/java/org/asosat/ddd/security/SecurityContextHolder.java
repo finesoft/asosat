@@ -1,7 +1,7 @@
 package org.asosat.ddd.security;
 
 import static org.corant.shared.util.Assertions.shouldNotNull;
-import static org.corant.shared.util.ObjectUtils.defaultObject;
+import static org.corant.shared.util.Objects.defaultObject;
 import static org.corant.suites.cdi.Instances.find;
 
 import java.util.Optional;

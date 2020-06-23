@@ -14,9 +14,9 @@
 package org.asosat.ddd.service;
 
 import static org.corant.shared.util.Assertions.shouldNotNull;
-import static org.corant.shared.util.CollectionUtils.immutableSetOf;
-import static org.corant.shared.util.ObjectUtils.asString;
-import static org.corant.shared.util.ObjectUtils.defaultObject;
+import static org.corant.shared.util.Objects.asString;
+import static org.corant.shared.util.Objects.defaultObject;
+import static org.corant.shared.util.Sets.immutableSetOf;
 import static org.corant.suites.cdi.Instances.resolve;
 import static org.corant.suites.cdi.Instances.select;
 import java.lang.annotation.Annotation;

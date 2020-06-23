@@ -13,8 +13,8 @@
  */
 package org.asosat.ddd.domain.model;
 
-import static org.corant.shared.util.ObjectUtils.isEquals;
-import static org.corant.shared.util.StringUtils.trim;
+import static org.corant.shared.util.Objects.areEqual;
+import static org.corant.shared.util.Strings.trim;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.MappedSuperclass;
@@ -123,7 +123,7 @@ public abstract class AbstractReferenceDataAggregate<P, T extends AbstractRefere
   }
 
   protected boolean changeName(String name) {
-    if (isEquals(trim(name), this.name)) {
+    if (areEqual(trim(name), this.name)) {
       return false;
     }
     this.setName(name);
@@ -131,7 +131,7 @@ public abstract class AbstractReferenceDataAggregate<P, T extends AbstractRefere
   }
 
   protected boolean changeNumber(String number) {
-    if (isEquals(trim(number), this.number)) {
+    if (areEqual(trim(number), this.number)) {
       return false;
     }
     this.setNumber(number);

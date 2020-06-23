@@ -13,7 +13,7 @@
  */
 package org.asosat.ddd;
 
-import static org.corant.shared.util.MapUtils.mapOf;
+import static org.corant.shared.util.Maps.mapOf;
 import java.time.LocalDate;
 
 import org.asosat.shared.Param;

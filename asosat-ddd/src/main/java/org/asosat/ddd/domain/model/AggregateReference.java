@@ -1,12 +1,12 @@
 package org.asosat.ddd.domain.model;
 
 import static org.apache.commons.lang3.reflect.ConstructorUtils.invokeExactConstructor;
-import static org.corant.shared.util.ConversionUtils.toLong;
-import static org.corant.shared.util.ConversionUtils.toObject;
+import static org.corant.shared.util.Conversions.toLong;
+import static org.corant.shared.util.Conversions.toObject;
 import static org.corant.shared.util.Empties.isEmpty;
-import static org.corant.shared.util.ObjectUtils.asString;
-import static org.corant.shared.util.ObjectUtils.forceCast;
-import static org.corant.shared.util.StringUtils.isNotBlank;
+import static org.corant.shared.util.Objects.asString;
+import static org.corant.shared.util.Objects.forceCast;
+import static org.corant.shared.util.Strings.isNotBlank;
 import static org.corant.suites.bundle.GlobalMessageCodes.ERR_OBJ_NON_FUD;
 import static org.corant.suites.bundle.GlobalMessageCodes.ERR_PARAM;
 import java.io.Serializable;

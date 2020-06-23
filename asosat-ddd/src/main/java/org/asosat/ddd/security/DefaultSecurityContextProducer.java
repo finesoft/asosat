@@ -13,15 +13,15 @@
  */
 package org.asosat.ddd.security;
 
-import static org.corant.shared.util.ConversionUtils.toLong;
-import static org.corant.shared.util.ObjectUtils.defaultObject;
+import static org.corant.shared.util.Conversions.toLong;
+import static org.corant.shared.util.Objects.defaultObject;
 import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.spi.Context;
 import javax.inject.Inject;
 import org.asosat.shared.Participator;
-import org.corant.shared.util.ConversionUtils;
+import org.corant.shared.util.Conversions;
 import org.corant.suites.cdi.Instances;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.weld.manager.api.WeldManager;
@@ -49,13 +49,13 @@ public class DefaultSecurityContextProducer implements SecurityContextProducer {
         Participator currentOrg = null;
         if (jwt.containsClaim("userId")) {
           Long userId = toLong(jwt.getClaim("userId"));
-          String userName = defaultObject(ConversionUtils.toString(jwt.getClaim("name")),
-              ConversionUtils.toString(jwt.getClaim("preferred_username"))); // from2019/12/19
+          String userName = defaultObject(Conversions.toString(jwt.getClaim("name")),
+              Conversions.toString(jwt.getClaim("preferred_username"))); // from2019/12/19
           currentUser = new Participator(userId, userName);
         }
         if (jwt.containsClaim("orgId")) {
           Long orgId = toLong(jwt.getClaim("orgId"));
-          String orgName = ConversionUtils.toString(jwt.getClaim("orgName"));
+          String orgName = Conversions.toString(jwt.getClaim("orgName"));
           currentOrg = new Participator(orgId, orgName);
         }
         return new DefaultSecurityContext(jwt.getRawToken(), null, jwt, currentUser, currentOrg,

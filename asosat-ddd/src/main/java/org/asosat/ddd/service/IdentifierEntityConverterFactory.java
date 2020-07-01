@@ -36,7 +36,6 @@ import org.corant.shared.conversion.ConversionException;
 import org.corant.shared.conversion.Converter;
 import org.corant.shared.conversion.ConverterFactory;
 import org.corant.shared.conversion.ConverterRegistry;
-import org.corant.shared.conversion.ConverterType;
 import org.corant.suites.ddd.annotation.stereotype.InfrastructureServices;
 import org.corant.suites.ddd.model.Entity;
 import org.corant.suites.ddd.repository.JPARepository;
@@ -124,7 +123,6 @@ public class IdentifierEntityConverterFactory implements ConverterFactory<Object
 
   @PreDestroy
   void onPreDestroy() {
-    cached.keySet().forEach(c -> ConverterRegistry.deregister(ConverterType.of(Object.class, c)));
     ConverterRegistry.deregister(this);
   }
 

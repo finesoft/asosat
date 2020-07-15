@@ -13,7 +13,7 @@
   <properties>
     <docker.dockerfile.skip>true</docker.dockerfile.skip>
     <docker.image.prefix>192.168.100.200:8083/gsft</docker.image.prefix>
-    <docker.image.stage>unkonw</docker.image.stage>
+    <docker.image.profile>unkonw</docker.image.profile>
     <runner-class></runner-class>
   </properties>
   <dependencyManagement>
@@ -73,7 +73,7 @@
             <skipDockerInfo>true</skipDockerInfo>
             <skip>${docker.dockerfile.skip}</skip>
             <repository>${docker.image.prefix}/${project.artifactId}</repository>
-            <tag>${project.version}-${docker.image.stage}</tag>
+            <tag>${project.version}-${docker.image.profile}</tag>
             <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
             <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
             <buildArgs>

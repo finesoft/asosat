@@ -1,9 +1,8 @@
 package org.asosat.ddd.exchange;
 
 import static org.corant.shared.util.Assertions.shouldBeTrue;
-import static org.corant.shared.util.CollectionUtils.listOf;
 import static org.corant.shared.util.Empties.isNotEmpty;
-
+import static org.corant.shared.util.Lists.listOf;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,33 +19,34 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.asosat.shared.exchange.DataImporter;
-import org.corant.suites.bundle.exception.GeneralRuntimeException;
 import org.corant.shared.exception.CorantRuntimeException;
 import org.corant.shared.util.Resources.InputStreamResource;
 import org.corant.shared.util.Resources.Resource;
+import org.corant.suites.bundle.exception.GeneralRuntimeException;
 
 /**
  * @author don
  * @date 2020-01-04
  */
-public abstract class AbstractExcelChunkImporter<V> extends AbstractExcelExchanger<V> implements DataImporter {
+public abstract class AbstractExcelChunkImporter<V> extends AbstractExcelExchanger<V>
+    implements DataImporter {
 
   private static final int CHUNK_LIMIT = 256;
 
   private final int numOfSkipHeadRow;
+
+  protected AbstractExcelChunkImporter() {
+    this(1);
+  }
 
   protected AbstractExcelChunkImporter(int numOfSkipHeadRow) {
     shouldBeTrue(numOfSkipHeadRow >= 0);
     this.numOfSkipHeadRow = numOfSkipHeadRow;
   }
 
-  protected AbstractExcelChunkImporter() {
-    this(1);
-  }
-
   /**
-   * 导入数据,
-   * 捕获GeneralRuntimeException异常,并输出excel,其它异常无法继续执行
+   * 导入数据, 捕获GeneralRuntimeException异常,并输出excel,其它异常无法继续执行
+   * 
    * @param resource
    * @param reporter
    */
@@ -73,7 +73,8 @@ public abstract class AbstractExcelChunkImporter<V> extends AbstractExcelExchang
           integrateReporter.rowReport(row, e);
         }
         if ((rowIdx % CHUNK_LIMIT == 0 || rowIdx == numberOfRows - 1) && isNotEmpty(collected)) {
-          BiConsumer<HoldingImportContext, V> eachRowConsumer = peekChunkData(listOf(collected.values()));
+          BiConsumer<HoldingImportContext, V> eachRowConsumer =
+              peekChunkData(listOf(collected.values()));
           for (Entry<Row, V> ent : collected.entrySet()) {
             GeneralRuntimeException gex = null;
             try {
@@ -87,7 +88,7 @@ public abstract class AbstractExcelChunkImporter<V> extends AbstractExcelExchang
           collected.clear();
         }
       }
-      //FIXME DON 先临时在内存中  http://poi.apache.org/components/spreadsheet/how-to.html#sxssf
+      // FIXME DON 先临时在内存中 http://poi.apache.org/components/spreadsheet/how-to.html#sxssf
       ByteArrayOutputStream output = new ByteArrayOutputStream();
       workbook.write(output);
       return new InputStreamResource(new ByteArrayInputStream(output.toByteArray()), "result.xlsx");
@@ -96,10 +97,10 @@ public abstract class AbstractExcelChunkImporter<V> extends AbstractExcelExchang
     }
   }
 
-  protected abstract BiConsumer<HoldingImportContext, V> peekChunkData(List<V> data);
-
   @SuppressWarnings("unused")
   protected void importPrepare(HoldingImportContext ctx) {}
+
+  protected abstract BiConsumer<HoldingImportContext, V> peekChunkData(List<V> data);
 
   class IntegrateReporter {
 

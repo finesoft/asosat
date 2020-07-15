@@ -5,10 +5,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static org.corant.shared.util.Assertions.shouldNotNull;
-import static org.corant.shared.util.MapUtils.immutableMapOf;
-import static org.corant.shared.util.ObjectUtils.defaultObject;
-import static org.corant.shared.util.StringUtils.isNotBlank;
-
+import static org.corant.shared.util.Maps.immutableMapOf;
+import static org.corant.shared.util.Objects.defaultObject;
+import static org.corant.shared.util.Strings.isNotBlank;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -21,6 +20,7 @@ import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 
 /**
  * resteasy InputPart resource
+ * 
  * @author don
  * @date 2019-09-26
  */
@@ -32,14 +32,19 @@ public class InputPartResource implements Resource {
 
   public InputPartResource(InputPart inputPart) {
     this.inputPart = shouldNotNull(inputPart);
-    ContentDisposition disposition = ContentDispositions.parse(inputPart.getHeaders().getFirst(CONTENT_DISPOSITION));
+    ContentDisposition disposition =
+        ContentDispositions.parse(inputPart.getHeaders().getFirst(CONTENT_DISPOSITION));
     String filename = disposition.getFilename();
     if (disposition.getCharset() == null && isNotBlank(filename)) {
-      //因为apache mime4j 解析浏览器提交的文件名按ISO_8859_1处理
-      //上传文件断点ContentUtil.decode(ByteSequence byteSequence, int offset, int length)
+      // 因为apache mime4j 解析浏览器提交的文件名按ISO_8859_1处理
+      // 上传文件断点ContentUtil.decode(ByteSequence byteSequence, int offset, int length)
       filename = new String(filename.getBytes(ISO_8859_1), UTF_8);
     }
     this.filename = defaultObject(filename, () -> "unnamed-" + UUID.randomUUID());
+  }
+
+  public String getContentType() {
+    return inputPart.getMediaType().toString();
   }
 
   @Override
@@ -60,10 +65,6 @@ public class InputPartResource implements Resource {
   @Override
   public SourceType getSourceType() {
     return null;
-  }
-
-  public String getContentType() {
-    return inputPart.getMediaType().toString();
   }
 
   @Override

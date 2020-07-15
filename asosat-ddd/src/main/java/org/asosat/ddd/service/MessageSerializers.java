@@ -16,8 +16,7 @@ package org.asosat.ddd.service;
 import static org.asosat.ddd.security.SecurityContextHolder.currentOrg;
 import static org.asosat.ddd.security.SecurityContextHolder.currentUser;
 import static org.corant.shared.util.Assertions.shouldBeTrue;
-import static org.corant.shared.util.StreamUtils.copy;
-
+import static org.corant.shared.util.Streams.copy;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -46,6 +45,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * corant-suites-ddd
+ * 
  * @author bingo 下午3:43:14
  */
 public class MessageSerializers {
@@ -97,7 +97,7 @@ public class MessageSerializers {
       shouldBeTrue(message instanceof TextMessage);
       TextMessage tMsg = (TextMessage) message;
       try {
-        Long userId = message.getLongProperty("SC_USER_ID");//FIXME DON
+        Long userId = message.getLongProperty("SC_USER_ID");// FIXME DON
         String userName = message.getStringProperty("SC_USER_NAME");
         Long orgId = message.getLongProperty("SC_ORG_ID");
         String orgName = message.getStringProperty("SC_ORG_NAME");
@@ -114,7 +114,7 @@ public class MessageSerializers {
       resolveSchemaProperty(message, SerializationSchema.JSON_STRING);
       try {
         Participator user = currentUser(), org = currentOrg();
-        message.setLongProperty("SC_USER_ID", user.getId());//FIXME DON
+        message.setLongProperty("SC_USER_ID", user.getId());// FIXME DON
         message.setStringProperty("SC_USER_NAME", user.getName());
         message.setLongProperty("SC_ORG_ID", org.getId());
         message.setStringProperty("SC_ORG_NAME", org.getName());

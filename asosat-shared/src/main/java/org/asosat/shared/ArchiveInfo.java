@@ -13,10 +13,10 @@
  */
 package org.asosat.shared;
 
-import static org.corant.shared.util.MapUtils.getMapBoolean;
-import static org.corant.shared.util.MapUtils.getMapInstant;
-import static org.corant.shared.util.MapUtils.getMapLong;
-import static org.corant.shared.util.MapUtils.getMapString;
+import static org.corant.shared.util.Maps.getMapBoolean;
+import static org.corant.shared.util.Maps.getMapInstant;
+import static org.corant.shared.util.Maps.getMapLong;
+import static org.corant.shared.util.Maps.getMapString;
 import java.time.Instant;
 import java.util.Map;
 import javax.persistence.AttributeOverride;

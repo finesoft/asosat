@@ -14,8 +14,8 @@
 package org.asosat.shared;
 
 import static java.math.BigDecimal.ONE;
-import static org.corant.shared.util.ObjectUtils.defaultObject;
-import static org.corant.shared.util.StringUtils.defaultString;
+import static org.corant.shared.util.Objects.defaultObject;
+import static org.corant.shared.util.Strings.defaultString;
 import java.beans.Transient;
 import java.math.BigDecimal;
 import java.math.RoundingMode;

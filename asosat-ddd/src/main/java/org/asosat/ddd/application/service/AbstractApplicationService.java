@@ -13,7 +13,7 @@
  */
 package org.asosat.ddd.application.service;
 
-import static org.corant.shared.util.MapUtils.getMapObject;
+import static org.corant.shared.util.Maps.getMapObject;
 import static org.corant.suites.bundle.Preconditions.requireNotBlank;
 import static org.corant.suites.bundle.Preconditions.requireNotNull;
 import static org.corant.suites.bundle.Preconditions.requireTrue;
@@ -21,7 +21,7 @@ import java.util.Map;
 import org.asosat.ddd.security.SecurityContextHolder;
 import org.asosat.shared.Participator;
 import org.corant.shared.util.Empties;
-import org.corant.shared.util.ObjectUtils;
+import org.corant.shared.util.Objects;
 import org.corant.suites.bundle.GlobalMessageCodes;
 import org.corant.suites.ddd.annotation.stereotype.ApplicationServices;
 import org.corant.suites.ddd.model.Entity.EntityReference;
@@ -46,7 +46,7 @@ public abstract class AbstractApplicationService implements ApplicationService {
   }
 
   protected Participator currentOrg(Map<?, ?> cmd) {
-    return getMapObject(cmd, Participator.CURRENT_ORG_KEY, ObjectUtils::forceCast, null);
+    return getMapObject(cmd, Participator.CURRENT_ORG_KEY, Objects::forceCast, null);
   }
 
   protected Participator currentUser() {
@@ -54,7 +54,7 @@ public abstract class AbstractApplicationService implements ApplicationService {
   }
 
   protected Participator currentUser(Map<?, ?> cmd) {
-    return getMapObject(cmd, Participator.CURRENT_USER_KEY, ObjectUtils::forceCast, null);
+    return getMapObject(cmd, Participator.CURRENT_USER_KEY, Objects::forceCast, null);
   }
 
   protected String notBlank(String obj) {
@@ -83,6 +83,6 @@ public abstract class AbstractApplicationService implements ApplicationService {
 
   @SuppressWarnings("rawtypes")
   protected <T extends EntityReference> T validRefObj(T obj) {
-    return requireTrue(obj, ObjectUtils::isNotNull, "");// FIXME
+    return requireTrue(obj, Objects::isNotNull, "");// FIXME
   }
 }

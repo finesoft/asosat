@@ -13,12 +13,12 @@
  */
 package org.asosat.ddd.gateway;
 
-import static org.corant.shared.util.ClassUtils.tryAsClass;
+import static org.corant.shared.util.Classes.tryAsClass;
 import static org.corant.shared.util.Empties.isEmpty;
-import static org.corant.shared.util.MapUtils.linkedHashMapOf;
-import static org.corant.shared.util.ObjectUtils.defaultObject;
-import static org.corant.shared.util.ObjectUtils.forceCast;
-import static org.corant.shared.util.StringUtils.isNotBlank;
+import static org.corant.shared.util.Maps.linkedHashMapOf;
+import static org.corant.shared.util.Objects.defaultObject;
+import static org.corant.shared.util.Objects.forceCast;
+import static org.corant.shared.util.Strings.isNotBlank;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;

@@ -13,9 +13,9 @@
  */
 package org.asosat.shared;
 
-import static org.corant.shared.util.ConversionUtils.toLong;
-import static org.corant.shared.util.MapUtils.getMapLong;
-import static org.corant.shared.util.MapUtils.getMapString;
+import static org.corant.shared.util.Conversions.toLong;
+import static org.corant.shared.util.Maps.getMapLong;
+import static org.corant.shared.util.Maps.getMapString;
 import java.security.Principal;
 import java.util.Map;
 import java.util.Objects;
@@ -37,6 +37,24 @@ public class Participator implements Principal, ValueObject {
   public static final String CURRENT_USER_ID_KEY = "_currentUserId";
   public static final String CURRENT_ORG_ID_KEY = "_currentOrgId";
 
+  @Column(name = "participatorId")
+  private Long id;
+
+  @Column(name = "participatorName")
+  private String name;
+
+  public Participator(Long id, String name) {
+    super();
+    setId(id);
+    setName(name);
+  }
+
+  public <K, V> Participator(Map<K, V> mapObj) {
+    this(getMapLong(mapObj, "id"), getMapString(mapObj, "name"));
+  }
+
+  protected Participator() {}
+
   @SuppressWarnings("unchecked")
   public static Participator of(Object obj) {
     if (obj instanceof Map) {
@@ -48,24 +66,6 @@ public class Participator implements Principal, ValueObject {
       return Participator.class.cast(obj);
     }
     return null;
-  }
-
-  @Column(name = "participatorId")
-  private Long id;
-
-  @Column(name = "participatorName")
-  private String name;
-
-  protected Participator() {}
-
-  public Participator(Long id, String name) {
-    super();
-    setId(id);
-    setName(name);
-  }
-
-  public <K, V> Participator(Map<K, V> mapObj) {
-    this(getMapLong(mapObj, "id"), getMapString(mapObj, "name"));
   }
 
   @Override

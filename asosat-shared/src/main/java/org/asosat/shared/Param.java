@@ -13,7 +13,7 @@
  */
 package org.asosat.shared;
 
-import static org.corant.shared.util.MapUtils.mapOf;
+import static org.corant.shared.util.Maps.mapOf;
 import java.io.Serializable;
 import java.util.Map;
 import org.asosat.shared.DynamicAttributes.DynamicAttributeMap;

@@ -1,13 +1,13 @@
 package org.asosat.ddd.storage;
 
 import static org.corant.shared.util.Assertions.shouldBeTrue;
-import static org.corant.shared.util.ConversionUtils.toLong;
-import static org.corant.shared.util.StringUtils.contains;
-import static org.corant.shared.util.StringUtils.isNoneBlank;
-import static org.corant.shared.util.StringUtils.isNotBlank;
-import static org.corant.shared.util.StringUtils.left;
-import static org.corant.shared.util.StringUtils.right;
-import static org.corant.shared.util.StringUtils.trim;
+import static org.corant.shared.util.Conversions.toLong;
+import static org.corant.shared.util.Strings.contains;
+import static org.corant.shared.util.Strings.isNoneBlank;
+import static org.corant.shared.util.Strings.isNotBlank;
+import static org.corant.shared.util.Strings.left;
+import static org.corant.shared.util.Strings.right;
+import static org.corant.shared.util.Strings.trim;
 import static org.corant.suites.cdi.Instances.findNamed;
 import java.io.InputStream;
 import java.util.Map;

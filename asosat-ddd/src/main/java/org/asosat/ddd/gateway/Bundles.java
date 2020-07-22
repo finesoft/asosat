@@ -40,7 +40,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.corant.suites.bundle.EnumerationBundle;
 import org.corant.suites.bundle.MessageBundle;
-import org.corant.suites.cdi.ConversionService;
+import org.corant.context.ConversionService;
 
 /**
  * asosat-ddd

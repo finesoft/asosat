@@ -15,7 +15,7 @@ package org.asosat.ddd.storage;
 
 import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.Strings.defaultString;
-import static org.corant.suites.cdi.Instances.resolveApply;
+import static org.corant.context.Instances.resolveApply;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;

@@ -22,7 +22,7 @@ import javax.enterprise.context.spi.Context;
 import javax.inject.Inject;
 import org.asosat.shared.Participator;
 import org.corant.shared.util.Conversions;
-import org.corant.suites.cdi.Instances;
+import org.corant.context.Instances;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.weld.manager.api.WeldManager;
 

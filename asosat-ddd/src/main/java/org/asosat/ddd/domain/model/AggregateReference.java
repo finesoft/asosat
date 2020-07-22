@@ -16,7 +16,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import org.corant.suites.bundle.exception.GeneralRuntimeException;
-import org.corant.suites.cdi.Instances;
+import org.corant.context.Instances;
 import org.corant.suites.ddd.model.Entity;
 import org.corant.suites.ddd.model.Entity.EntityReference;
 import org.corant.suites.ddd.repository.JPARepository;

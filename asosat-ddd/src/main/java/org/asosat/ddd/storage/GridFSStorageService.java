@@ -8,7 +8,7 @@ import static org.corant.shared.util.Strings.isNotBlank;
 import static org.corant.shared.util.Strings.left;
 import static org.corant.shared.util.Strings.right;
 import static org.corant.shared.util.Strings.trim;
-import static org.corant.suites.cdi.Instances.findNamed;
+import static org.corant.context.Instances.findNamed;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Optional;

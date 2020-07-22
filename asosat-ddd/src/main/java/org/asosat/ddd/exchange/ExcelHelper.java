@@ -50,7 +50,7 @@ import org.corant.shared.exception.CorantRuntimeException;
 import org.corant.shared.util.Encrypts;
 import org.corant.suites.bundle.PropertyEnumerationBundle;
 import org.corant.suites.bundle.exception.GeneralRuntimeException;
-import org.corant.suites.cdi.Instances;
+import org.corant.context.Instances;
 
 /**
  * @author don

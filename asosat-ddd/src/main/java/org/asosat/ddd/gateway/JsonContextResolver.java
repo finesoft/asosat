@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Locale;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -30,6 +31,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
+import org.corant.suites.bundle.EnumerationBundle;
 import org.corant.suites.json.JsonUtils;
 
 /**
@@ -45,16 +47,14 @@ public class JsonContextResolver implements ContextResolver<ObjectMapper> {
   public final static Long BROWSER_SAFE_LONG = 9007199254740991L;
   public final static BigInteger BROWSER_SAFE_BIGINTEGER = BigInteger.valueOf(BROWSER_SAFE_LONG);
 
-  private final static ObjectMapper objectMapper;
+  private ObjectMapper objectMapper;
 
-  static {
-    SimpleModule simpleModule = new SimpleModule().addSerializer(new BigIntegerJsonSerializer()).addSerializer(new LongJsonSerializer());
-    objectMapper = JsonUtils.copyMapper().registerModules(simpleModule);
-  }
+  @Any
+  @Inject
+  Instance<JsonContextResolverConfigurator> configurator;
 
   @Inject
-  @Any
-  Instance<JsonContextResolverConfigurator> configurator;
+  EnumerationBundle enumerationBundle;
 
   @Override
   public ObjectMapper getContext(Class<?> objectType) {
@@ -63,6 +63,12 @@ public class JsonContextResolver implements ContextResolver<ObjectMapper> {
 
   @PostConstruct
   void onPostConstruct() {
+    SimpleModule simpleModule = new SimpleModule()
+        .addSerializer(new BigIntegerJsonSerializer())
+        .addSerializer(new LongJsonSerializer())
+        .addSerializer(new EnumJsonSerializer(enumerationBundle));
+    objectMapper = JsonUtils.copyMapper().registerModules(simpleModule);
+
     if (!configurator.isUnsatisfied()) {
       configurator.forEach(cfg -> cfg.config(objectMapper));
     }
@@ -100,6 +106,29 @@ public class JsonContextResolver implements ContextResolver<ObjectMapper> {
         gen.writeString(value.toString());
       } else {
         gen.writeNumber(value);
+      }
+    }
+  }
+
+  static final class EnumJsonSerializer extends JsonSerializer<Enum> {
+
+    private EnumerationBundle bundle;
+
+    public EnumJsonSerializer(EnumerationBundle bundle) {
+      this.bundle = bundle;
+    }
+
+    @Override
+    public Class<Enum> handledType() {
+      return Enum.class;
+    }
+
+    @Override
+    public void serialize(Enum value, JsonGenerator gen, SerializerProvider serializers)
+        throws IOException {
+      gen.writeString(value.toString());
+      if (bundle != null) {
+        gen.writeStringField(gen.getOutputContext().getCurrentName() + "Literal", bundle.getEnumItemLiteral(value, Locale.getDefault()));
       }
     }
   }

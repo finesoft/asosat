@@ -50,8 +50,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class MessageSerializers {
 
-  static final ObjectMapper jsonObjectMapper =
-      JsonUtils.copyMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  static final ObjectMapper jsonObjectMapper = JsonUtils.copyMapper();
 
   @ApplicationScoped
   @MessageSerialization(schema = SerializationSchema.BINARY)

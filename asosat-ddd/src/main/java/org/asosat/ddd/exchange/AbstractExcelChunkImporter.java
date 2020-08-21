@@ -1,8 +1,8 @@
 package org.asosat.ddd.exchange;
 
-import static org.corant.shared.util.Assertions.shouldBeTrue;
 import static org.corant.shared.util.Empties.isNotEmpty;
 import static org.corant.shared.util.Lists.listOf;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -18,6 +18,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.asosat.ddd.exchange.ExcelHelper.ColumnDesc;
 import org.asosat.shared.exchange.DataImporter;
 import org.corant.shared.exception.CorantRuntimeException;
 import org.corant.shared.util.Resources.InputStreamResource;
@@ -36,17 +37,16 @@ public abstract class AbstractExcelChunkImporter<V> extends AbstractExcelExchang
   private final int numOfSkipHeadRow;
 
   protected AbstractExcelChunkImporter() {
-    this(1);
-  }
-
-  protected AbstractExcelChunkImporter(int numOfSkipHeadRow) {
-    shouldBeTrue(numOfSkipHeadRow >= 0);
-    this.numOfSkipHeadRow = numOfSkipHeadRow;
+    List<ColumnDesc> columnDesc = ExcelHelper.getColumnDesc(determineVOClass());
+    if (columnDesc != null && columnDesc.stream().anyMatch(c -> c.getMergeAnnotation() != null)) {
+      this.numOfSkipHeadRow = 2;
+    } else {
+      this.numOfSkipHeadRow = 1;
+    }
   }
 
   /**
    * 导入数据, 捕获GeneralRuntimeException异常,并输出excel,其它异常无法继续执行
-   * 
    * @param resource
    * @param reporter
    */

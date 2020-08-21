@@ -314,7 +314,7 @@ public class ExcelHelper {
     }
   }
 
-  private static List<ColumnDesc> getColumnDesc(Class<?> voCls) {
+  static List<ColumnDesc> getColumnDesc(Class<?> voCls) {
     List<ColumnDesc> allColumnDesc;
     if ((allColumnDesc = CACHED_COLUMN_DESC.get(voCls)) == null) {
       synchronized (ExcelHelper.class) {
@@ -346,7 +346,7 @@ public class ExcelHelper {
     return allColumnDesc;
   }
 
-  private static class ColumnDesc {
+  static class ColumnDesc {
 
     private final int index;
     private final ExcelColumn annotation;
@@ -365,6 +365,22 @@ public class ExcelHelper {
       if (annotation.extract()) {
         shouldNotNull(setter, field + "没有setter方法");
       }
+    }
+
+    public int getIndex() {
+      return index;
+    }
+
+    public ExcelColumn getAnnotation() {
+      return annotation;
+    }
+
+    public ExcelMerge getMergeAnnotation() {
+      return mergeAnnotation;
+    }
+
+    public Field getField() {
+      return field;
     }
   }
 }

@@ -47,19 +47,25 @@ public class ExcelTest {
     @ExcelColumn(alphabet = "B", title = "测试B", dataFormat = PERCENT_FORMAT)
     BigDecimal b;
 
- //   @ExcelMerge(value = MergeIndicate.START, title = "合并标题")
+    //   @ExcelMerge(value = MergeIndicate.START, title = "合并标题")
     @ExcelColumn(alphabet = "C", title = "测试C", extract = true)
     Instant c;
 
     @ExcelColumn(alphabet = "D", title = "测试D", extract = true)
     LocalDate d;
 
- //   @ExcelMerge(value = MergeIndicate.END)
+    //   @ExcelMerge(value = MergeIndicate.END)
     @ExcelColumn(alphabet = "e", title = "测试e", extract = true)
     BigDecimal e;
 
     @ExcelColumn(alphabet = "f", title = "测试f", extract = true)
     Boolean f;
+  }
+
+  @Test
+  public void testTmpl() throws IOException {
+    OutputStream output = new FileOutputStream("D:/x.xlsx");
+    ExcelHelper.generateTemplate(ExportVO.class, output);
   }
 
   @Test
@@ -84,7 +90,7 @@ public class ExcelTest {
 
   @Test
   public void testColumn() throws IOException {
-    XSSFWorkbook workbook =XSSFWorkbookFactory.createWorkbook();
+    XSSFWorkbook workbook = XSSFWorkbookFactory.createWorkbook();
     Sheet sheet = workbook.createSheet();
     ExcelHelper.initColumn(sheet, ExportVO.class);
     System.out.println(sheet.getPhysicalNumberOfRows());

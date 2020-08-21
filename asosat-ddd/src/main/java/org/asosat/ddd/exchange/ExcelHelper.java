@@ -11,10 +11,13 @@ import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.Strings.defaultBlank;
 import static org.corant.shared.util.Strings.isNotBlank;
 import static org.corant.suites.bundle.Preconditions.requireTrue;
+
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,6 +32,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -44,13 +48,19 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
 import org.asosat.ddd.MK;
+import org.asosat.ddd.application.query.GenericQueryParam;
 import org.corant.shared.conversion.Conversion;
 import org.corant.shared.exception.CorantRuntimeException;
 import org.corant.shared.util.Encrypts;
 import org.corant.suites.bundle.PropertyEnumerationBundle;
 import org.corant.suites.bundle.exception.GeneralRuntimeException;
 import org.corant.context.Instances;
+import org.corant.suites.query.shared.QueryService.Forwarding;
 
 /**
  * @author don
@@ -66,8 +76,24 @@ public class ExcelHelper {
   private static final Long EXCEL_MAX_NUMBER = 999999999999999L;// excel只支持15位数字
 
   /**
+   * 生成excel模板
+   * @param voCls
+   * @param output
+   * @throws IOException
+   */
+  public static void generateTemplate(Class<?> voCls, OutputStream output) throws IOException {
+    XSSFWorkbook wb = XSSFWorkbookFactory.createWorkbook();
+    ExcelHelper.initColumn(wb.createSheet(), voCls);
+    SXSSFWorkbook workbook = new SXSSFWorkbook(wb, -1);
+    try {
+      workbook.write(output);
+    } finally {
+      workbook.dispose();
+    }
+  }
+
+  /**
    * 初始化Excel列
-   * 
    * @param sheet
    * @param voCls
    * @return number of head rows
@@ -138,7 +164,6 @@ public class ExcelHelper {
 
   /**
    * 读取excel行转成vo数据
-   * 
    * @param row
    * @param voCls
    * @param <V>
@@ -166,7 +191,7 @@ public class ExcelHelper {
                       Map<Enum, String> literals =
                           opt.get().getEnumItemLiterals((Class<Enum>) type, Locale.getDefault());
                       shouldNotEmpty(literals,
-                          "enum:" + type + " not configured literal properties");
+                                     "enum:" + type + " not configured literal properties");
                       for (Entry<Enum, String> e : literals.entrySet()) {
                         if (e.getValue().equalsIgnoreCase((String) v)) {
                           v = e.getKey();
@@ -197,7 +222,7 @@ public class ExcelHelper {
               colDesc.setter.invoke(vo, Conversion.convert(v, type));
             } catch (RuntimeException e) {
               throw new GeneralRuntimeException(e, MK.EXCEL_CELL_ERROR, annotation.alphabet(),
-                  annotation.title());
+                                                annotation.title());
             }
           }
         }
@@ -211,7 +236,6 @@ public class ExcelHelper {
 
   /**
    * 将处理结果写入excel最后一列
-   * 
    * @param row
    * @param gex
    */
@@ -243,7 +267,6 @@ public class ExcelHelper {
 
   /**
    * 设置Excel每一数据行的值
-   * 
    * @param row
    * @param vo
    */

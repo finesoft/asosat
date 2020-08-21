@@ -31,6 +31,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
+import org.corant.shared.util.Strings;
 import org.corant.suites.bundle.EnumerationBundle;
 import org.corant.suites.json.JsonUtils;
 
@@ -127,7 +128,7 @@ public class JsonContextResolver implements ContextResolver<ObjectMapper> {
     public void serialize(Enum value, JsonGenerator gen, SerializerProvider serializers)
         throws IOException {
       gen.writeString(value.toString());
-      if (bundle != null) {
+      if (bundle != null && Strings.isNoneBlank(gen.getOutputContext().getCurrentName())) {
         gen.writeStringField(gen.getOutputContext().getCurrentName() + "Literal", bundle.getEnumItemLiteral(value, Locale.getDefault()));
       }
     }

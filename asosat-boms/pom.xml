@@ -12,7 +12,7 @@
   <artifactId>asosat-boms</artifactId>
   <properties>
     <docker.dockerfile.skip>true</docker.dockerfile.skip>
-    <docker.image.prefix>192.168.100.200:8083/gsft</docker.image.prefix>
+    <docker.image.prefix>192.168.100.200:8083</docker.image.prefix>
     <docker.image.profile>unknow</docker.image.profile>
     <runner-class></runner-class>
   </properties>
@@ -21,81 +21,13 @@
       <dependency>
         <groupId>org.asosat</groupId>
         <artifactId>asosat-shared</artifactId>
-        <version>${project.version}</version>
+        <version>${revision}</version>
       </dependency>
       <dependency>
         <groupId>org.asosat</groupId>
         <artifactId>asosat-ddd</artifactId>
-        <version>${project.version}</version>
+        <version>${revision}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>exec-maven-plugin</artifactId>
-          <executions>
-            <execution>
-              <goals>
-                <goal>java</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <mainClass>${runner-class}</mainClass>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.corant</groupId>
-          <artifactId>corant-devops-maven-plugin</artifactId>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>package</goal>
-              </goals>
-              <configuration>
-                <classifier>bin</classifier>
-                <distFormat>tar</distFormat>
-                <withDist>true</withDist>
-                <vmArgs>-Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai -Duser.language=zh -Duser.region=CN</vmArgs>
-                <mainClass>${runner-class}</mainClass>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>com.spotify</groupId>
-          <artifactId>dockerfile-maven-plugin</artifactId>
-          <configuration>
-            <skipDockerInfo>true</skipDockerInfo>
-            <skip>${docker.dockerfile.skip}</skip>
-            <repository>${docker.image.prefix}/${project.artifactId}</repository>
-            <tag>${project.version}-${docker.image.profile}</tag>
-            <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
-            <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
-            <buildArgs>
-              <BIN_DIST_FILE>./target/${project.artifactId}-${project.version}-bin-dist.tar</BIN_DIST_FILE>
-            </buildArgs>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>flatten-maven-plugin</artifactId>
-        <inherited>false</inherited><!--不传递-->
-        <configuration>
-          <updatePomFile>true</updatePomFile>
-          <flattenMode>resolveCiFriendliesOnly</flattenMode>
-          <pomElements>
-            <dependencyManagement>expand</dependencyManagement>
-          </pomElements>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>

@@ -10,26 +10,30 @@
   <version>${revision}</version>
   <parent>
     <groupId>org.corant</groupId>
-    <artifactId>corant-boms</artifactId>
+    <artifactId>corant-parent</artifactId>
     <version>9999-SNAPSHOT</version>
   </parent>
   <properties>
     <revision>9999-SNAPSHOT</revision>
   </properties>
   <modules>
+    <module>asosat-boms</module>
     <module>asosat-shared</module>
     <module>asosat-ddd</module>
-    <module>asosat-boms</module>
   </modules>
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-      </plugin>
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.corant</groupId>

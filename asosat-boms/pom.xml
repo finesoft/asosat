@@ -10,12 +10,6 @@
     <version>${revision}</version>
   </parent>
   <artifactId>asosat-boms</artifactId>
-  <properties>
-    <docker.dockerfile.skip>true</docker.dockerfile.skip>
-    <docker.image.prefix>192.168.100.200:8083</docker.image.prefix>
-    <docker.image.profile>unknow</docker.image.profile>
-    <runner-class></runner-class>
-  </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>

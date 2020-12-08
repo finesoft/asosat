@@ -14,7 +14,7 @@
     <version>1.3.10.RELEASE</version>
   </parent>
   <properties>
-    <revision>1.3.4.RELEASE</revision>
+    <revision>1.3.6.RELEASE</revision>
   </properties>
   <modules>
     <module>asosat-boms</module>

@@ -1,5 +1,6 @@
 package org.asosat.ddd.storage;
 
+import static org.corant.context.Instances.findNamed;
 import static org.corant.shared.util.Assertions.shouldBeTrue;
 import static org.corant.shared.util.Conversions.toLong;
 import static org.corant.shared.util.Strings.contains;
@@ -8,7 +9,11 @@ import static org.corant.shared.util.Strings.isNotBlank;
 import static org.corant.shared.util.Strings.left;
 import static org.corant.shared.util.Strings.right;
 import static org.corant.shared.util.Strings.trim;
-import static org.corant.context.Instances.findNamed;
+
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.GridFSBuckets;
+import com.mongodb.client.gridfs.GridFSDownloadStream;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Optional;
@@ -19,15 +24,12 @@ import javax.enterprise.event.TransactionPhase;
 import javax.inject.Inject;
 import org.corant.shared.exception.CorantRuntimeException;
 import org.corant.shared.normal.Names;
-import org.corant.shared.util.Identifiers;
+import org.corant.shared.util.Identifiers.IdentifierGenerator;
+import org.corant.shared.util.Identifiers.SnowflakeW10S12UUIDGenerator;
 import org.corant.suites.ddd.annotation.stereotype.InfrastructureServices;
 import org.corant.suites.mongodb.AbstractGridFSBucketProvider;
 import org.corant.suites.mongodb.MongoClientExtension;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.gridfs.GridFSBucket;
-import com.mongodb.client.gridfs.GridFSBuckets;
-import com.mongodb.client.gridfs.GridFSDownloadStream;
 
 @ApplicationScoped
 @InfrastructureServices
@@ -42,7 +44,7 @@ public class GridFSStorageService extends AbstractGridFSBucketProvider implement
 
   @Inject
   @ConfigProperty(name = "storage.gridfs.identifier.generator.worker-id", defaultValue = "1")
-  protected int defaultWorkerId;
+  protected int workerId;
 
   protected GridFSBucket bucket;
 
@@ -53,10 +55,12 @@ public class GridFSStorageService extends AbstractGridFSBucketProvider implement
     return bucket;
   }
 
+  private IdentifierGenerator idGenerator;
+
   @Override
   public StorageFile getFile(String id) {
     GridFSDownloadStream stream = super.getFile(Long.valueOf(id));// GridFSDownloadStream
-                                                                  // 只要不调用read,都可以不关闭
+    // 只要不调用read,都可以不关闭
     return new GridFSStorageFile(stream);
   }
 
@@ -95,10 +99,11 @@ public class GridFSStorageService extends AbstractGridFSBucketProvider implement
     dataBase = findNamed(MongoDatabase.class, dataBaseName).orElseThrow(
         () -> new CorantRuntimeException("Can not find any mongo database by name %s.", dn));
     bucket = GridFSBuckets.create(dataBase, bucketName);
+
+    idGenerator = new SnowflakeW10S12UUIDGenerator(workerId);
   }
 
   private Long nextId() {
-    return (Long) Identifiers.snowflakeBufferUUIDGenerator(defaultWorkerId, true)
-        .generate(() -> extension.getDatabaseLocalTime(dataBase).toEpochMilli());
+    return (Long) idGenerator.generate(() -> extension.getDatabaseLocalTime(dataBase).toEpochMilli());
   }
 }

@@ -13,12 +13,12 @@
  */
 package org.asosat.ddd.service;
 
+import static org.corant.context.Instances.resolve;
+import static org.corant.context.Instances.select;
 import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.Objects.asString;
 import static org.corant.shared.util.Objects.defaultObject;
 import static org.corant.shared.util.Sets.immutableSetOf;
-import static org.corant.context.Instances.resolve;
-import static org.corant.context.Instances.select;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +29,7 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 import org.asosat.ddd.domain.SimpleAggregateIdentifier;
 import org.corant.kernel.event.PostContainerStartedEvent;
@@ -58,6 +59,9 @@ public class IdentifierEntityConverterFactory implements ConverterFactory<Object
       immutableSetOf(Long.class, Long.TYPE, String.class, Entity.class);
 
   final Logger logger = Logger.getLogger(this.getClass().getName());
+
+  @Inject
+  JPARepositoryExtension jpaRepoExt;
 
   @Transactional
   public <T extends Entity> T convert(Object value, Class<T> targetClass, Map<String, ?> hints) {
@@ -128,7 +132,7 @@ public class IdentifierEntityConverterFactory implements ConverterFactory<Object
 
   Annotation[] resolveQualifier(Class<?> cls) {
     return puqCached.computeIfAbsent(cls, (c) -> {
-      return JPARepositoryExtension.resolveQualifiers(cls);
+      return jpaRepoExt.resolveQualifiers(cls);
     });
   }
 }

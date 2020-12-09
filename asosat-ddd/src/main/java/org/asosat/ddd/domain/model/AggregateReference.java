@@ -1,8 +1,8 @@
 package org.asosat.ddd.domain.model;
 
 import static org.apache.commons.lang3.reflect.ConstructorUtils.invokeExactConstructor;
+import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.Conversions.toLong;
-import static org.corant.shared.util.Conversions.toObject;
 import static org.corant.shared.util.Empties.isEmpty;
 import static org.corant.shared.util.Objects.asString;
 import static org.corant.shared.util.Objects.forceCast;
@@ -10,13 +10,13 @@ import static org.corant.shared.util.Strings.isNotBlank;
 import static org.corant.suites.bundle.GlobalMessageCodes.ERR_OBJ_NON_FUD;
 import static org.corant.suites.bundle.GlobalMessageCodes.ERR_PARAM;
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
-import org.corant.suites.bundle.exception.GeneralRuntimeException;
+import java.util.Optional;
 import org.corant.context.Instances;
+import org.corant.suites.bundle.exception.GeneralRuntimeException;
 import org.corant.suites.ddd.model.Entity;
 import org.corant.suites.ddd.model.Entity.EntityReference;
 import org.corant.suites.ddd.repository.JPARepository;
@@ -52,18 +52,17 @@ public interface AggregateReference<T extends AbstractGenericAggregate> extends 
         asString(cls).concat(":").concat(asString(param)));
   }
 
-  static <X extends Entity> X resolve(Serializable id, Class<X> cls) {
+  static <X extends Entity> X resolve(Class<X> cls, Serializable id) {
     if (id != null && cls != null) {
-      return toObject(id, cls);
+      return shouldNotNull(resolveRepository(cls).get(cls, id),
+          () -> new GeneralRuntimeException(ERR_PARAM));
     }
     throw new GeneralRuntimeException(ERR_PARAM);
   }
 
-  static <X extends Entity> X resolve(String namedQuery, Class<X> cls, Map<Object, Object> params) {
+  static <X extends Entity> X resolve(Class<X> cls, String namedQuery, Map<Object, Object> params) {
     if (isNotBlank(namedQuery)) {
-      Annotation[] quas = JPARepositoryExtension.resolveQualifiers(cls);
-      JPARepository jpar = Instances.resolve(JPARepository.class, quas);
-      List<X> list = jpar.select(namedQuery, params);
+      List<X> list = resolveRepository(cls).namedQuery(namedQuery).parameters(params).select();
       if (!isEmpty(list)) {
         if (list.size() > 1) {
           throw new GeneralRuntimeException(ERR_OBJ_NON_FUD);
@@ -74,11 +73,9 @@ public interface AggregateReference<T extends AbstractGenericAggregate> extends 
     throw new GeneralRuntimeException(ERR_PARAM);
   }
 
-  static <X> X resolve(String namedQuery, Class<X> cls, Object... params) {
+  static <X> X resolve(Class<X> cls, String namedQuery, Object... params) {
     if (isNotBlank(namedQuery)) {
-      Annotation[] quas = JPARepositoryExtension.resolveQualifiers(cls);
-      JPARepository jpar = Instances.resolve(JPARepository.class, quas);
-      List<X> list = jpar.select(namedQuery, params);
+      List<X> list = resolveRepository(cls).namedQuery(namedQuery).parameters(params).select();
       if (!isEmpty(list)) {
         if (list.size() > 1) {
           throw new GeneralRuntimeException(ERR_OBJ_NON_FUD);
@@ -89,37 +86,49 @@ public interface AggregateReference<T extends AbstractGenericAggregate> extends 
     throw new GeneralRuntimeException(ERR_PARAM);
   }
 
-  static <X> List<X> resolveList(String namedQuery, Class<X> cls, Object... params) {
-    Annotation[] quas = JPARepositoryExtension.resolveQualifiers(cls);
-    JPARepository jpar = Instances.resolve(JPARepository.class, quas);
-    return jpar.select(namedQuery, params);
+  static <X> List<X> resolveList(Class<X> cls, String namedQuery, Object... params) {
+    return resolveRepository(cls).namedQuery(namedQuery).parameters(params).select();
+  }
+
+  static JPARepository resolveRepository(Class<?> cls) {
+    return Instances.resolve(JPARepository.class,
+        Instances.resolve(JPARepositoryExtension.class).resolveQualifiers(cls));
+  }
+
+  @Override
+  default T retrieve() {
+    return tryRetrieve().orElseThrow(() -> new GeneralRuntimeException(ERR_PARAM));
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  default T retrieve() {
-    Class<T> resolveClass = null;
-    Class<?> t = getClass();
+  default Optional<T> tryRetrieve() {
+    Class<T> resolvedClass = null;
+    Class<?> referenceClass = getClass();
     do {
-      if (t.getGenericSuperclass() instanceof ParameterizedType) {
-        resolveClass =
-            (Class<T>) ((ParameterizedType) t.getGenericSuperclass()).getActualTypeArguments()[0];
+      if (referenceClass.getGenericSuperclass() instanceof ParameterizedType) {
+        resolvedClass = (Class<T>) ((ParameterizedType) referenceClass.getGenericSuperclass())
+            .getActualTypeArguments()[0];
         break;
       } else {
-        Type[] genericInterfaces = t.getGenericInterfaces();
+        Type[] genericInterfaces = referenceClass.getGenericInterfaces();
         if (genericInterfaces != null) {
           for (Type type : genericInterfaces) {
             if (type instanceof ParameterizedType) {
               ParameterizedType parameterizedType = (ParameterizedType) type;
-              if (parameterizedType.getRawType() == AggregateReference.class) {
-                resolveClass = (Class<T>) parameterizedType.getActualTypeArguments()[0];
+              if (AggregateReference.class
+                  .isAssignableFrom((Class<?>) parameterizedType.getRawType())) {
+                resolvedClass = (Class<T>) parameterizedType.getActualTypeArguments()[0];
                 break;
               }
             }
           }
         }
       }
-    } while (resolveClass == null && (t = t.getSuperclass()) != null);
-    return resolve(getId(), resolveClass);
+    } while (resolvedClass == null && (referenceClass = referenceClass.getSuperclass()) != null);
+    if (resolvedClass != null && getId() != null) {
+      return Optional.ofNullable(resolveRepository(resolvedClass).get(resolvedClass, getId()));
+    }
+    return Optional.empty();
   }
 }

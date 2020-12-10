@@ -11,10 +11,10 @@
   <parent>
     <groupId>org.corant</groupId>
     <artifactId>corant-parent</artifactId>
-    <version>1.5.1.RELEASE</version>
+    <version>1.5.2.RELEASE</version>
   </parent>
   <properties>
-    <revision>1.5.1-SNAPSHOT</revision>
+    <revision>1.5.2-SNAPSHOT</revision>
   </properties>
   <modules>
     <module>asosat-boms</module>

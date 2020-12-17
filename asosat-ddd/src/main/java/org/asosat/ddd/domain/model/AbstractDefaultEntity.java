@@ -19,7 +19,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import org.corant.suites.bundle.GlobalMessageCodes;
-import org.corant.suites.ddd.model.AbstractDefaultGenericAggregate;
+import org.corant.suites.ddd.model.AbstractEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -29,8 +29,7 @@ import org.hibernate.annotations.GenericGenerator;
  *
  */
 @MappedSuperclass
-public abstract class AbstractGenericAggregate<P, T extends AbstractGenericAggregate<P, T>>
-    extends AbstractDefaultGenericAggregate<P, T> {
+public abstract class AbstractDefaultEntity extends AbstractEntity {
 
   private static final long serialVersionUID = -4395445831789674052L;
 
@@ -40,11 +39,11 @@ public abstract class AbstractGenericAggregate<P, T extends AbstractGenericAggre
       strategy = "org.asosat.ddd.util.GlobalUUIDGenerator$GlobalHibernateUUIDGenerator")
   private Long id;
 
-  public AbstractGenericAggregate() {}
+  public AbstractDefaultEntity() {}
 
   @Override
   public Long getId() {
-    return this.id;
+    return id;
   }
 
   protected void setId(Long id) {

@@ -15,6 +15,7 @@ package org.asosat.ddd.gateway;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.corant.shared.util.Maps.mapOf;
+import static org.corant.suites.bundle.MessageResolver.MessageSource.UNKNOW_ERR_CODE;
 
 import java.util.Locale;
 import java.util.Map;
@@ -26,7 +27,6 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import org.apache.logging.log4j.Logger;
 import org.corant.suites.bundle.MessageResolver;
-import org.corant.suites.bundle.MessageResolver.MessageSource;
 import org.corant.suites.bundle.exception.GeneralRuntimeException;
 import org.corant.suites.ddd.annotation.stereotype.ApplicationServices;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -68,10 +68,10 @@ public class RestsExceptionMapper implements ExceptionMapper<Exception> {
                   "attributes", gre.getAttributes(),
                   "code", gre.getCodes());
     } else {
-      res = mapOf("message", messageResolver.getMessage(locale, MessageSource.UNKNOW_ERR_CODE));
+      logger.error(exception::getMessage, exception);
+      res = mapOf("message", messageResolver.getMessage(locale, UNKNOW_ERR_CODE));
       if (exproseErrorCause) {
-        res.put("cause", mapOf("exception:", exception.getClass().getName(),
-                               "message", exception.getLocalizedMessage()));
+        res.put("cause", mapOf("exception:", exception.getClass().getName(), "message", exception.getLocalizedMessage()));
       }
     }
     return Response.serverError().type(APPLICATION_JSON).entity(res).build();

@@ -25,19 +25,19 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 public class SMSClientAliyunImpl implements SMSClient {
 
   @Inject
-  @ConfigProperty(name = "sms.aliyun.regionId", defaultValue = "cn-hangzhou")
+  @ConfigProperty(name = "cloud.aliyun.sms.regionId", defaultValue = "cn-hangzhou")
   protected String regionId;
 
   @Inject
-  @ConfigProperty(name = "sms.aliyun.accessKeyId")
+  @ConfigProperty(name = "cloud.aliyun.sms.accessKeyId")
   protected String accessKeyId;
 
   @Inject
-  @ConfigProperty(name = "sms.aliyun.accessSecret")
+  @ConfigProperty(name = "cloud.aliyun.sms.accessSecret")
   protected String accessSecret;
 
   @Inject
-  @ConfigProperty(name = "sms.aliyun.signName")
+  @ConfigProperty(name = "cloud.aliyun.sms.signName")
   protected String signName;
 
   private IAcsClient client;

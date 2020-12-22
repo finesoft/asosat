@@ -1,21 +1,25 @@
-package org.asosat.ddd.storage;
+package org.asosat.ddd.storage.mongo;
 
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static org.corant.shared.util.Assertions.shouldNotNull;
+import static org.corant.shared.util.Strings.asDefaultString;
+
+import com.mongodb.client.gridfs.GridFSDownloadStream;
 import java.io.InputStream;
 import java.util.Map;
-import org.asosat.ddd.storage.StorageService.StorageFile;
+import org.asosat.ddd.storage.StorageFile;
 import org.corant.shared.util.Resources.SourceType;
-import com.mongodb.client.gridfs.GridFSDownloadStream;
+import org.corant.shared.util.Strings;
 
 /**
  * @author don
  * @date 2019-09-27
  */
-class GridFSStorageFile implements StorageFile {
+public class GridFSFile implements StorageFile {
 
   private final GridFSDownloadStream stream;
 
-  public GridFSStorageFile(GridFSDownloadStream stream) {
+  public GridFSFile(GridFSDownloadStream stream) {
     this.stream = shouldNotNull(stream);
   }
 
@@ -35,8 +39,13 @@ class GridFSStorageFile implements StorageFile {
   }
 
   @Override
+  public String getContentType() {
+    return asDefaultString(stream.getGridFSFile().getMetadata().get(CONTENT_TYPE));
+  }
+
+  @Override
   public String getLocation() {
-    return stream.getGridFSFile().getFilename();
+    return getName();
   }
 
   @Override
@@ -50,13 +59,13 @@ class GridFSStorageFile implements StorageFile {
   }
 
   @Override
-  public SourceType getSourceType() {
-    return null;
+  public InputStream openStream() {
+    return stream;
   }
 
   @Override
-  public InputStream openStream() {
-    return stream;
+  public SourceType getSourceType() {
+    return null;
   }
 
   @SuppressWarnings("unchecked")

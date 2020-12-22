@@ -1,0 +1,2 @@
+org.asosat.ddd.storage.mongo.GridFSExtension
+org.asosat.ddd.storage.aliyun.OSSExtension

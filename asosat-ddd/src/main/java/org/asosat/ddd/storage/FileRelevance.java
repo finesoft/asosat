@@ -3,7 +3,6 @@ package org.asosat.ddd.storage;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.MappedSuperclass;
-import org.asosat.ddd.storage.StorageService.StorageFile;
 import org.asosat.shared.ValueObject;
 
 /**
@@ -13,6 +12,7 @@ import org.asosat.shared.ValueObject;
 @MappedSuperclass
 @Embeddable
 public class FileRelevance implements ValueObject {
+
   private static final long serialVersionUID = 3204979646451864469L;
 
   @Column

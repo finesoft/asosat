@@ -86,6 +86,11 @@
       <optional>true</optional>
     </dependency>
     <dependency>
+      <groupId>com.aliyun.oss</groupId>
+      <artifactId>aliyun-sdk-oss</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
       <groupId>org.corant</groupId>
       <artifactId>corant-suites-redis</artifactId>
       <optional>true</optional>
@@ -96,15 +101,15 @@
       <optional>true</optional>
     </dependency>
 
-	<dependency>
-		<groupId>jakarta.persistence</groupId>
-		<artifactId>jakarta.persistence-api</artifactId>
-	</dependency>
-	<dependency>
-		<groupId>jakarta.enterprise</groupId>
-		<artifactId>jakarta.enterprise.cdi-api</artifactId>
-		<scope>provided</scope>
-	</dependency>
+    <dependency>
+      <groupId>jakarta.persistence</groupId>
+      <artifactId>jakarta.persistence-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.enterprise</groupId>
+      <artifactId>jakarta.enterprise.cdi-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>

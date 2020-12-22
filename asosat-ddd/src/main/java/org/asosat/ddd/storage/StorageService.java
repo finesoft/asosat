@@ -15,53 +15,42 @@ package org.asosat.ddd.storage;
 
 import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.Strings.defaultString;
-import static org.corant.context.Instances.resolveApply;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import org.corant.context.Instances;
 import org.corant.shared.exception.CorantRuntimeException;
 import org.corant.shared.util.Resources.Resource;
 
 /**
  * asosat-ddd
- *
  * @author bingo 上午10:36:11
  */
 public interface StorageService {
 
   static StorageFile get(String id) {
-    return resolveApply(GridFSStorageService.class, t -> t.getFile(shouldNotNull(id)));
+    return Instances.resolveApply(StorageService.class, t -> t.getFile(shouldNotNull(id)));
   }
 
   static String store(Resource resource) {
-    return resolveApply(GridFSStorageService.class, t -> t.putResource(resource));
+    return Instances.resolveApply(StorageService.class, t -> t.putResource(resource));
   }
+
+
+  String putFile(InputStream is, String filename, Map<String, Object> metadata);
 
   StorageFile getFile(String id);
 
-  String putFile(InputStream is, String filename, Map<String, Object> metadata);
+  void removeFile(String id);
 
   default String putResource(Resource resource) {
     shouldNotNull(resource);
     try (InputStream is = resource.openStream()) {
-      return putFile(is, defaultString(resource.getName(), defaultString(resource.getLocation())),
-          resource.getMetadata());// filename should not null
+      String filename = defaultString(resource.getName(), defaultString(resource.getLocation()));
+      return putFile(is, filename, resource.getMetadata());// filename should not null
     } catch (IOException e) {
       throw new CorantRuntimeException(e);
     }
-  }
-
-  void removeFile(String id);
-
-  interface StorageFile extends Resource {
-
-    long getCreatedTime();
-
-    String getId();
-
-    long getLength();
-
-    /** 获取实际处理类 */
-    <T> T unwrap();
   }
 }

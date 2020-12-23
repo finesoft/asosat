@@ -22,10 +22,10 @@ public class OSSConfig extends AbstractNamedObject implements DeclarativeConfig 
   @ConfigKeyItem
   protected String endpoint;
 
-  @ConfigKeyItem("accessKeyId")
+  @ConfigKeyItem
   protected String accessKeyId;
 
-  @ConfigKeyItem("accessKeySecret")
+  @ConfigKeyItem
   protected String accessKeySecret;
 
   /** 支持多个用逗号分隔 */

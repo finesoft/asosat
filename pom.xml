@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.corant</groupId>
     <artifactId>corant-parent</artifactId>
-    <version>1.5.5-SNAPSHOT</version>
+    <version>1.5.5.RELEASE</version>
   </parent>
   <properties>
     <revision>1.5.5-SNAPSHOT</revision>

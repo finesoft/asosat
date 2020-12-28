@@ -17,6 +17,9 @@ import static org.asosat.ddd.security.SecurityContextHolder.currentOrg;
 import static org.asosat.ddd.security.SecurityContextHolder.currentUser;
 import static org.corant.shared.util.Assertions.shouldBeTrue;
 import static org.corant.shared.util.Streams.copy;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -39,13 +42,9 @@ import org.corant.suites.jms.shared.annotation.MessageSend.SerializationSchema;
 import org.corant.suites.jms.shared.annotation.MessageSerialization;
 import org.corant.suites.jms.shared.context.MessageSerializer;
 import org.corant.suites.json.JsonUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * corant-suites-ddd
- * 
  * @author bingo 下午3:43:14
  */
 public class MessageSerializers {
@@ -113,10 +112,14 @@ public class MessageSerializers {
       resolveSchemaProperty(message, SerializationSchema.JSON_STRING);
       try {
         Participator user = currentUser(), org = currentOrg();
-        message.setLongProperty("SC_USER_ID", user.getId());// FIXME DON
-        message.setStringProperty("SC_USER_NAME", user.getName());
-        message.setLongProperty("SC_ORG_ID", org.getId());
-        message.setStringProperty("SC_ORG_NAME", org.getName());
+        if (user != null) {
+          message.setLongProperty("SC_USER_ID", user.getId());// FIXME DON
+          message.setStringProperty("SC_USER_NAME", user.getName());
+        }
+        if (org != null) {
+          message.setLongProperty("SC_ORG_ID", org.getId());
+          message.setStringProperty("SC_ORG_NAME", org.getName());
+        }
       } catch (JMSException e) {
         throw new CorantRuntimeException(e);
       }

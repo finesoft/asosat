@@ -3,6 +3,8 @@ package org.asosat.ddd.storage.aliyun;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static org.corant.shared.util.Assertions.shouldNotBlank;
+import static org.corant.shared.util.Objects.asString;
+import static org.corant.shared.util.Objects.defaultObject;
 import static org.corant.shared.util.Strings.EMPTY;
 
 import com.aliyun.oss.OSS;
@@ -13,13 +15,13 @@ import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectRequest;
 import com.aliyun.oss.model.StorageClass;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import org.asosat.ddd.storage.StorageFile;
 import org.asosat.ddd.storage.StorageService;
 import org.asosat.ddd.util.GlobalUUIDGenerator;
 import org.corant.shared.util.FileUtils;
-import org.corant.shared.util.Objects;
 import org.corant.suites.servlet.abstraction.ContentDispositions.ContentDisposition;
 
 /**
@@ -49,17 +51,19 @@ public class OSSProvider implements StorageService {
   @Override
   public String putFile(InputStream input, String filename, Map<String, Object> meta) {
     String id = GlobalUUIDGenerator.generate().toString();
-    meta = (meta != null) ? new HashMap<>(meta) : new HashMap<>();
-    Object contentType = meta.remove(CONTENT_TYPE);
+    meta = defaultObject(meta, Collections::emptyMap);
+    Object contentType = meta.get(CONTENT_TYPE);
     if (contentType == null) {
-      contentType = Objects.defaultObject(FileUtils.getContentType(filename), EMPTY);
+      contentType = defaultObject(FileUtils.getContentType(filename), EMPTY);
     }
     ObjectMetadata ossMeta = new ObjectMetadata();
-    meta.forEach((k, v) -> ossMeta.addUserMetadata(k, Objects.asString(v, null)));
     ossMeta.setHeader(OSSHeaders.OSS_STORAGE_CLASS, StorageClass.Standard.toString());
     ossMeta.setContentType(contentType.toString());
     ossMeta.setContentDisposition(new ContentDisposition(null, null, filename, UTF_8, null, null, null, null).toString());
     ossMeta.addUserMetadata(OSSFile.FILE_NAME_KEY, filename);
+    for (var key : Arrays.asList(KEY_OWNER_ID, KEY_ORG_ID)) {
+      ossMeta.addUserMetadata(key, asString(meta.get(key), null));
+    }
     ossClient.putObject(new PutObjectRequest(bucketName, id, input, ossMeta));
     return id;
   }

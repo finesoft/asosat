@@ -1,7 +1,9 @@
 package org.asosat.ddd.storage.mongo;
 
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.Objects.defaultObject;
+import static org.corant.shared.util.Strings.EMPTY;
 import static org.corant.suites.mongodb.MongoClientExtension.bsonId;
 
 import com.mongodb.MongoGridFSException;
@@ -11,6 +13,7 @@ import com.mongodb.client.gridfs.GridFSBuckets;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.logging.Level;
@@ -23,6 +26,7 @@ import org.asosat.ddd.storage.StorageService;
 import org.asosat.ddd.util.GlobalUUIDGenerator;
 import org.bson.Document;
 import org.corant.shared.normal.Defaults;
+import org.corant.shared.util.FileUtils;
 
 public class GridFSProvider implements StorageService {
 
@@ -37,14 +41,22 @@ public class GridFSProvider implements StorageService {
   }
 
   @Override
-  public String putFile(InputStream is, String filename, Map<String, Object> metadata) {
+  public String putFile(InputStream is, String filename, Map<String, Object> meta) {
     shouldNotNull(is);
     Long id = GlobalUUIDGenerator.generate();
-    metadata = defaultObject(metadata, Collections::emptyMap);
-    GridFSUploadOptions options = new GridFSUploadOptions()
-        .metadata(new Document(metadata))
-        .chunkSizeBytes(DFLT_CHUNK_SIZE_BYTES);
-    getBucket().uploadFromStream(bsonId(id), filename, is, options);
+    meta = defaultObject(meta, Collections::emptyMap);
+    Object contentType = meta.get(CONTENT_TYPE);
+    if (contentType == null) {
+      contentType = defaultObject(FileUtils.getContentType(filename), EMPTY);
+    }
+    Document document = new Document(CONTENT_TYPE, contentType);
+    for (var key : Arrays.asList(KEY_OWNER_ID, KEY_ORG_ID)) {
+      document.put(key, meta.get(key));
+    }
+    GridFSUploadOptions opt = new GridFSUploadOptions()
+        .chunkSizeBytes(DFLT_CHUNK_SIZE_BYTES)
+        .metadata(document);
+    getBucket().uploadFromStream(bsonId(id), filename, is, opt);
     return id.toString();
   }
 

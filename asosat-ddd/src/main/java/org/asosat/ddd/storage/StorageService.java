@@ -29,6 +29,9 @@ import org.corant.shared.util.Resources.Resource;
  */
 public interface StorageService {
 
+  String KEY_OWNER_ID = "ownerId";
+  String KEY_ORG_ID = "orgId";
+
   static StorageFile get(String id) {
     return Instances.resolveApply(StorageService.class, t -> t.getFile(shouldNotNull(id)));
   }

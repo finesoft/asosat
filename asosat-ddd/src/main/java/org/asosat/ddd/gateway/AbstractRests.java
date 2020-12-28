@@ -3,7 +3,6 @@ package org.asosat.ddd.gateway;
 import static org.corant.shared.util.Empties.isEmpty;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.util.ArrayList;
@@ -16,7 +15,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.corant.suites.ddd.annotation.stereotype.ApplicationServices;
-import org.corant.suites.jaxrs.shared.StreamOutputBuilder;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 
 /**
@@ -141,9 +139,4 @@ public abstract class AbstractRests {
       return "";
     });
   }
-
-  protected StreamOutputBuilder stream(InputStream is) {
-    return StreamOutputBuilder.of(is);
-  }
-
 }

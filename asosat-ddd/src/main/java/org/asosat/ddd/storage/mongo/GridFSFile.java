@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.util.Map;
 import org.asosat.ddd.storage.StorageFile;
 import org.corant.shared.util.Resources.SourceType;
-import org.corant.shared.util.Strings;
 
 /**
  * @author don

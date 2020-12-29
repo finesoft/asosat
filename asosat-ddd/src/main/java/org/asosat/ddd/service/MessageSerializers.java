@@ -95,11 +95,13 @@ public class MessageSerializers {
       shouldBeTrue(message instanceof TextMessage);
       TextMessage tMsg = (TextMessage) message;
       try {
-        Long userId = message.getLongProperty("SC_USER_ID");// FIXME DON
-        String userName = message.getStringProperty("SC_USER_NAME");
-        Long orgId = message.getLongProperty("SC_ORG_ID");
-        String orgName = message.getStringProperty("SC_ORG_NAME");
-        SecurityContextHolder.propagateSecurityContext(userId, userName, orgId, orgName);
+        if (message.propertyExists("SC_USER_ID") && message.propertyExists("SC_ORG_NAME")) {
+          Long userId = message.getLongProperty("SC_USER_ID");// FIXME DON
+          String userName = message.getStringProperty("SC_USER_NAME");
+          Long orgId = message.getLongProperty("SC_ORG_ID");
+          String orgName = message.getStringProperty("SC_ORG_NAME");
+          SecurityContextHolder.propagateSecurityContext(userId, userName, orgId, orgName);
+        }
         return from(tMsg.getText(), clazz);
       } catch (JMSException e) {
         throw new CorantRuntimeException(e);

@@ -181,13 +181,10 @@ public class ExcelHelper {
                 case STRING:
                   v = cell.getStringCellValue();
                   if (Enum.class.isAssignableFrom(type) && annotation.enumLiteral()) {// 字符转换枚举
-                    Optional<PropertyEnumerationBundle> opt =
-                        Instances.find(PropertyEnumerationBundle.class);// FIXME DON
+                    Optional<PropertyEnumerationBundle> opt = Instances.find(PropertyEnumerationBundle.class);
                     if (opt.isPresent()) {
-                      Map<Enum, String> literals =
-                          opt.get().getEnumItemLiterals((Class<Enum>) type, Locale.getDefault());
-                      shouldNotEmpty(literals,
-                                     "enum:" + type + " not configured literal properties");
+                      Map<Enum, String> literals = opt.get().getEnumItemLiterals((Class<Enum>) type, Locale.getDefault());
+                      shouldNotEmpty(literals, "enum:" + type + " not configured literal properties");
                       for (Entry<Enum, String> e : literals.entrySet()) {
                         if (e.getValue().equalsIgnoreCase((String) v)) {
                           v = e.getKey();
@@ -212,20 +209,17 @@ public class ExcelHelper {
                   v = null;
                   break;
                 default:
-                  throw new CorantRuntimeException(
-                      "excel get cell not support " + cell.getCellType());
+                  throw new CorantRuntimeException("excel get cell not support " + cell.getCellType());
               }
               colDesc.setter.invoke(vo, Conversion.convert(v, type));
             } catch (RuntimeException e) {
-              throw new GeneralRuntimeException(e, MK.EXCEL_CELL_ERROR, annotation.alphabet(),
-                                                annotation.title());
+              throw new GeneralRuntimeException(e, MK.EXCEL_CELL_ERROR, annotation.alphabet(), annotation.title());
             }
           }
         }
       }
       return vo;
-    } catch (InstantiationException | IllegalAccessException | InvocationTargetException
-        | NoSuchMethodException e) {
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
       throw new CorantRuntimeException(e);
     }
   }
@@ -294,8 +288,7 @@ public class ExcelHelper {
         cell.setCellValue((LocalDate) v);
       } else if (v instanceof Enum) {
         Optional<PropertyEnumerationBundle> opt; // FIXME DON 待提供静态变量后再改进 Instances.resolve
-        if (colDesc.annotation.enumLiteral()
-            && (opt = Instances.find(PropertyEnumerationBundle.class)).isPresent()) {
+        if (colDesc.annotation.enumLiteral() && (opt = Instances.find(PropertyEnumerationBundle.class)).isPresent()) {
           String literal = opt.get().getEnumItemLiteral((Enum) v, Locale.getDefault());
           shouldNotBlank(literal, "enum:" + v + " not configured literal properties");
           cell.setCellValue(literal);

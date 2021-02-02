@@ -3,6 +3,7 @@ package org.asosat.ddd.storage.aliyun;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static org.corant.shared.util.Assertions.shouldNotBlank;
+import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.Objects.asString;
 import static org.corant.shared.util.Objects.defaultObject;
 import static org.corant.shared.util.Strings.EMPTY;
@@ -20,7 +21,7 @@ import java.util.Collections;
 import java.util.Map;
 import org.asosat.ddd.storage.StorageFile;
 import org.asosat.ddd.storage.StorageService;
-import org.asosat.ddd.util.GlobalUUIDGenerator;
+import org.corant.shared.util.Assertions;
 import org.corant.shared.util.FileUtils;
 import org.corant.suites.servlet.abstraction.ContentDispositions.ContentDisposition;
 
@@ -49,8 +50,9 @@ public class OSSProvider implements StorageService {
   }
 
   @Override
-  public String putFile(InputStream input, String filename, Map<String, Object> meta) {
-    String id = GlobalUUIDGenerator.generate().toString();
+  public String putFile(String id,InputStream input, String filename, Map<String, Object> meta) {
+    shouldNotBlank(id);
+    shouldNotNull(input);
     meta = defaultObject(meta, Collections::emptyMap);
     Object contentType = meta.get(CONTENT_TYPE);
     if (contentType == null) {

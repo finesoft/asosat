@@ -19,6 +19,7 @@ import static org.corant.shared.util.Strings.defaultString;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import org.asosat.ddd.util.GlobalUUIDGenerator;
 import org.corant.context.Instances;
 import org.corant.shared.exception.CorantRuntimeException;
 import org.corant.shared.util.Resources.Resource;
@@ -40,8 +41,11 @@ public interface StorageService {
     return Instances.resolveApply(StorageService.class, t -> t.putResource(resource));
   }
 
+  String putFile(String id, InputStream is, String filename, Map<String, Object> metadata);
 
-  String putFile(InputStream is, String filename, Map<String, Object> metadata);
+  default String putFile(InputStream is, String filename, Map<String, Object> metadata) {
+    return putFile(GlobalUUIDGenerator.generate().toString(), is, filename, metadata);
+  }
 
   StorageFile getFile(String id);
 
@@ -52,6 +56,16 @@ public interface StorageService {
     try (InputStream is = resource.openStream()) {
       String filename = defaultString(resource.getName(), defaultString(resource.getLocation()));
       return putFile(is, filename, resource.getMetadata());// filename should not null
+    } catch (IOException e) {
+      throw new CorantRuntimeException(e);
+    }
+  }
+
+  default String putResource(String id, Resource resource) {
+    shouldNotNull(resource);
+    try (InputStream is = resource.openStream()) {
+      String filename = defaultString(resource.getName(), defaultString(resource.getLocation()));
+      return putFile(id, is, filename, resource.getMetadata());// filename should not null
     } catch (IOException e) {
       throw new CorantRuntimeException(e);
     }

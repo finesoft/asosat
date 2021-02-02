@@ -1,6 +1,7 @@
 package org.asosat.ddd.storage.mongo;
 
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+import static org.corant.shared.util.Assertions.shouldNotBlank;
 import static org.corant.shared.util.Assertions.shouldNotNull;
 import static org.corant.shared.util.Objects.defaultObject;
 import static org.corant.shared.util.Strings.EMPTY;
@@ -23,7 +24,6 @@ import javax.enterprise.event.TransactionPhase;
 import org.asosat.ddd.storage.FileDeprecatedEvent;
 import org.asosat.ddd.storage.StorageFile;
 import org.asosat.ddd.storage.StorageService;
-import org.asosat.ddd.util.GlobalUUIDGenerator;
 import org.bson.Document;
 import org.corant.shared.normal.Defaults;
 import org.corant.shared.util.FileUtils;
@@ -41,9 +41,10 @@ public class GridFSProvider implements StorageService {
   }
 
   @Override
-  public String putFile(InputStream is, String filename, Map<String, Object> meta) {
-    shouldNotNull(is);
-    Long id = GlobalUUIDGenerator.generate();
+  public String putFile(String idStr,InputStream input, String filename, Map<String, Object> meta) {
+    shouldNotNull(input);
+    shouldNotBlank(idStr);
+    Long id = Long.valueOf(idStr);
     meta = defaultObject(meta, Collections::emptyMap);
     Object contentType = meta.get(CONTENT_TYPE);
     if (contentType == null) {
@@ -56,7 +57,7 @@ public class GridFSProvider implements StorageService {
     GridFSUploadOptions opt = new GridFSUploadOptions()
         .chunkSizeBytes(DFLT_CHUNK_SIZE_BYTES)
         .metadata(document);
-    getBucket().uploadFromStream(bsonId(id), filename, is, opt);
+    getBucket().uploadFromStream(bsonId(id), filename, input, opt);
     return id.toString();
   }
 

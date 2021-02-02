@@ -10,6 +10,7 @@ import static org.corant.shared.util.Strings.EMPTY;
 
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
+import com.aliyun.oss.OSSException;
 import com.aliyun.oss.internal.OSSHeaders;
 import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.ObjectMetadata;
@@ -19,9 +20,10 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.asosat.ddd.storage.StorageFile;
 import org.asosat.ddd.storage.StorageService;
-import org.corant.shared.util.Assertions;
 import org.corant.shared.util.FileUtils;
 import org.corant.suites.servlet.abstraction.ContentDispositions.ContentDisposition;
 
@@ -30,6 +32,8 @@ import org.corant.suites.servlet.abstraction.ContentDispositions.ContentDisposit
  * @date 2020/12/14
  */
 public class OSSProvider implements StorageService {
+
+  protected final Logger logger = Logger.getLogger(getClass().getName());
 
   protected final OSS ossClient;
 
@@ -45,12 +49,17 @@ public class OSSProvider implements StorageService {
 
   @Override
   public StorageFile getFile(String id) {
-    OSSObject object = ossClient.getObject(bucketName, id);
+    OSSObject object = null;
+    try {
+      object = ossClient.getObject(bucketName, id);
+    } catch (OSSException e) {
+      logger.log(Level.WARNING, e, () -> "get file error, id " + id);
+    }
     return object != null ? new OSSFile(object) : null;
   }
 
   @Override
-  public String putFile(String id,InputStream input, String filename, Map<String, Object> meta) {
+  public String putFile(String id, InputStream input, String filename, Map<String, Object> meta) {
     shouldNotBlank(id);
     shouldNotNull(input);
     meta = defaultObject(meta, Collections::emptyMap);

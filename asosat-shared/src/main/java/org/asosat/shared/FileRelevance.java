@@ -1,9 +1,8 @@
-package org.asosat.ddd.storage;
+package org.asosat.shared;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.MappedSuperclass;
-import org.asosat.shared.ValueObject;
 
 /**
  * @author don
@@ -26,10 +25,6 @@ public class FileRelevance implements ValueObject {
   }
 
   protected FileRelevance() {}
-
-  public static FileRelevance of(StorageFile f) {
-    return new FileRelevance(f.getId(), f.getName());
-  }
 
   public String getName() {
     return name;
